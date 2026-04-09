@@ -1,0 +1,1725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MingLi Gems — Personalized Chinese Fortune Bracelets</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Noto+Serif+SC:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #C9A96E;
+            --gold-dark: #8B6914;
+            --black: #1A1A1A;
+            --dark-bg: #0D0D0D;
+            --warm-gray: #2A2A2A;
+            --text-light: #F5F0E8;
+            --text-muted: #9A8F7E;
+            --accent-red: #8B2500;
+            --accent-green: #2E5941;
+            --border: rgba(201,169,110,0.2);
+            --font-heading: 'Cinzel', serif;
+            --font-body: 'Playfair Display', serif;
+            --font-chinese: 'Noto Serif SC', serif;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            background: var(--dark-bg);
+            color: var(--text-light);
+            font-family: var(--font-body);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--dark-bg); }
+        ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 3px; }
+
+        /* ===== NAVBAR ===== */
+        .navbar {
+            position: fixed; top:0; left:0; right:0; z-index:1000;
+            padding: 18px 60px;
+            display: flex; justify-content:space-between; align-items:center;
+            background: rgba(13,13,13,0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            transition: all 0.4s ease;
+        }
+        .navbar.scrolled {
+            padding: 12px 60px;
+            background: rgba(13,13,13,0.95);
+        }
+        .nav-logo {
+            font-family: var(--font-heading);
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--gold);
+            letter-spacing: 4px;
+            text-decoration: none;
+            display: flex; align-items:center; gap: 12px;
+        }
+        .nav-logo .logo-icon {
+            width: 36px; height:36px;
+            border: 2px solid var(--gold);
+            border-radius: 50%;
+            display:flex; align-items:center; justify-content:center;
+            font-size: 1.1rem;
+        }
+        .nav-links {
+            display: flex; gap: 36px; align-items:center; list-style:none;
+        }
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-family: var(--font-heading);
+            font-size: 0.78rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: color 0.3s;
+            position: relative;
+        }
+        .nav-links a::after {
+            content:''; position:absolute; bottom:-4px; left:0; right:0;
+            height:1px; background: var(--gold);
+            transform: scaleX(0); transition: transform 0.3s;
+        }
+        .nav-links a:hover { color: var(--gold); }
+        .nav-links a:hover::after { transform: scaleX(1); }
+        .nav-cta {
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            color: var(--black) !important;
+            padding: 10px 24px;
+            border-radius: 2px;
+            font-weight: 600;
+            letter-spacing: 2px !important;
+            transition: all 0.3s !important;
+        }
+        .nav-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(201,169,110,0.3);
+        }
+        .nav-cta::after { display:none !important; }
+        .hamburger {
+            display: none; flex-direction:column; gap:5px; cursor:pointer;
+            background:none; border:none; padding:5px;
+        }
+        .hamburger span {
+            width: 28px; height:2px; background: var(--gold);
+            transition: all 0.3s;
+        }
+
+        /* ===== HERO ===== */
+        .hero {
+            height: 100vh;
+            position: relative;
+            display: flex; align-items:center; justify-content:center;
+            overflow: hidden;
+        }
+        .hero-bg {
+            position: absolute; inset:0;
+            background:
+                radial-gradient(ellipse at 30% 50%, rgba(201,169,110,0.08) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 30%, rgba(139,37,0,0.06) 0%, transparent 50%),
+                linear-gradient(180deg, #0D0D0D 0%, #1A0A00 50%, #0D0D0D 100%);
+        }
+        .hero-particles {
+            position: absolute; inset:0; overflow:hidden;
+        }
+        .particle {
+            position: absolute; border-radius: 50%;
+            background: var(--gold);
+            opacity: 0; animation: float-particle 8s infinite;
+        }
+        @keyframes float-particle {
+            0% { opacity:0; transform: translateY(100vh) scale(0); }
+            20% { opacity: 0.6; }
+            80% { opacity: 0.3; }
+            100% { opacity:0; transform: translateY(-10vh) scale(1); }
+        }
+        .hero-content {
+            position: relative; z-index:2; text-align:center;
+            max-width: 800px; padding: 0 24px;
+        }
+        .hero-badge {
+            display: inline-block;
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            padding: 6px 20px;
+            font-family: var(--font-heading);
+            font-size: 0.7rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 32px;
+            opacity: 0; animation: fadeInUp 1s 0.3s forwards;
+        }
+        .hero-title {
+            font-family: var(--font-heading);
+            font-size: clamp(2.8rem, 6vw, 5rem);
+            font-weight: 700;
+            color: var(--gold);
+            line-height: 1.1;
+            margin-bottom: 8px;
+            opacity: 0; animation: fadeInUp 1s 0.5s forwards;
+            text-shadow: 0 0 60px rgba(201,169,110,0.2);
+        }
+        .hero-title-zh {
+            font-family: var(--font-chinese);
+            font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+            color: var(--text-muted);
+            letter-spacing: 12px;
+            margin-bottom: 28px;
+            opacity: 0; animation: fadeInUp 1s 0.7s forwards;
+        }
+        .hero-desc {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            max-width: 560px;
+            margin: 0 auto 40px;
+            opacity: 0; animation: fadeInUp 1s 0.9s forwards;
+        }
+        .hero-actions {
+            display: flex; gap: 20px; justify-content:center;
+            flex-wrap:wrap;
+            opacity: 0; animation: fadeInUp 1s 1.1s forwards;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            color: var(--black);
+            padding: 16px 40px;
+            border: none;
+            font-family: var(--font-heading);
+            font-size: 0.8rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(201,169,110,0.35);
+        }
+        .btn-outline {
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            padding: 16px 40px;
+            font-family: var(--font-heading);
+            font-size: 0.8rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: inline-block;
+            background: transparent;
+        }
+        .btn-outline:hover {
+            background: rgba(201,169,110,0.1);
+            transform: translateY(-3px);
+        }
+        .hero-scroll {
+            position: absolute; bottom: 40px; left:50%; transform:translateX(-50%);
+            z-index:2;
+            opacity: 0; animation: fadeInUp 1s 1.5s forwards;
+        }
+        .scroll-line {
+            width: 1px; height: 50px;
+            background: linear-gradient(to bottom, var(--gold), transparent);
+            margin: 0 auto;
+            animation: scrollPulse 2s infinite;
+        }
+        @keyframes scrollPulse {
+            0%,100% { opacity: 0.3; transform: scaleY(1); }
+            50% { opacity: 1; transform: scaleY(1.3); }
+        }
+        @keyframes fadeInUp {
+            from { opacity:0; transform:translateY(30px); }
+            to { opacity:1; transform:translateY(0); }
+        }
+
+        /* ===== SECTIONS ===== */
+        .section {
+            padding: 100px 60px;
+        }
+        .section-header {
+            text-align:center;
+            margin-bottom: 70px;
+        }
+        .section-label {
+            font-family: var(--font-heading);
+            font-size: 0.7rem;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 16px;
+            display: block;
+        }
+        .section-title {
+            font-family: var(--font-heading);
+            font-size: clamp(2rem, 4vw, 3rem);
+            color: var(--text-light);
+            margin-bottom: 16px;
+            line-height: 1.2;
+        }
+        .section-title-zh {
+            font-family: var(--font-chinese);
+            font-size: 1rem;
+            color: var(--text-muted);
+            letter-spacing: 6px;
+            margin-bottom: 24px;
+        }
+        .section-line {
+            width: 60px; height: 2px;
+            background: var(--gold);
+            margin: 0 auto;
+        }
+
+        /* ===== BANNER STRIP ===== */
+        .banner-strip {
+            background: var(--warm-gray);
+            padding: 20px 60px;
+            display: flex; justify-content:center; gap: 60px;
+            flex-wrap:wrap;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+        .banner-item {
+            display: flex; align-items:center; gap: 12px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-family: var(--font-heading);
+            letter-spacing: 1px;
+        }
+        .banner-item .icon {
+            width: 36px; height:36px; border-radius:50%;
+            border: 1px solid var(--gold);
+            display:flex; align-items:center; justify-content:center;
+            color: var(--gold); font-size: 1rem;
+        }
+
+        /* ===== PHILOSOPHY ===== */
+        .philosophy-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            max-width: 1100px; margin: 0 auto;
+        }
+        .philosophy-card {
+            text-align:center;
+            padding: 50px 36px;
+            border: 1px solid var(--border);
+            transition: all 0.4s;
+            position: relative;
+            overflow: hidden;
+        }
+        .philosophy-card::before {
+            content:''; position:absolute; top:0; left:0; right:0; height:2px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            transform: scaleX(0); transition: transform 0.4s;
+        }
+        .philosophy-card:hover {
+            border-color: rgba(201,169,110,0.4);
+            transform: translateY(-8px);
+        }
+        .philosophy-card:hover::before { transform: scaleX(1); }
+        .philosophy-icon {
+            font-size: 2.5rem; margin-bottom: 24px;
+            display: block;
+        }
+        .philosophy-title {
+            font-family: var(--font-heading);
+            font-size: 1rem;
+            color: var(--gold);
+            margin-bottom: 6px;
+            letter-spacing: 2px;
+        }
+        .philosophy-zh {
+            font-family: var(--font-chinese);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+        .philosophy-desc {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.8;
+        }
+
+        /* ===== COLLECTION ===== */
+        .collection-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            max-width: 1200px; margin: 0 auto;
+        }
+        .product-card {
+            background: var(--warm-gray);
+            border: 1px solid var(--border);
+            transition: all 0.4s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .product-card:hover {
+            border-color: var(--gold);
+            transform: translateY(-6px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+        .product-img {
+            width: 100%; aspect-ratio:1;
+            background: linear-gradient(135deg, #1a1208, #2d1f0a);
+            display:flex; align-items:center; justify-content:center;
+            font-size: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .product-img .overlay {
+            position:absolute; inset:0;
+            background: rgba(201,169,110,0.1);
+            display:flex; align-items:center; justify-content:center;
+            opacity: 0; transition: opacity 0.3s;
+        }
+        .product-card:hover .overlay { opacity:1; }
+        .product-badge {
+            position:absolute; top:12px; left:12px;
+            background: var(--gold); color: var(--black);
+            font-size: 0.65rem; font-family: var(--font-heading);
+            padding: 4px 10px; letter-spacing: 1px;
+        }
+        .product-info { padding: 20px; }
+        .product-category {
+            font-family: var(--font-heading);
+            font-size: 0.65rem; color: var(--gold);
+            letter-spacing: 2px; text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+        .product-name {
+            font-family: var(--font-heading);
+            font-size: 0.95rem;
+            color: var(--text-light);
+            margin-bottom: 6px;
+        }
+        .product-name-zh {
+            font-family: var(--font-chinese);
+            font-size: 0.8rem; color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+        .product-price {
+            display:flex; align-items:baseline; gap: 10px;
+        }
+        .price-current {
+            font-family: var(--font-heading);
+            font-size: 1.2rem; color: var(--gold);
+        }
+        .price-original {
+            font-size: 0.85rem; color: var(--text-muted);
+            text-decoration: line-through;
+        }
+        .product-tag {
+            display: inline-block;
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            font-size: 0.6rem;
+            padding: 2px 8px;
+            font-family: var(--font-heading);
+            letter-spacing: 1px;
+            margin-top: 8px;
+        }
+
+        /* ===== CUSTOMIZE BUILDER ===== */
+        #customize {
+            background: linear-gradient(180deg, var(--dark-bg) 0%, #150d00 50%, var(--dark-bg) 100%);
+        }
+        .builder-layout {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 60px; max-width: 1200px; margin: 0 auto;
+            align-items: start;
+        }
+        .builder-preview {
+            position: sticky; top: 120px;
+        }
+        .bracelet-display {
+            aspect-ratio: 1;
+            background: radial-gradient(circle at center, #2d1f0a, #0d0d0d);
+            border: 1px solid var(--border);
+            display:flex; align-items:center; justify-content:center;
+            position: relative;
+            overflow: hidden;
+        }
+        .bracelet-visual {
+            display: flex; align-items:center; gap: 6px;
+            flex-wrap: wrap; justify-content:center;
+            max-width: 300px;
+        }
+        .bead {
+            width: 38px; height: 38px; border-radius:50%;
+            display:flex; align-items:center; justify-content:center;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.1);
+            transition: transform 0.3s;
+        }
+        .bead:hover { transform: scale(1.2); }
+        .bead-center {
+            width: 50px; height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            display:flex; align-items:center; justify-content:center;
+            font-size: 1.4rem;
+            box-shadow: 0 0 30px rgba(201,169,110,0.4);
+        }
+        .preview-label {
+            position:absolute; bottom: 24px; left:0; right:0;
+            text-align:center;
+            font-family: var(--font-heading);
+            font-size: 0.7rem; letter-spacing:3px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+        .builder-controls {
+            padding: 20px 0;
+        }
+        .step-section {
+            margin-bottom: 40px;
+        }
+        .step-title {
+            font-family: var(--font-heading);
+            font-size: 0.75rem; letter-spacing: 3px;
+            color: var(--gold); text-transform: uppercase;
+            margin-bottom: 6px;
+            display: flex; align-items:center; gap: 10px;
+        }
+        .step-num {
+            width: 24px; height: 24px;
+            border: 1px solid var(--gold);
+            border-radius: 50%;
+            display:flex; align-items:center; justify-content:center;
+            font-size: 0.65rem;
+        }
+        .step-zh {
+            font-family: var(--font-chinese);
+            font-size: 0.8rem; color: var(--text-muted);
+            margin-bottom: 18px; margin-left: 34px;
+        }
+        .option-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+        .option-btn {
+            padding: 12px 8px;
+            background: var(--warm-gray);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            cursor: pointer;
+            text-align:center;
+            font-family: var(--font-heading);
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+        }
+        .option-btn .opt-icon { font-size: 1.4rem; display:block; margin-bottom: 6px; }
+        .option-btn:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+        .option-btn.active {
+            border-color: var(--gold);
+            background: rgba(201,169,110,0.1);
+            color: var(--gold);
+        }
+        .select-custom {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--warm-gray);
+            border: 1px solid var(--border);
+            color: var(--text-light);
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            appearance: none;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+        .select-custom:focus { outline: none; border-color: var(--gold); }
+        .select-custom option { background: var(--warm-gray); }
+        .input-custom {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--warm-gray);
+            border: 1px solid var(--border);
+            color: var(--text-light);
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+        .input-custom:focus { outline: none; border-color: var(--gold); }
+        .builder-summary {
+            background: rgba(201,169,110,0.05);
+            border: 1px solid var(--border);
+            padding: 24px;
+            margin-top: 20px;
+        }
+        .summary-row {
+            display:flex; justify-content:space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(201,169,110,0.1);
+            font-size: 0.85rem;
+        }
+        .summary-row:last-child { border:none; }
+        .summary-label { color: var(--text-muted); }
+        .summary-value { color: var(--gold); font-family: var(--font-heading); }
+        .summary-total {
+            display:flex; justify-content:space-between;
+            padding-top: 16px; margin-top: 8px;
+            border-top: 1px solid var(--border);
+            font-family: var(--font-heading);
+            font-size: 1.2rem;
+            color: var(--gold);
+        }
+        .btn-builder {
+            width: 100%; margin-top: 20px;
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            color: var(--black);
+            padding: 16px;
+            border: none;
+            font-family: var(--font-heading);
+            font-size: 0.85rem; letter-spacing: 3px;
+            text-transform: uppercase; cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s;
+        }
+        .btn-builder:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(201,169,110,0.3);
+        }
+
+        /* ===== ASTROLOGY CALCULATOR ===== */
+        .astro-section {
+            background: linear-gradient(135deg, #0d0800, #1a1000);
+            border: 1px solid var(--border);
+            padding: 40px;
+            max-width: 600px; margin: 0 auto 50px;
+        }
+        .astro-result {
+            display: none;
+            margin-top: 30px;
+            padding: 30px;
+            background: rgba(201,169,110,0.05);
+            border: 1px solid var(--gold);
+            text-align:center;
+        }
+        .astro-result.show { display: block; }
+        .astro-element {
+            font-size: 3rem; margin-bottom: 10px;
+        }
+        .astro-element-name {
+            font-family: var(--font-heading);
+            font-size: 1.5rem; color: var(--gold);
+            letter-spacing: 3px;
+        }
+        .astro-desc {
+            color: var(--text-muted);
+            margin-top: 12px; font-size: 0.9rem;
+        }
+        .astro-recommend {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(201,169,110,0.08);
+            border-left: 3px solid var(--gold);
+            text-align:left;
+        }
+        .astro-recommend-title {
+            font-family: var(--font-heading);
+            color: var(--gold); font-size: 0.75rem;
+            letter-spacing: 2px; margin-bottom: 8px;
+        }
+
+        /* ===== TESTIMONIALS ===== */
+        #testimonials {
+            background: var(--warm-gray);
+        }
+        .testimonial-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 30px; max-width: 1100px; margin: 0 auto;
+        }
+        .testimonial-card {
+            background: var(--dark-bg);
+            border: 1px solid var(--border);
+            padding: 36px;
+            transition: all 0.3s;
+        }
+        .testimonial-card:hover {
+            border-color: var(--gold);
+            transform: translateY(-4px);
+        }
+        .testimonial-stars { color: var(--gold); font-size: 0.9rem; margin-bottom: 16px; }
+        .testimonial-text {
+            color: var(--text-muted); font-size: 0.9rem;
+            line-height: 1.8; margin-bottom: 20px;
+            font-style: italic;
+        }
+        .testimonial-author {
+            display:flex; align-items:center; gap: 12px;
+        }
+        .author-avatar {
+            width: 40px; height:40px;
+            border-radius:50%; border: 1px solid var(--gold);
+            display:flex; align-items:center; justify-content:center;
+            font-size: 0.8rem; color: var(--gold);
+            background: rgba(201,169,110,0.1);
+        }
+        .author-name {
+            font-family: var(--font-heading);
+            font-size: 0.8rem; color: var(--text-light);
+        }
+        .author-detail {
+            font-size: 0.75rem; color: var(--text-muted);
+        }
+
+        /* ===== BLOG ===== */
+        .blog-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 30px; max-width: 1100px; margin: 0 auto;
+        }
+        .blog-card {
+            background: var(--warm-gray);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            transition: all 0.4s;
+            cursor: pointer;
+        }
+        .blog-card:hover {
+            border-color: var(--gold);
+            transform: translateY(-6px);
+        }
+        .blog-img {
+            height: 200px;
+            background: linear-gradient(135deg, #1a1208, #2d1f0a);
+            display:flex; align-items:center; justify-content:center;
+            font-size: 2.5rem;
+        }
+        .blog-content { padding: 24px; }
+        .blog-tag {
+            font-family: var(--font-heading);
+            font-size: 0.65rem; color: var(--gold);
+            letter-spacing: 2px; text-transform:uppercase;
+            margin-bottom: 10px; display:block;
+        }
+        .blog-title {
+            font-family: var(--font-heading);
+            font-size: 1rem; color: var(--text-light);
+            margin-bottom: 10px; line-height:1.4;
+        }
+        .blog-excerpt {
+            font-size: 0.85rem; color: var(--text-muted);
+            line-height: 1.7;
+        }
+
+        /* ===== NEWSLETTER ===== */
+        .newsletter {
+            padding: 80px 60px;
+            text-align:center;
+            background: linear-gradient(180deg, var(--dark-bg) 0%, #150d00 100%);
+            border-top: 1px solid var(--border);
+        }
+        .newsletter-form {
+            display:flex; gap: 0; max-width: 500px; margin: 30px auto 0;
+        }
+        .newsletter-input {
+            flex:1; padding: 14px 20px;
+            background: var(--warm-gray);
+            border: 1px solid var(--border);
+            border-right: none;
+            color: var(--text-light);
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+        }
+        .newsletter-input:focus { outline:none; border-color: var(--gold); }
+        .newsletter-btn {
+            padding: 14px 30px;
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            color: var(--black);
+            border: none;
+            font-family: var(--font-heading);
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s;
+        }
+        .newsletter-btn:hover {
+            box-shadow: 0 8px 25px rgba(201,169,110,0.3);
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            background: var(--black);
+            border-top: 1px solid var(--border);
+            padding: 60px 60px 30px;
+        }
+        .footer-grid {
+            display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 50px; margin-bottom: 50px;
+        }
+        .footer-brand .nav-logo {
+            margin-bottom: 16px;
+        }
+        .footer-brand p {
+            color: var(--text-muted); font-size: 0.85rem;
+            line-height: 1.8; margin-bottom: 20px;
+        }
+        .footer-social {
+            display:flex; gap: 14px;
+        }
+        .social-link {
+            width: 38px; height:38px;
+            border: 1px solid var(--border);
+            display:flex; align-items:center; justify-content:center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+        .social-link:hover {
+            border-color: var(--gold); color: var(--gold);
+        }
+        .footer-col h4 {
+            font-family: var(--font-heading);
+            font-size: 0.75rem; letter-spacing: 2px;
+            color: var(--gold); margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+        .footer-col ul { list-style:none; }
+        .footer-col li { margin-bottom: 10px; }
+        .footer-col a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.3s;
+        }
+        .footer-col a:hover { color: var(--gold); }
+        .footer-bottom {
+            border-top: 1px solid var(--border);
+            padding-top: 24px;
+            display:flex; justify-content:space-between; align-items:center;
+            font-size: 0.8rem; color: var(--text-muted);
+        }
+        .payment-icons { display:flex; gap: 14px; }
+        .payment-icon {
+            padding: 4px 12px;
+            border: 1px solid var(--border);
+            font-size: 0.7rem;
+            font-family: var(--font-heading);
+            color: var(--text-muted);
+        }
+
+        /* ===== BACK TO TOP ===== */
+        .back-to-top {
+            position: fixed; bottom: 30px; right: 30px;
+            width: 44px; height:44px;
+            background: var(--gold);
+            color: var(--black);
+            border: none; cursor: pointer;
+            font-size: 1.1rem;
+            display:flex; align-items:center; justify-content:center;
+            opacity: 0; transition: all 0.3s;
+            z-index: 999;
+        }
+        .back-to-top.show { opacity:1; }
+        .back-to-top:hover { transform: translateY(-4px); }
+
+        /* ===== CART DRAWER ===== */
+        .cart-icon-fixed {
+            position: fixed; bottom: 30px; left: 30px;
+            width: 50px; height:50px;
+            background: var(--warm-gray);
+            border: 1px solid var(--gold);
+            display:flex; align-items:center; justify-content:center;
+            color: var(--gold); font-size: 1.2rem;
+            cursor:pointer; z-index: 999;
+            transition: all 0.3s;
+        }
+        .cart-icon-fixed:hover {
+            background: var(--gold); color: var(--black);
+        }
+        .cart-count {
+            position:absolute; top:-6px; right:-6px;
+            width: 20px; height:20px;
+            background: var(--accent-red);
+            color: white;
+            font-size: 0.65rem;
+            border-radius:50%;
+            display:flex; align-items:center; justify-content:center;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 900px) {
+            .navbar { padding: 14px 24px; }
+            .nav-links { display: none; }
+            .hamburger { display:flex; }
+            .section { padding: 60px 24px; }
+            .philosophy-grid { grid-template-columns: 1fr; }
+            .collection-grid { grid-template-columns: repeat(2, 1fr); }
+            .testimonial-grid { grid-template-columns: 1fr; }
+            .blog-grid { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: 1fr 1fr; }
+            .builder-layout { grid-template-columns: 1fr; }
+            .option-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (max-width: 600px) {
+            .collection-grid { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: 1fr; }
+            .newsletter-form { flex-direction:column; }
+            .newsletter-input { border-right:1px solid var(--border); margin-bottom: 10px; }
+            .hero-actions { flex-direction:column; align-items:center; }
+            .footer-bottom { flex-direction:column; gap: 12px; }
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            display: none; position:fixed; inset:0;
+            background: rgba(13,13,13,0.98);
+            z-index: 9999;
+            flex-direction:column; align-items:center; justify-content:center;
+            gap: 30px;
+        }
+        .mobile-menu.open { display:flex; }
+        .mobile-menu a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-family: var(--font-heading);
+            font-size: 1.2rem;
+            letter-spacing: 4px;
+            transition: color 0.3s;
+        }
+        .mobile-menu a:hover { color: var(--gold); }
+        .mobile-close {
+            position:absolute; top:20px; right:24px;
+            background:none; border:none; color: var(--gold);
+            font-size: 1.8rem; cursor:pointer;
+        }
+
+        /* Animations */
+        .fade-in {
+            opacity: 0; transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .fade-in.visible {
+            opacity: 1; transform: translateY(0);
+        }
+
+        /* Notification */
+        .notification {
+            position:fixed; top:80px; right:20px;
+            background: var(--warm-gray);
+            border: 1px solid var(--gold);
+            padding: 16px 24px;
+            color: var(--text-light);
+            font-size: 0.85rem;
+            z-index: 10000;
+            transform: translateX(120%);
+            transition: transform 0.4s;
+        }
+        .notification.show { transform: translateX(0); }
+    </style>
+</head>
+<body>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <button class="mobile-close" onclick="closeMobile()">×</button>
+        <a href="#collection" onclick="closeMobile()">Collection</a>
+        <a href="#customize" onclick="closeMobile()">Customize</a>
+        <a href="#astrology" onclick="closeMobile()">Astrology</a>
+        <a href="#testimonials" onclick="closeMobile()">Reviews</a>
+        <a href="#about" onclick="closeMobile()">About</a>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar" id="navbar">
+        <a href="#" class="nav-logo">
+            <span class="logo-icon">☰</span>
+            MingLi Gems
+        </a>
+        <ul class="nav-links">
+            <li><a href="#collection">Collection</a></li>
+            <li><a href="#customize">Customize</a></li>
+            <li><a href="#astrology">Astrology</a></li>
+            <li><a href="#testimonials">Reviews</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#customize" class="nav-cta">Get Yours</a></li>
+        </ul>
+        <button class="hamburger" onclick="openMobile()">
+            <span></span><span></span><span></span>
+        </button>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-particles" id="particles"></div>
+        <div class="hero-content">
+            <div class="hero-badge">✦ Ancient Wisdom · Modern Craft ✦</div>
+            <h1 class="hero-title">MingLi Gems</h1>
+            <p class="hero-title-zh">命理手串 · 定制珠宝</p>
+            <p class="hero-desc">
+                Discover your destiny through the art of Chinese metaphysics. Each bracelet is thoughtfully crafted to harmonize with your Five Elements, zodiac sign, and personal energy.
+            </p>
+            <div class="hero-actions">
+                <a href="#customize" class="btn-primary">Design Your Bracelet</a>
+                <a href="#collection" class="btn-outline">Explore Collection</a>
+            </div>
+        </div>
+        <div class="hero-scroll">
+            <div class="scroll-line"></div>
+        </div>
+    </section>
+
+    <!-- Banner Strip -->
+    <div class="banner-strip">
+        <div class="banner-item">
+            <span class="icon">✦</span>
+            <span>Handcrafted with Care</span>
+        </div>
+        <div class="banner-item">
+            <span class="icon">☯</span>
+            <span>Five Elements Balancing</span>
+        </div>
+        <div class="banner-item">
+            <span class="icon">◈</span>
+            <span>Free Shipping Worldwide</span>
+        </div>
+        <div class="banner-item">
+            <span class="icon">◎</span>
+            <span>Authenticity Guaranteed</span>
+        </div>
+        <div class="banner-item">
+            <span class="icon">⬡</span>
+            <span>30-Day Returns</span>
+        </div>
+    </div>
+
+    <!-- Philosophy -->
+    <section class="section" id="about">
+        <div class="section-header">
+            <span class="section-label">Our Philosophy</span>
+            <h2 class="section-title">道法自然 · 天人合一</h2>
+            <p class="section-title-zh">The Way of Harmony</p>
+            <div class="section-line"></div>
+        </div>
+        <div class="philosophy-grid">
+            <div class="philosophy-card fade-in">
+                <span class="philosophy-icon">☷</span>
+                <h3 class="philosophy-title">FIVE ELEMENTS</h3>
+                <p class="philosophy-zh">五行调和</p>
+                <p class="philosophy-desc">Each gemstone carries the energy of Wood, Fire, Earth, Metal, or Water. We match crystals to your birth chart for optimal harmony.</p>
+            </div>
+            <div class="philosophy-card fade-in">
+                <span class="philosophy-icon">☉</span>
+                <h3 class="philosophy-title">ANCIENT WISDOM</h3>
+                <p class="philosophy-zh">古法传承</p>
+                <p class="philosophy-desc">Drawing from 5,000 years of Chinese metaphysics — BaZi, Zi Wei Dou Shu, and Feng Shui — our designs carry authentic cultural significance.</p>
+            </div>
+            <div class="philosophy-card fade-in">
+                <span class="philosophy-icon">◈</span>
+                <h3 class="philosophy-title">SOUL CONNECTION</h3>
+                <p class="philosophy-zh">心灵感应</p>
+                <p class="philosophy-desc">Every piece is chosen not just for beauty, but for the energy it channels. Your bracelet becomes a personal talisman of intention.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Collection -->
+    <section class="section" id="collection" style="background: linear-gradient(180deg, var(--dark-bg) 0%, #0a0804 50%, var(--dark-bg) 100%);">
+        <div class="section-header">
+            <span class="section-label">Our Collection</span>
+            <h2 class="section-title">Curated Energy Bracelets</h2>
+            <p class="section-title-zh">精选能量手串</p>
+            <div class="section-line"></div>
+        </div>
+        <div class="collection-grid">
+            <div class="product-card fade-in" onclick="addToCart('Pixiu Wealth Bracelet')">
+                <div class="product-img">
+                    🐉
+                    <div class="overlay">
+                        <span class="btn-primary" style="padding:10px 24px;font-size:0.7rem;">View Details</span>
+                    </div>
+                    <span class="product-badge">Best Seller</span>
+                </div>
+                <div class="product-info">
+                    <p class="product-category">Wealth · 财富</p>
+                    <h3 class="product-name">Pixiu Wealth Bracelet</h3>
+                    <p class="product-name-zh">貔貅聚宝手串</p>
+                    <div class="product-price">
+                        <span class="price-current">$89</span>
+                        <span class="price-original">$129</span>
+                    </div>
+                    <span class="product-tag">BLACK OBSIDIAN</span>
+                </div>
+            </div>
+            <div class="product-card fade-in" onclick="addToCart('Five Elements Balance Bracelet')">
+                <div class="product-img">
+                    ☯
+                    <div class="overlay">
+                        <span class="btn-primary" style="padding:10px 24px;font-size:0.7rem;">View Details</span>
+                    </div>
+                    <span class="product-badge">Popular</span>
+                </div>
+                <div class="product-info">
+                    <p class="product-category">Balance · 平衡</p>
+                    <h3 class="product-name">Five Elements Bracelet</h3>
+                    <p class="product-name-zh">五行调和手串</p>
+                    <div class="product-price">
+                        <span class="price-current">$109</span>
+                        <span class="price-original">$159</span>
+                    </div>
+                    <span class="product-tag">MIXED GEMSTONES</span>
+                </div>
+            </div>
+            <div class="product-card fade-in" onclick="addToCart('Green Jade Prosperity Bracelet')">
+                <div class="product-img">
+                    ◆
+                    <div class="overlay">
+                        <span class="btn-primary" style="padding:10px 24px;font-size:0.7rem;">View Details</span>
+                    </div>
+                </div>
+                <div class="product-info">
+                    <p class="product-category">Health · 健康</p>
+                    <h3 class="product-name">Jade Prosperity Bracelet</h3>
+                    <p class="product-name-zh">翡翠平安手串</p>
+                    <div class="product-price">
+                        <span class="price-current">$149</span>
+                    </div>
+                    <span class="product-tag">NEPHRITE JADE</span>
+                </div>
+            </div>
+            <div class="product-card fade-in" onclick="addToCart('Red String Fate Bracelet')">
+                <div class="product-img">
+                    ◎
+                    <div class="overlay">
+                        <span class="btn-primary" style="padding:10px 24px;font-size:0.7rem;">View Details</span>
+                    </div>
+                    <span class="product-badge">New</span>
+                </div>
+                <div class="product-info">
+                    <p class="product-category">Love · 姻缘</p>
+                    <h3 class="product-name">Red String of Fate</h3>
+                    <p class="product-name-zh">姻缘红绳手串</p>
+                    <div class="product-price">
+                        <span class="price-current">$79</span>
+                        <span class="price-original">$99</span>
+                    </div>
+                    <span class="product-tag">ROSE QUARTZ + AGATE</span>
+                </div>
+            </div>
+        </div>
+        <div style="text-align:center; margin-top:50px;">
+            <a href="#customize" class="btn-outline">Design Your Own →</a>
+        </div>
+    </section>
+
+    <!-- Customize Builder -->
+    <section class="section" id="customize">
+        <div class="section-header">
+            <span class="section-label">Personalized Creation</span>
+            <h2 class="section-title">Build Your Destiny Bracelet</h2>
+            <p class="section-title-zh">定制您的命理手串</p>
+            <div class="section-line"></div>
+        </div>
+        <div class="builder-layout">
+            <!-- Preview -->
+            <div class="builder-preview">
+                <div class="bracelet-display" id="braceletDisplay">
+                    <div class="bracelet-visual" id="braceletVisual">
+                        <div class="bead" style="background:linear-gradient(135deg,#2d1f0a,#4a3510);color:#C9A96E;">木</div>
+                        <div class="bead" style="background:linear-gradient(135deg,#1a0a00,#4a1010);color:#ff6b6b;">火</div>
+                        <div class="bead" style="background:linear-gradient(135deg,#2a2a1a,#5a5030);color:#d4a843;">土</div>
+                        <div class="bead-center">命</div>
+                        <div class="bead" style="background:linear-gradient(135deg,#1a1a2a,#304060);color:#8ab4f8;">金</div>
+                        <div class="bead" style="background:linear-gradient(135deg,#0a1a1a,#103030);color:#6ee7b7;">水</div>
+                    </div>
+                    <div class="preview-label">Live Preview · 实时预览</div>
+                </div>
+                <div style="margin-top:16px; display:flex; justify-content:space-between; font-size:0.8rem; color:var(--text-muted);">
+                    <span>Selected Beads: <span id="beadCount" style="color:var(--gold);">6</span></span>
+                    <span>Total Weight: ~<span id="beadWeight" style="color:var(--gold);">18g</span></span>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="builder-controls">
+                <div class="step-section">
+                    <div class="step-title">
+                        <span class="step-num">1</span>
+                        Your Energy Profile
+                    </div>
+                    <p class="step-zh">您的命理信息</p>
+                    <select class="select-custom" id="birthYear" onchange="updateElement()">
+                        <option value="">— Select Birth Year —</option>
+                    </select>
+                    <select class="select-custom" id="zodiacSign" onchange="updateElement()">
+                        <option value="">— Select Zodiac Sign —</option>
+                        <option value="rat">Rat · 鼠</option>
+                        <option value="ox">Ox · 牛</option>
+                        <option value="tiger">Tiger · 虎</option>
+                        <option value="rabbit">Rabbit · 兔</option>
+                        <option value="dragon">Dragon · 龙</option>
+                        <option value="snake">Snake · 蛇</option>
+                        <option value="horse">Horse · 马</option>
+                        <option value="goat">Goat · 羊</option>
+                        <option value="monkey">Monkey · 猴</option>
+                        <option value="rooster">Rooster · 鸡</option>
+                        <option value="dog">Dog · 狗</option>
+                        <option value="pig">Pig · 猪</option>
+                    </select>
+                    <select class="select-custom" id="elementNeed" onchange="updateBracelet()">
+                        <option value="">— What do you need most? —</option>
+                        <option value="wealth">Wealth & Prosperity · 招财旺运</option>
+                        <option value="health">Health & Longevity · 健康平安</option>
+                        <option value="love">Love & Relationships · 姻缘感情</option>
+                        <option value="career">Career & Success · 事业晋升</option>
+                        <option value="protection">Protection & Clarity · 辟邪化煞</option>
+                    </select>
+                </div>
+
+                <div class="step-section">
+                    <div class="step-title">
+                        <span class="step-num">2</span>
+                        Choose Your Beads
+                    </div>
+                    <p class="step-zh">选择珠子材质</p>
+                    <div class="option-grid" id="beadOptions">
+                        <button class="option-btn active" onclick="selectBead(this, 'obsidian')">
+                            <span class="opt-icon">⬢</span>
+                            Black Obsidian<br><small>土</small>
+                        </button>
+                        <button class="option-btn" onclick="selectBead(this, 'jade')">
+                            <span class="opt-icon">◆</span>
+                            Jade<br><small>木</small>
+                        </button>
+                        <button class="option-btn" onclick="selectBead(this, 'amethyst')">
+                            <span class="opt-icon">◈</span>
+                            Amethyst<br><small>火</small>
+                        </button>
+                        <button class="option-btn" onclick="selectBead(this, 'citrine')">
+                            <span class="opt-icon">○</span>
+                            Citrine<br><small>火</small>
+                        </button>
+                        <button class="option-btn" onclick="selectBead(this, 'turquoise')">
+                            <span class="opt-icon">◇</span>
+                            Turquoise<br><small>木</small>
+                        </button>
+                        <button class="option-btn" onclick="selectBead(this, 'tiger-eye')">
+                            <span class="opt-icon">△</span>
+                            Tiger Eye<br><small>土</small>
+                        </button>
+                        <button class="option-btn" onclick="selectBead(this, 'rose-quartz')">
+                            <span class="opt-icon">♡</span>
+                            Rose Quartz<br><small>火</small>
+                        </button>
+                        <button class="option-btn" onclick="selectBead(this, 'onyx')">
+                            <span class="opt-icon">●</span>
+                            Onyx<br><small>水</small>
+                        </button>
+                        <button class="option-btn" onclick="selectBead(this, 'garnet')">
+                            <span class="opt-icon">▼</span>
+                            Garnet<br><small>火</small>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="step-section">
+                    <div class="step-title">
+                        <span class="step-num">3</span>
+                        Bracelet Size
+                    </div>
+                    <p class="step-zh">手串尺寸</p>
+                    <select class="select-custom" id="braceletSize">
+                        <option value="small">Small (16-17cm) — Women</option>
+                        <option value="medium" selected>Medium (18-19cm) — Most Adults</option>
+                        <option value="large">Large (20-21cm) — Men</option>
+                        <option value="xlarge">XL (22cm+) — Custom Fit</option>
+                    </select>
+                </div>
+
+                <div class="step-section">
+                    <div class="step-title">
+                        <span class="step-num">4</span>
+                        Personal Engraving
+                    </div>
+                    <p class="step-zh">个性化刻字（可选）</p>
+                    <input type="text" class="input-custom" id="engraving" placeholder="e.g. your name or a mantra (max 6 characters)" maxlength="6">
+                </div>
+
+                <div class="builder-summary" id="builderSummary">
+                    <div class="summary-row">
+                        <span class="summary-label">Bead Material</span>
+                        <span class="summary-value" id="summaryBead">Black Obsidian</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Number of Beads</span>
+                        <span class="summary-value" id="summaryCount">6 beads</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Size</span>
+                        <span class="summary-value" id="summarySize">Medium</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Engraving</span>
+                        <span class="summary-value" id="summaryEngraving">—</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Custom Design Fee</span>
+                        <span class="summary-value">+$15</span>
+                    </div>
+                    <div class="summary-total">
+                        <span>Estimated Total</span>
+                        <span id="totalPrice">$89</span>
+                    </div>
+                </div>
+                <button class="btn-builder" onclick="addCustomToCart()">
+                    ✦ Add to Cart — <span id="btnPrice">$89</span> ✦
+                </button>
+                <p style="text-align:center; margin-top:12px; font-size:0.75rem; color:var(--text-muted);">
+                    Handcrafted in 3-5 days · Free shipping over $100
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Astrology Calculator -->
+    <section class="section" id="astrology" style="background: var(--warm-gray);">
+        <div class="section-header">
+            <span class="section-label">Free Analysis</span>
+            <h2 class="section-title">Discover Your Element</h2>
+            <p class="section-title-zh">发现您的五行属性</p>
+            <div class="section-line"></div>
+        </div>
+        <div class="astro-section">
+            <p style="color:var(--text-muted); margin-bottom:20px; font-size:0.9rem; text-align:center;">
+                Enter your birth details to discover your dominant Five Elements and get personalized bracelet recommendations.
+            </p>
+            <div style="display:grid; gap:12px;">
+                <select class="select-custom" id="astroYear">
+                    <option value="">Select Birth Year</option>
+                </select>
+                <select class="select-custom" id="astroMonth">
+                    <option value="">Select Birth Month</option>
+                </select>
+                <select class="select-custom" id="astroDay">
+                    <option value="">Select Birth Day</option>
+                </select>
+                <button class="btn-builder" onclick="calculateElement()" style="margin-top:8px;">
+                    Calculate My Element
+                </button>
+            </div>
+            <div class="astro-result" id="astroResult">
+                <div class="astro-element" id="astroElementIcon">木</div>
+                <div class="astro-element-name" id="astroElementName">WOOD</div>
+                <p class="astro-desc" id="astroDesc"></p>
+                <div class="astro-recommend">
+                    <p class="astro-recommend-title">✦ Recommended Bracelet Elements</p>
+                    <p id="astroRecommend"></p>
+                </div>
+                <a href="#customize" class="btn-primary" style="margin-top:20px; display:inline-block; padding:12px 30px; font-size:0.75rem;">
+                    Design My Bracelet →
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="section" id="testimonials">
+        <div class="section-header">
+            <span class="section-label">Customer Stories</span>
+            <h2 class="section-title">Voices of Harmony</h2>
+            <p class="section-title-zh">顾客心声</p>
+            <div class="section-line"></div>
+        </div>
+        <div class="testimonial-grid">
+            <div class="testimonial-card fade-in">
+                <div class="testimonial-stars">★★★★★</div>
+                <p class="testimonial-text">
+                    "I ordered a custom Five Elements bracelet based on my BaZi reading. The energy shift was noticeable within days — my business deals started flowing more smoothly. Absolutely remarkable craftsmanship."
+                </p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">S</div>
+                    <div>
+                        <p class="author-name">Sarah M.</p>
+                        <p class="author-detail">Los Angeles, USA · Five Elements Bracelet</p>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card fade-in">
+                <div class="testimonial-stars">★★★★★</div>
+                <p class="testimonial-text">
+                    "The Pixiu bracelet exceeded all expectations. Beautifully packaged with a certificate of authenticity. My fortune readings have never been this aligned. Already ordered my second piece for my mother."
+                </p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">J</div>
+                    <div>
+                        <p class="author-name">James L.</p>
+                        <p class="author-detail">Toronto, Canada · Pixiu Wealth Bracelet</p>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card fade-in">
+                <div class="testimonial-stars">★★★★★</div>
+                <p class="testimonial-text">
+                    "The custom engraving on my Red String bracelet made it truly personal. The beads feel powerful and the energy is palpable. Shipping was fast to London. This is now my most treasured accessory."
+                </p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">E</div>
+                    <div>
+                        <p class="author-name">Emily R.</p>
+                        <p class="author-detail">London, UK · Red String Bracelet</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog / Culture -->
+    <section class="section" id="blog" style="background: linear-gradient(180deg, var(--dark-bg) 0%, #0a0804 50%, var(--dark-bg) 100%);">
+        <div class="section-header">
+            <span class="section-label">Ancient Wisdom Blog</span>
+            <h2 class="section-title">Culture & Knowledge</h2>
+            <p class="section-title-zh">玄学文化</p>
+            <div class="section-line"></div>
+        </div>
+        <div class="blog-grid">
+            <div class="blog-card fade-in">
+                <div class="blog-img">☯</div>
+                <div class="blog-content">
+                    <span class="blog-tag">Five Elements</span>
+                    <h3 class="blog-title">How to Balance Your Five Elements Through Gemstones</h3>
+                    <p class="blog-excerpt">Understanding the Wood, Fire, Earth, Metal, Water cycle and which crystals can strengthen your weakest element...</p>
+                </div>
+            </div>
+            <div class="blog-card fade-in">
+                <div class="blog-img">🐉</div>
+                <div class="blog-content">
+                    <span class="blog-tag">BaZi</span>
+                    <h3 class="blog-title">Reading Your Destiny: What Your Birth Chart Reveals</h3>
+                    <p class="blog-excerpt">Your Eight Characters carry profound insights about your personality, luck cycles, and ideal career paths...</p>
+                </div>
+            </div>
+            <div class="blog-card fade-in">
+                <div class="blog-img">◎</div>
+                <div class="blog-content">
+                    <span class="blog-tag">Feng Shui</span>
+                    <h3 class="blog-title">Pixiu: The Mythical Wealth Attractor of Ancient China</h3>
+                    <p class="blog-excerpt">The legendary creature that eats gold but never excretes it — how to activate its wealth-attracting power...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter -->
+    <div class="newsletter">
+        <span class="section-label">Stay Connected</span>
+        <h2 class="section-title" style="font-size:2rem;">Join the MingLi Circle</h2>
+        <p class="section-title-zh">订阅获取命理资讯与专属折扣</p>
+        <form class="newsletter-form" onsubmit="return subscribeNewsletter(event)">
+            <input type="email" class="newsletter-input" placeholder="Enter your email address" required>
+            <button type="submit" class="newsletter-btn">Subscribe</button>
+        </form>
+        <p style="margin-top:16px; font-size:0.8rem; color:var(--text-muted);">
+            ✦ Weekly feng shui tips · Exclusive subscriber discounts · Early access to new collections
+        </p>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <a href="#" class="nav-logo">
+                    <span class="logo-icon">☰</span>
+                    MingLi Gems
+                </a>
+                <p>Blending 5,000 years of Chinese metaphysics with modern craftsmanship. Each piece carries intention, energy, and destiny.</p>
+                <div class="footer-social">
+                    <a href="#" class="social-link">IG</a>
+                    <a href="#" class="social-link">TT</a>
+                    <a href="#" class="social-link">FB</a>
+                    <a href="#" class="social-link">YT</a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Shop</h4>
+                <ul>
+                    <li><a href="#collection">All Bracelets</a></li>
+                    <li><a href="#customize">Custom Design</a></li>
+                    <li><a href="#">Wealth & Prosperity</a></li>
+                    <li><a href="#">Health & Longevity</a></li>
+                    <li><a href="#">Love & Relationships</a></li>
+                    <li><a href="#">Protection & Clarity</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Learn</h4>
+                <ul>
+                    <li><a href="#">Five Elements Guide</a></li>
+                    <li><a href="#">BaZi Basics</a></li>
+                    <li><a href="#">Feng Shui Tips</a></li>
+                    <li><a href="#">Crystal Properties</a></li>
+                    <li><a href="#">Care Instructions</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="#">Shipping Policy</a></li>
+                    <li><a href="#">Returns & Refunds</a></li>
+                    <li><a href="#">Size Guide</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="#">FAQ</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>© 2026 MingLi Gems. All rights reserved. Made with ☯</span>
+            <div class="payment-icons">
+                <span class="payment-icon">VISA</span>
+                <span class="payment-icon">MC</span>
+                <span class="payment-icon">AMEX</span>
+                <span class="payment-icon">PayPal</span>
+                <span class="payment-icon">Apple Pay</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top -->
+    <button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+    <!-- Cart Fixed -->
+    <div class="cart-icon-fixed" onclick="showNotification('Cart feature coming soon! 🛒')">
+        🛒
+        <span class="cart-count" id="cartCount">0</span>
+    </div>
+
+<script>
+    // ===== INIT =====
+    const beadPrices = {
+        'obsidian': 89, 'jade': 149, 'amethyst': 99, 'citrine': 119,
+        'turquoise': 109, 'tiger-eye': 89, 'rose-quartz': 79, 'onyx': 85, 'garnet': 129
+    };
+    const beadElements = {
+        'obsidian': '土', 'jade': '木', 'amethyst': '火', 'citrine': '火',
+        'turquoise': '木', 'tiger-eye': '土', 'rose-quartz': '火', 'onyx': '水', 'garnet': '火'
+    };
+    const beadColors = {
+        'obsidian': 'linear-gradient(135deg,#1a0a00,#3a2a1a)',
+        'jade': 'linear-gradient(135deg,#0a2a1a,#1a5a3a)',
+        'amethyst': 'linear-gradient(135deg,#1a0a2a,#4a2a6a)',
+        'citrine': 'linear-gradient(135deg,#2a1a00,#6a5a10)',
+        'turquoise': 'linear-gradient(135deg,#0a1a2a,#1a4a5a)',
+        'tiger-eye': 'linear-gradient(135deg,#2a1a0a,#6a4a20)',
+        'rose-quartz': 'linear-gradient(135deg,#2a0a1a,#6a2a4a)',
+        'onyx': 'linear-gradient(135deg,#0a0a0a,#2a2a2a)',
+        'garnet': 'linear-gradient(135deg,#2a0a0a,#6a1a1a)'
+    };
+    const beadIcons = {
+        'obsidian': '⬢', 'jade': '◆', 'amethyst': '◈', 'citrine': '○',
+        'turquoise': '◇', 'tiger-eye': '△', 'rose-quartz': '♡', 'onyx': '●', 'garnet': '▼'
+    };
+    const elementData = {
+        'wood': { icon: '木', name: 'WOOD', desc: 'Associated with growth, creativity, and spring energy. Wood types are ambitious, visionary, and possess strong leadership qualities.' },
+        'fire': { icon: '火', name: 'FIRE', desc: 'Linked to passion, transformation, and summer warmth. Fire types are charismatic, enthusiastic, and naturally draw people to them.' },
+        'earth': { icon: '土', name: 'EARTH', desc: 'Symbolizes stability, nourishment, and late-summer abundance. Earth types are reliable, practical, and create solid foundations.' },
+        'metal': { icon: '金', name: 'METAL', desc: 'Represents clarity, structure, and autumn precision. Metal types are organized, decisive, and excel at bringing order to chaos.' },
+        'water': { icon: '水', name: 'WATER', desc: 'Embodies wisdom, flow, and winter introspection. Water types are intuitive, adaptable, and possess deep emotional intelligence.' }
+    };
+    let cartItems = [];
+    let selectedBead = 'obsidian';
+
+    // Populate years
+    const yearSelect = document.getElementById('birthYear');
+    const astroYear = document.getElementById('astroYear');
+    for (let y = 1990; y <= 2010; y++) {
+        const opt = new Option(y, y);
+        yearSelect.add(opt);
+        astroYear.add(new Option(y, y));
+    }
+    const astroMonth = document.getElementById('astroMonth');
+    for (let m = 1; m <= 12; m++) {
+        astroMonth.add(new Option(m + ' 月', m));
+    }
+    const astroDay = document.getElementById('astroDay');
+    for (let d = 1; d <= 31; d++) {
+        astroDay.add(new Option(d + ' 日', d));
+    }
+
+    // ===== NAVBAR SCROLL =====
+    window.addEventListener('scroll', () => {
+        const nav = document.getElementById('navbar');
+        const btt = document.getElementById('backToTop');
+        if (window.scrollY > 50) { nav.classList.add('scrolled'); }
+        else { nav.classList.remove('scrolled'); }
+        if (window.scrollY > 500) { btt.classList.add('show'); }
+        else { btt.classList.remove('show'); }
+    });
+
+    // ===== FADE IN ANIMATION =====
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    // ===== PARTICLES =====
+    const particlesContainer = document.getElementById('particles');
+    for (let i = 0; i < 30; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        p.style.width = (Math.random() * 3 + 1) + 'px';
+        p.style.height = p.style.width;
+        p.style.left = Math.random() * 100 + '%';
+        p.style.animationDelay = Math.random() * 8 + 's';
+        p.style.animationDuration = (Math.random() * 6 + 5) + 's';
+        particlesContainer.appendChild(p);
+    }
+
+    // ===== MOBILE MENU =====
+    function openMobile() { document.getElementById('mobileMenu').classList.add('open'); }
+    function closeMobile() { document.getElementById('mobileMenu').classList.remove('open'); }
+
+    // ===== BRACELET BUILDER =====
+    function selectBead(btn, bead) {
+        document.querySelectorAll('#beadOptions .option-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        selectedBead = bead;
+        updateBracelet();
+        updateSummary();
+    }
+
+    function updateBracelet() {
+        const visual = document.getElementById('braceletVisual');
+        const beadCount = 5;
+        const colors = ['#2d1f0a', '#4a3510'];
+        let html = '';
+        for (let i = 0; i < beadCount; i++) {
+            html += `<div class="bead" style="background:${beadColors[selectedBead]};color:var(--gold);">${beadIcons[selectedBead]}</div>`;
+        }
+        html += `<div class="bead-center">命</div>`;
+        for (let i = 0; i < beadCount; i++) {
+            html += `<div class="bead" style="background:${beadColors[selectedBead]};color:var(--gold);">${beadIcons[selectedBead]}</div>`;
+        }
+        visual.innerHTML = html;
+        document.getElementById('beadCount').textContent = beadCount * 2 + 1;
+        document.getElementById('beadWeight').textContent = Math.round((beadCount * 2 + 1) * 3) + 'g';
+    }
+
+    function updateSummary() {
+        const size = document.getElementById('braceletSize');
+        const engraving = document.getElementById('engraving');
+        const price = beadPrices[selectedBead] + 15;
+        document.getElementById('summaryBead').textContent = selectedBead.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase());
+        document.getElementById('summaryCount').textContent = '11 beads';
+        document.getElementById('summarySize').textContent = size.options[size.selectedIndex].text.split('(')[0].trim();
+        document.getElementById('summaryEngraving').textContent = engraving.value || '—';
+        document.getElementById('totalPrice').textContent = '$' + price;
+        document.getElementById('btnPrice').textContent = '$' + price;
+    }
+
+    document.getElementById('braceletSize').addEventListener('change', updateSummary);
+    document.getElementById('engraving').addEventListener('input', updateSummary);
+
+    // ===== ELEMENT CALCULATION =====
+    function updateElement() {
+        const year = document.getElementById('birthYear').value;
+        if (!year) return;
+        // Simple Five Elements based on last digit
+        const lastDigit = year % 10;
+        const elements = ['土', '金', '水', '木', '火'];
+        const elNames = ['EARTH', 'METAL', 'WATER', 'WOOD', 'FIRE'];
+        const idx = [0, 4, 3, 2, 1][lastDigit % 5];
+        const elIcon = ['土', '金', '水', '木', '火'][lastDigit % 5];
+        const elName = ['EARTH', 'METAL', 'WATER', 'WOOD', 'FIRE'][lastDigit % 5];
+        // Visual feedback
+        const display = document.getElementById('braceletDisplay');
+        display.style.background = `radial-gradient(circle at center, ${beadColors[selectedBead]}, #0d0d0d)`;
+    }
+
+    function calculateElement() {
+        const year = document.getElementById('astroYear').value;
+        const month = document.getElementById('astroMonth').value;
+        if (!year || !month) {
+            showNotification('Please select your birth year and month');
+            return;
+        }
+        const lastDigit = year % 10;
+        const elements = ['土', '金', '水', '木', '火'];
+        const elNames = ['EARTH', 'METAL', 'WATER', 'WOOD', 'FIRE'];
+        const elDescs = [
+            'Associated with stability, nourishment, and grounding energy. Earth types build lasting foundations.',
+            'Linked to clarity, strength, and autumn structure. Metal types possess keen intuition and precision.',
+            'Embodies wisdom, adaptability, and winter flow. Water types are deeply intuitive and emotional.',
+            'Associated with growth, creativity, and spring energy. Wood types are ambitious visionaries.',
+            'Linked to passion, transformation, and summer warmth. Fire types are charismatic leaders.'
+        ];
+        const elRecommend = [
+            'Recommended: Jade, Tiger Eye, Golden Citrine to strengthen Earth energy.',
+            'Recommended: White Howlite, Moonstone, Clear Quartz for Metal harmony.',
+            'Recommended: Black Obsidian, Blue Lace Agate, Aquamarine to enhance Water.',
+            'Recommended: Green Jade, Turquoise, Moss Agate to boost Wood energy.',
+            'Recommended: Red Carnelian, Garnet, Ruby to amplify Fire passion.'
+        ];
+        const idx = lastDigit % 5;
+        const result = document.getElementById('astroResult');
+        result.classList.add('show');
+        document.getElementById('astroElementIcon').textContent = elements[idx];
+        document.getElementById('astroElementName').textContent = elements[idx] + ' — ' + elNames[idx];
+        document.getElementById('astroDesc').textContent = elDescs[idx];
+        document.getElementById('astroRecommend').textContent = elRecommend[idx];
+    }
+
+    // ===== CART =====
+    function addToCart(name) {
+        cartItems.push(name);
+        document.getElementById('cartCount').textContent = cartItems.length;
+        showNotification(`✓ ${name} added to cart!`);
+    }
+
+    function addCustomToCart() {
+        const engraving = document.getElementById('engraving').value;
+        const bead = selectedBead;
+        const size = document.getElementById('braceletSize').value;
+        cartItems.push(`Custom ${bead} bracelet${engraving ? ' (' + engraving + ')' : ''}`);
+        document.getElementById('cartCount').textContent = cartItems.length;
+        showNotification(`✓ Custom bracelet added to cart! Handcrafted in 3-5 days.`);
+    }
+
+    // ===== NEWSLETTER =====
+    function subscribeNewsletter(e) {
+        e.preventDefault();
+        const email = e.target.querySelector('input').value;
+        showNotification(`✓ Subscribed! Welcome to the MingLi Circle.`);
+        e.target.reset();
+        return false;
+    }
+
+    // ===== NOTIFICATION =====
+    function showNotification(msg) {
+        const n = document.getElementById('notification');
+        n.textContent = msg;
+        n.classList.add('show');
+        setTimeout(() => n.classList.remove('show'), 3000);
+    }
+
+    // ===== SMOOTH SCROLL =====
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+        a.addEventListener('click', e => {
+            const target = document.querySelector(a.getAttribute('href'));
+            if (target) {
+                e.preventDefault();
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+</script>
+</body>
+</html>
