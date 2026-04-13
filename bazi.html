@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bazi Calculator — 八字排盘 | MingLi Gems</title>
+    <meta name="description" content="Free Chinese Bazi Calculator. Discover your Four Pillars of Destiny, Five Elements balance, and personalized fortune bracelet recommendations.">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Noto+Serif+SC:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #C9A96E;
+            --gold-dark: #8B6914;
+            --gold-light: #E8D4A8;
+            --black: #1A1A1A;
+            --dark-bg: #0D0D0D;
+            --warm-gray: #2A2A2A;
+            --text-light: #F5F0E8;
+            --text-muted: #9A8F7E;
+            --accent-red: #8B2500;
+            --accent-green: #2E5941;
+            --accent-blue: #2A4A6A;
+            --border: rgba(201,169,110,0.2);
+            --font-heading: 'Cinzel', serif;
+            --font-body: 'Playfair Display', serif;
+            --font-chinese: 'Noto Serif SC', serif;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            background: var(--dark-bg);
+            color: var(--text-light);
+            font-family: var(--font-body);
+            line-height: 1.7;
+            min-height: 100vh;
+        }
+
+        /* ===== NAVBAR ===== */
+        .navbar {
+            position: fixed; top:0; left:0; right:0;
+            display:flex; justify-content:space-between; align-items:center;
+            padding: 18px 48px;
+            z-index: 1000;
+            transition: all 0.4s;
+            background: transparent;
+        }
+        .navbar.scrolled {
+            background: rgba(13,13,13,0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+        }
+        .nav-logo {
+            display:flex; align-items:center; gap: 10px;
+            color: var(--gold);
+            text-decoration: none;
+            font-family: var(--font-heading);
+            font-size: 1.1rem;
+            letter-spacing: 3px;
+        }
+        .logo-icon { font-size: 1.4rem; }
+        .nav-links {
+            display:flex; list-style:none; gap: 32px;
+        }
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: color 0.3s;
+            font-family: var(--font-heading);
+        }
+        .nav-links a:hover { color: var(--gold); }
+        .nav-links a.active { color: var(--gold); }
+        .nav-cta {
+            padding: 8px 20px;
+            border: 1px solid var(--gold);
+            color: var(--gold) !important;
+            transition: all 0.3s;
+        }
+        .nav-cta:hover {
+            background: var(--gold);
+            color: var(--black) !important;
+        }
+
+        /* ===== HERO ===== */
+        .hero {
+            min-height: 50vh;
+            display:flex; align-items:center; justify-content:center;
+            text-align: center;
+            padding: 120px 24px 60px;
+            position: relative;
+            background: linear-gradient(180deg, rgba(201,169,110,0.05) 0%, transparent 100%);
+            border-bottom: 1px solid var(--border);
+        }
+        .hero-content { max-width: 720px; }
+        .hero-badge {
+            display:inline-block;
+            border:1px solid var(--border);
+            padding: 8px 24px;
+            font-size: 0.7rem;
+            letter-spacing: 4px;
+            color: var(--gold);
+            margin-bottom: 24px;
+            font-family: var(--font-heading);
+        }
+        .hero-title {
+            font-family: var(--font-heading);
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 400;
+            letter-spacing: 6px;
+            margin-bottom: 12px;
+            line-height: 1.2;
+        }
+        .hero-title-zh {
+            font-family: var(--font-chinese);
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            letter-spacing: 8px;
+            margin-bottom: 24px;
+        }
+        .hero-desc {
+            color: var(--text-muted);
+            font-size: 1rem;
+            max-width: 560px;
+            margin: 0 auto;
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 60px 24px;
+        }
+
+        /* ===== FORM SECTION ===== */
+        .form-section {
+            background: var(--warm-gray);
+            border: 1px solid var(--border);
+            padding: 48px;
+            margin-bottom: 48px;
+        }
+        .form-title {
+            font-family: var(--font-heading);
+            font-size: 1.1rem;
+            letter-spacing: 3px;
+            margin-bottom: 32px;
+            text-align: center;
+            display:flex; align-items:center; justify-content:center; gap: 12px;
+        }
+        .form-title::before, .form-title::after {
+            content: '—';
+            color: var(--border);
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .form-label {
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-family: var(--font-heading);
+        }
+        .form-select, .form-input {
+            padding: 14px 16px;
+            background: var(--dark-bg);
+            border: 1px solid var(--border);
+            color: var(--text-light);
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            appearance: none;
+        }
+        .form-select:focus, .form-input:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+        .form-select:hover { border-color: var(--gold-dark); }
+        .select-wrapper { position: relative; }
+        .select-wrapper::after {
+            content: '▼';
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gold);
+            font-size: 0.7rem;
+            pointer-events: none;
+        }
+        .radio-group {
+            display: flex;
+            gap: 24px;
+        }
+        .radio-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            padding: 12px 20px;
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+        }
+        .radio-label:hover { border-color: var(--gold-dark); }
+        .radio-label input[type="radio"] {
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border: 1px solid var(--gold);
+            border-radius: 50%;
+            position: relative;
+        }
+        .radio-label input[type="radio"]:checked::after {
+            content: '';
+            position: absolute;
+            inset: 3px;
+            background: var(--gold);
+            border-radius: 50%;
+        }
+        .radio-label:has(input:checked) {
+            border-color: var(--gold);
+            background: rgba(201,169,110,0.1);
+        }
+
+        .btn-calculate {
+            display: block;
+            width: 100%;
+            max-width: 320px;
+            margin: 0 auto;
+            padding: 16px 32px;
+            background: var(--gold);
+            color: var(--black);
+            border: none;
+            font-family: var(--font-heading);
+            font-size: 0.85rem;
+            letter-spacing: 3px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-calculate:hover {
+            background: var(--gold-light);
+            transform: translateY(-2px);
+        }
+
+        /* ===== RESULT SECTION ===== */
+        .result-section {
+            display: none;
+            animation: fadeIn 0.6s ease;
+        }
+        .result-section.show { display: block; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-header {
+            text-align: center;
+            margin-bottom: 48px;
+            padding-bottom: 32px;
+            border-bottom: 1px solid var(--border);
+        }
+        .result-title {
+            font-family: var(--font-heading);
+            font-size: 1.3rem;
+            letter-spacing: 4px;
+            margin-bottom: 8px;
+        }
+        .result-subtitle {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Bazi Grid */
+        .bazi-grid {
+            display: grid;
+            grid-template-columns: 80px repeat(4, 1fr);
+            gap: 1px;
+            background: var(--border);
+            border: 1px solid var(--border);
+            margin-bottom: 48px;
+        }
+        .bazi-cell {
+            background: var(--warm-gray);
+            padding: 20px;
+            text-align: center;
+        }
+        .bazi-header {
+            background: var(--dark-bg);
+            font-family: var(--font-heading);
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+        }
+        .bazi-pillar-name {
+            background: var(--dark-bg);
+            font-family: var(--font-chinese);
+            color: var(--gold);
+            font-size: 1rem;
+        }
+        .gan {
+            font-family: var(--font-chinese);
+            font-size: 1.8rem;
+            color: var(--gold);
+            margin-bottom: 4px;
+        }
+        .zhi {
+            font-family: var(--font-chinese);
+            font-size: 1.8rem;
+            color: var(--text-light);
+            margin-bottom: 4px;
+        }
+        .element-tag {
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            background: var(--dark-bg);
+            color: var(--text-muted);
+            display: inline-block;
+            margin-top: 4px;
+        }
+
+        /* Five Elements */
+        .elements-section {
+            background: var(--warm-gray);
+            border: 1px solid var(--border);
+            padding: 32px;
+            margin-bottom: 48px;
+        }
+        .section-title {
+            font-family: var(--font-heading);
+            font-size: 1rem;
+            letter-spacing: 3px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        .elements-chart {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            flex-wrap: wrap;
+        }
+        .element-item {
+            text-align: center;
+        }
+        .element-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-chinese);
+            font-size: 1.8rem;
+            margin-bottom: 12px;
+            border: 2px solid;
+            position: relative;
+        }
+        .element-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            border-radius: 0 0 40px 40px;
+            opacity: 0.3;
+        }
+        .wood { color: #4A9A5A; border-color: #4A9A5A; }
+        .wood .element-bar { background: #4A9A5A; height: 0%; }
+        .fire { color: #C85A4A; border-color: #C85A4A; }
+        .fire .element-bar { background: #C85A4A; height: 0%; }
+        .earth { color: #B89A4A; border-color: #B89A4A; }
+        .earth .element-bar { background: #B89A4A; height: 0%; }
+        .metal { color: #B0B0B0; border-color: #B0B0B0; }
+        .metal .element-bar { background: #B0B0B0; height: 0%; }
+        .water { color: #4A8AA0; border-color: #4A8AA0; }
+        .water .element-bar { background: #4A8AA0; height: 0%; }
+        .element-name {
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            font-family: var(--font-heading);
+        }
+        .element-count {
+            font-size: 1.2rem;
+            font-family: var(--font-heading);
+            margin-top: 4px;
+        }
+
+        /* Recommendation Card */
+        .recommendation-card {
+            background: linear-gradient(135deg, rgba(201,169,110,0.1) 0%, rgba(201,169,110,0.05) 100%);
+            border: 1px solid var(--gold);
+            padding: 40px;
+            text-align: center;
+        }
+        .recommendation-title {
+            font-family: var(--font-heading);
+            font-size: 1.1rem;
+            letter-spacing: 3px;
+            margin-bottom: 16px;
+            color: var(--gold);
+        }
+        .recommendation-text {
+            font-size: 1rem;
+            line-height: 1.8;
+            margin-bottom: 24px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .recommendation-beads {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+        }
+        .bead-tag {
+            padding: 8px 20px;
+            border: 1px solid var(--border);
+            font-size: 0.85rem;
+            background: var(--dark-bg);
+        }
+        .btn-shop {
+            display: inline-block;
+            padding: 14px 32px;
+            background: var(--gold);
+            color: var(--black);
+            text-decoration: none;
+            font-family: var(--font-heading);
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            transition: all 0.3s;
+        }
+        .btn-shop:hover {
+            background: var(--gold-light);
+            transform: translateY(-2px);
+        }
+
+        /* Dayun Section */
+        .dayun-section {
+            background: var(--warm-gray);
+            border: 1px solid var(--border);
+            padding: 32px;
+            margin-bottom: 48px;
+        }
+        .dayun-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 16px;
+        }
+        .dayun-item {
+            text-align: center;
+            padding: 16px 8px;
+            background: var(--dark-bg);
+            border: 1px solid var(--border);
+        }
+        .dayun-age {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+        .dayun-gan, .dayun-zhi {
+            font-family: var(--font-chinese);
+            font-size: 1.2rem;
+        }
+        .dayun-gan { color: var(--gold); margin-bottom: 4px; }
+        .dayun-zhi { color: var(--text-light); }
+
+        /* Footer */
+        .footer-note {
+            text-align: center;
+            padding: 24px;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .navbar { padding: 14px 24px; }
+            .nav-links { display: none; }
+            .form-section { padding: 24px; }
+            .form-grid { grid-template-columns: 1fr; }
+            .bazi-grid {
+                grid-template-columns: 60px repeat(4, 1fr);
+                font-size: 0.8rem;
+            }
+            .bazi-cell { padding: 12px 8px; }
+            .gan, .zhi { font-size: 1.4rem; }
+            .elements-chart { gap: 16px; }
+            .element-icon { width: 60px; height: 60px; font-size: 1.4rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar" id="navbar">
+        <a href="index.html" class="nav-logo">
+            <span class="logo-icon">☰</span>
+            MingLi Gems
+        </a>
+        <ul class="nav-links">
+            <li><a href="index.html#collection">Collection</a></li>
+            <li><a href="index.html#customize">Customize</a></li>
+            <li><a href="bazi.html" class="active">Bazi</a></li>
+            <li><a href="index.html#testimonials">Reviews</a></li>
+            <li><a href="index.html#about">About</a></li>
+            <li><a href="index.html#customize" class="nav-cta">Get Yours</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">✦ Four Pillars of Destiny ✦</div>
+            <h1 class="hero-title">Bazi Calculator</h1>
+            <p class="hero-title-zh">八字排盘 · 命理推算</p>
+            <p class="hero-desc">
+                Discover your Four Pillars of Destiny based on your birth date and time. 
+                Uncover your Five Elements balance and find the perfect bracelet to harmonize your energy.
+            </p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Form Section -->
+        <section class="form-section">
+            <h2 class="form-title">Enter Your Birth Information</h2>
+            <form id="baziForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Calendar Type</label>
+                        <div class="select-wrapper">
+                            <select class="form-select" id="calendarType">
+                                <option value="solar">Solar Calendar (阳历)</option>
+                                <option value="lunar">Lunar Calendar (阴历)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Birth Year</label>
+                        <div class="select-wrapper">
+                            <select class="form-select" id="birthYear"></select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Birth Month</label>
+                        <div class="select-wrapper">
+                            <select class="form-select" id="birthMonth"></select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Birth Day</label>
+                        <div class="select-wrapper">
+                            <select class="form-select" id="birthDay"></select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Birth Hour</label>
+                        <div class="select-wrapper">
+                            <select class="form-select" id="birthHour"></select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Gender</label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="gender" value="male" checked>
+                                <span>Male</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="gender" value="female">
+                                <span>Female</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn-calculate">✦ Calculate My Bazi ✦</button>
+            </form>
+        </section>
+
+        <!-- Result Section -->
+        <section class="result-section" id="resultSection">
+            <div class="result-header">
+                <h2 class="result-title">Your Four Pillars of Destiny</h2>
+                <p class="result-subtitle">Based on your birth information</p>
+            </div>
+
+            <!-- Bazi Grid -->
+            <div class="bazi-grid">
+                <div class="bazi-cell bazi-header"></div>
+                <div class="bazi-cell bazi-header">Year Pillar<br>年柱</div>
+                <div class="bazi-cell bazi-header">Month Pillar<br>月柱</div>
+                <div class="bazi-cell bazi-header">Day Pillar<br>日柱</div>
+                <div class="bazi-cell bazi-header">Hour Pillar<br>时柱</div>
+
+                <div class="bazi-cell bazi-pillar-name">Heavenly Stem<br>天干</div>
+                <div class="bazi-cell"><div class="gan" id="yearGan">—</div><span class="element-tag" id="yearGanElement">—</span></div>
+                <div class="bazi-cell"><div class="gan" id="monthGan">—</div><span class="element-tag" id="monthGanElement">—</span></div>
+                <div class="bazi-cell"><div class="gan" id="dayGan">—</div><span class="element-tag" id="dayGanElement">—</span></div>
+                <div class="bazi-cell"><div class="gan" id="hourGan">—</div><span class="element-tag" id="hourGanElement">—</span></div>
+
+                <div class="bazi-cell bazi-pillar-name">Earthly Branch<br>地支</div>
+                <div class="bazi-cell"><div class="zhi" id="yearZhi">—</div><span class="element-tag" id="yearZhiElement">—</span></div>
+                <div class="bazi-cell"><div class="zhi" id="monthZhi">—</div><span class="element-tag" id="monthZhiElement">—</span></div>
+                <div class="bazi-cell"><div class="zhi" id="dayZhi">—</div><span class="element-tag" id="dayZhiElement">—</span></div>
+                <div class="bazi-cell"><div class="zhi" id="hourZhi">—</div><span class="element-tag" id="hourZhiElement">—</span></div>
+            </div>
+
+            <!-- Five Elements -->
+            <div class="elements-section">
+                <h3 class="section-title">Five Elements Analysis · 五行分析</h3>
+                <div class="elements-chart">
+                    <div class="element-item">
+                        <div class="element-icon wood">
+                            <div class="element-bar" id="woodBar"></div>
+                            木
+                        </div>
+                        <div class="element-name">Wood</div>
+                        <div class="element-count" id="woodCount">0</div>
+                    </div>
+                    <div class="element-item">
+                        <div class="element-icon fire">
+                            <div class="element-bar" id="fireBar"></div>
+                            火
+                        </div>
+                        <div class="element-name">Fire</div>
+                        <div class="element-count" id="fireCount">0</div>
+                    </div>
+                    <div class="element-item">
+                        <div class="element-icon earth">
+                            <div class="element-bar" id="earthBar"></div>
+                            土
+                        </div>
+                        <div class="element-name">Earth</div>
+                        <div class="element-count" id="earthCount">0</div>
+                    </div>
+                    <div class="element-item">
+                        <div class="element-icon metal">
+                            <div class="element-bar" id="metalBar"></div>
+                            金
+                        </div>
+                        <div class="element-name">Metal</div>
+                        <div class="element-count" id="metalCount">0</div>
+                    </div>
+                    <div class="element-item">
+                        <div class="element-icon water">
+                            <div class="element-bar" id="waterBar"></div>
+                            水
+                        </div>
+                        <div class="element-name">Water</div>
+                        <div class="element-count" id="waterCount">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dayun (Big Luck) -->
+            <div class="dayun-section">
+                <h3 class="section-title">Big Luck Periods · 大运</h3>
+                <div class="dayun-grid" id="dayunGrid">
+                    <!-- Dynamically generated -->
+                </div>
+            </div>
+
+            <!-- Recommendation -->
+            <div class="recommendation-card">
+                <h3 class="recommendation-title">✦ Your Personalized Recommendation ✦</h3>
+                <p class="recommendation-text" id="recommendationText">
+                    Based on your Bazi analysis, we recommend...
+                </p>
+                <div class="recommendation-beads" id="recommendationBeads">
+                    <!-- Dynamically generated -->
+                </div>
+                <a href="index.html#customize" class="btn-shop">Shop Recommended Bracelets</a>
+            </div>
+        </section>
+
+        <div class="footer-note">
+            <p>Note: This calculator is for reference and entertainment purposes. For professional Bazi consultation, please consult a qualified Chinese metaphysics master.</p>
+        </div>
+    </main>
+
+    <script>
+        // ===== NAVBAR SCROLL =====
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 50) { nav.classList.add('scrolled'); }
+            else { nav.classList.remove('scrolled'); }
+        });
+
+        // ===== BAZI DATA =====
+        const TIANGAN = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'];
+        const DIZHI = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
+        const TIANGAN_ELEMENT = ['wood', 'wood', 'fire', 'fire', 'earth', 'earth', 'metal', 'metal', 'water', 'water'];
+        const DIZHI_ELEMENT = ['water', 'earth', 'wood', 'wood', 'earth', 'fire', 'fire', 'earth', 'metal', 'metal', 'earth', 'water'];
+        const ELEMENT_NAMES = { wood: 'Wood', fire: 'Fire', earth: 'Earth', metal: 'Metal', water: 'Water' };
+        
+        const SHICHEN = [
+            { name: 'Zi', label: '子', time: '23:00-01:00' },
+            { name: 'Chou', label: '丑', time: '01:00-03:00' },
+            { name: 'Yin', label: '寅', time: '03:00-05:00' },
+            { name: 'Mao', label: '卯', time: '05:00-07:00' },
+            { name: 'Chen', label: '辰', time: '07:00-09:00' },
+            { name: 'Si', label: '巳', time: '09:00-11:00' },
+            { name: 'Wu', label: '午', time: '11:00-13:00' },
+            { name: 'Wei', label: '未', time: '13:00-15:00' },
+            { name: 'Shen', label: '申', time: '15:00-17:00' },
+            { name: 'You', label: '酉', time: '17:00-19:00' },
+            { name: 'Xu', label: '戌', time: '19:00-21:00' },
+            { name: 'Hai', label: '亥', time: '21:00-23:00' }
+        ];
+
+        const BEAD_RECOMMENDATIONS = {
+            wood: ['Jade', 'Turquoise', 'Aventurine'],
+            fire: ['Carnelian', 'Red Agate', 'Ruby'],
+            earth: ['Tiger Eye', 'Citrine', 'Yellow Jasper'],
+            metal: ['Clear Quartz', 'White Howlite', 'Moonstone'],
+            water: ['Obsidian', 'Black Onyx', 'Aquamarine']
+        };
+
+        // ===== POPULATE SELECTS =====
+        const yearSelect = document.getElementById('birthYear');
+        const monthSelect = document.getElementById('birthMonth');
+        const daySelect = document.getElementById('birthDay');
+        const hourSelect = document.getElementById('birthHour');
+
+        // Years (1920-2025)
+        for (let y = 2025; y >= 1920; y--) {
+            yearSelect.add(new Option(y + ' 年', y));
+        }
+
+        // Months
+        for (let m = 1; m <= 12; m++) {
+            monthSelect.add(new Option(m + ' 月', m));
+        }
+
+        // Days
+        function updateDays() {
+            const year = parseInt(yearSelect.value) || 2020;
+            const month = parseInt(monthSelect.value) || 1;
+            const daysInMonth = new Date(year, month, 0).getDate();
+            daySelect.innerHTML = '';
+            for (let d = 1; d <= daysInMonth; d++) {
+                daySelect.add(new Option(d + ' 日', d));
+            }
+        }
+        monthSelect.addEventListener('change', updateDays);
+        yearSelect.addEventListener('change', updateDays);
+        updateDays();
+
+        // Hours (Shichen)
+        SHICHEN.forEach((s, i) => {
+            hourSelect.add(new Option(`${s.label}时 ${s.time}`, i));
+        });
+
+        // ===== BAZI CALCULATION =====
+        function getGanZhi(year, month, day) {
+            // Simplified calculation based on known formulas
+            // Year Gan
+            const yearGanIndex = (year - 4) % 10;
+            const yearZhiIndex = (year - 4) % 12;
+            
+            // Approximate Month GanZhi (simplified)
+            const monthGanIndex = (yearGanIndex * 2 + month + 1) % 10;
+            const monthZhiIndex = (month + 1) % 12;
+            
+            // Day GanZhi (based on century formula)
+            const baseDate = new Date(1900, 0, 31);
+            const targetDate = new Date(year, month - 1, day);
+            const daysDiff = Math.floor((targetDate - baseDate) / (1000 * 60 * 60 * 24));
+            const dayGanIndex = (daysDiff + 6) % 10;
+            const dayZhiIndex = (daysDiff + 0) % 12;
+            
+            return {
+                year: { gan: yearGanIndex, zhi: yearZhiIndex },
+                month: { gan: monthGanIndex, zhi: monthZhiIndex },
+                day: { gan: dayGanIndex, zhi: dayZhiIndex }
+            };
+        }
+
+        function getHourGan(dayGanIndex, hourZhiIndex) {
+            const hourGanStart = [0, 2, 4, 6, 8, 0, 2, 4, 6, 8];
+            return (hourGanStart[dayGanIndex] + hourZhiIndex) % 10;
+        }
+
+        function calculateDayun(yearGanIndex, gender, yearZhiIndex) {
+            const dayun = [];
+            const yangGan = [0, 2, 4, 6, 8];
+            const isYang = yangGan.includes(yearGanIndex);
+            const isMale = gender === 'male';
+            const forward = (isYang && isMale) || (!isYang && !isMale);
+            
+            let startGan = yearGanIndex;
+            let startZhi = yearZhiIndex;
+            
+            for (let i = 0; i < 8; i++) {
+                if (forward) {
+                    startGan = (startGan + 1) % 10;
+                    startZhi = (startZhi + 1) % 12;
+                } else {
+                    startGan = (startGan + 9) % 10;
+                    startZhi = (startZhi + 11) % 12;
+                }
+                dayun.push({
+                    age: 3 + i * 10,
+                    gan: startGan,
+                    zhi: startZhi
+                });
+            }
+            return dayun;
+        }
+
+        // ===== FORM SUBMISSION =====
+        document.getElementById('baziForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const year = parseInt(yearSelect.value);
+            const month = parseInt(monthSelect.value);
+            const day = parseInt(daySelect.value);
+            const hour = parseInt(hourSelect.value);
+            const gender = document.querySelector('input[name="gender"]:checked').value;
+            
+            // Calculate Bazi
+            const bazi = getGanZhi(year, month, day);
+            const hourGanIndex = getHourGan(bazi.day.gan, hour);
+            
+            // Display Bazi
+            document.getElementById('yearGan').textContent = TIANGAN[bazi.year.gan];
+            document.getElementById('yearZhi').textContent = DIZHI[bazi.year.zhi];
+            document.getElementById('yearGanElement').textContent = ELEMENT_NAMES[TIANGAN_ELEMENT[bazi.year.gan]];
+            document.getElementById('yearZhiElement').textContent = ELEMENT_NAMES[DIZHI_ELEMENT[bazi.year.zhi]];
+            
+            document.getElementById('monthGan').textContent = TIANGAN[bazi.month.gan];
+            document.getElementById('monthZhi').textContent = DIZHI[bazi.month.zhi];
+            document.getElementById('monthGanElement').textContent = ELEMENT_NAMES[TIANGAN_ELEMENT[bazi.month.gan]];
+            document.getElementById('monthZhiElement').textContent = ELEMENT_NAMES[DIZHI_ELEMENT[bazi.month.zhi]];
+            
+            document.getElementById('dayGan').textContent = TIANGAN[bazi.day.gan];
+            document.getElementById('dayZhi').textContent = DIZHI[bazi.day.zhi];
+            document.getElementById('dayGanElement').textContent = ELEMENT_NAMES[TIANGAN_ELEMENT[bazi.day.gan]];
+            document.getElementById('dayZhiElement').textContent = ELEMENT_NAMES[DIZHI_ELEMENT[bazi.day.zhi]];
+            
+            document.getElementById('hourGan').textContent = TIANGAN[hourGanIndex];
+            document.getElementById('hourZhi').textContent = DIZHI[hour];
+            document.getElementById('hourGanElement').textContent = ELEMENT_NAMES[TIANGAN_ELEMENT[hourGanIndex]];
+            document.getElementById('hourZhiElement').textContent = ELEMENT_NAMES[DIZHI_ELEMENT[hour]];
+            
+            // Count Elements
+            const elements = { wood: 0, fire: 0, earth: 0, metal: 0, water: 0 };
+            [bazi.year.gan, bazi.month.gan, bazi.day.gan, hourGanIndex].forEach(idx => {
+                elements[TIANGAN_ELEMENT[idx]]++;
+            });
+            [bazi.year.zhi, bazi.month.zhi, bazi.day.zhi, hour].forEach(idx => {
+                elements[DIZHI_ELEMENT[idx]]++;
+            });
+            
+            // Display Elements
+            const maxCount = Math.max(...Object.values(elements));
+            Object.keys(elements).forEach(el => {
+                document.getElementById(el + 'Count').textContent = elements[el];
+                document.getElementById(el + 'Bar').style.height = (elements[el] / maxCount * 100) + '%';
+            });
+            
+            // Find weakest element (to recommend)
+            const minElement = Object.keys(elements).reduce((a, b) => elements[a] < elements[b] ? a : b);
+            
+            // Dayun
+            const dayun = calculateDayun(bazi.year.gan, gender, bazi.year.zhi);
+            const dayunGrid = document.getElementById('dayunGrid');
+            dayunGrid.innerHTML = '';
+            dayun.forEach(d => {
+                dayunGrid.innerHTML += `
+                    <div class="dayun-item">
+                        <div class="dayun-age">${d.age}-${d.age + 9}</div>
+                        <div class="dayun-gan">${TIANGAN[d.gan]}</div>
+                        <div class="dayun-zhi">${DIZHI[d.zhi]}</div>
+                    </div>
+                `;
+            });
+            
+            // Recommendation
+            const recText = `Your Bazi shows a relative deficiency in the ${ELEMENT_NAMES[minElement]} element. 
+                ${ELEMENT_NAMES[minElement]} represents ${getElementQuality(minElement)}. 
+                Wearing ${ELEMENT_NAMES[minElement]}-related gemstone bracelets can help balance your energy.`;
+            document.getElementById('recommendationText').textContent = recText;
+            
+            const beadsContainer = document.getElementById('recommendationBeads');
+            beadsContainer.innerHTML = '';
+            BEAD_RECOMMENDATIONS[minElement].forEach(bead => {
+                beadsContainer.innerHTML += `<span class="bead-tag">${bead}</span>`;
+            });
+            
+            // Show results
+            document.getElementById('resultSection').classList.add('show');
+            document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth' });
+        });
+
+        function getElementQuality(element) {
+            const qualities = {
+                wood: 'growth, creativity, and vitality',
+                fire: 'passion, transformation, and charisma',
+                earth: 'stability, nourishment, and reliability',
+                metal: 'clarity, strength, and precision',
+                water: 'wisdom, adaptability, and intuition'
+            };
+            return qualities[element];
+        }
+    </script>
+</body>
+</html>
