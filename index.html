@@ -894,12 +894,63 @@
             margin-bottom: 16px;
         }
         .checkout-item {
-            display: flex; justify-content: space-between;
-            padding: 8px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            font-size: 0.9rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .checkout-item:last-child { border-bottom: none; }
+        .checkout-item-info { flex: 1; }
+        .checkout-item-name { color: var(--text-light); font-weight: 500; }
+        .checkout-item-details { color: var(--text-muted); font-size: 0.75rem; margin-top: 4px; }
+        .checkout-item-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-right: 16px;
+        }
+        .quantity-btn {
+            width: 28px;
+            height: 28px;
+            border: 1px solid var(--border);
+            background: var(--dark-bg);
+            color: var(--gold);
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .quantity-btn:hover {
+            background: var(--gold);
+            color: var(--black);
+        }
+        .quantity-display {
+            min-width: 24px;
+            text-align: center;
+            font-family: var(--font-heading);
             font-size: 0.9rem;
         }
-        .checkout-item-name { color: var(--text-light); }
-        .checkout-item-price { color: var(--gold); font-family: var(--font-heading); }
+        .checkout-item-price {
+            color: var(--gold);
+            font-family: var(--font-heading);
+            min-width: 70px;
+            text-align: right;
+        }
+        .remove-item-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            cursor: pointer;
+            margin-left: 8px;
+            padding: 0 4px;
+            transition: color 0.2s;
+        }
+        .remove-item-btn:hover { color: var(--accent-red); }
         .checkout-empty {
             text-align: center; padding: 32px;
             color: var(--text-muted);
@@ -2031,7 +2082,7 @@
         const itemName = `Destiny Bespoke Bracelet (Full Custom)`;
         const itemDetails = `Birth: ${year}/${month}/${day} ${hourLabel}时 | Size: ${size}cm | Gender: ${gender}`;
 
-        cartItems.push({
+        addToCart({
             name: itemName,
             details: itemDetails,
             price: 269,
@@ -2039,9 +2090,7 @@
             isFullCustom: true
         });
 
-        document.getElementById('cartCount').textContent = cartItems.length;
         closeFullCustomModal();
-        showNotification('✓ Destiny Bespoke Bracelet added! 7-day craftsmanship.');
     }
 
     // Close modal when clicking outside
@@ -2191,22 +2240,75 @@
 
     // ===== CART =====
     function addToCart(name, price) {
+        let itemKey;
+        let itemData;
+
         if (typeof name === 'object') {
-            cartItems.push(name);
+            itemKey = JSON.stringify({ name: name.name, details: name.details || '' });
+            itemData = { ...name, quantity: 1 };
         } else {
-            cartItems.push({ name: name, price: price });
+            itemKey = name;
+            itemData = { name: name, price: price, quantity: 1 };
         }
-        document.getElementById('cartCount').textContent = cartItems.length;
-        showNotification(`✓ ${typeof name === 'object' ? name.name : name} added to cart!`);
+
+        // Check if item already exists
+        const existingIndex = cartItems.findIndex(item => {
+            if (typeof name === 'object') {
+                return JSON.stringify({ name: item.name, details: item.details || '' }) === itemKey;
+            }
+            return item.name === name;
+        });
+
+        if (existingIndex >= 0) {
+            cartItems[existingIndex].quantity++;
+            showNotification(`✓ ${itemData.name} quantity updated!`);
+        } else {
+            cartItems.push(itemData);
+            showNotification(`✓ ${itemData.name} added to cart!`);
+        }
+
+        updateCartCount();
+    }
+
+    function updateCartCount() {
+        const totalCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+        document.getElementById('cartCount').textContent = totalCount;
+    }
+
+    function increaseQuantity(index) {
+        cartItems[index].quantity++;
+        openCheckout();
+    }
+
+    function decreaseQuantity(index) {
+        if (cartItems[index].quantity > 1) {
+            cartItems[index].quantity--;
+        } else {
+            cartItems.splice(index, 1);
+        }
+        updateCartCount();
+        openCheckout();
+    }
+
+    function removeItem(index) {
+        cartItems.splice(index, 1);
+        updateCartCount();
+        openCheckout();
     }
 
     function addCustomToCart() {
         const engraving = document.getElementById('engraving').value;
         const bead = selectedBead;
         const size = document.getElementById('braceletSize').value;
-        cartItems.push(`Custom ${bead} bracelet${engraving ? ' (' + engraving + ')' : ''}`);
-        document.getElementById('cartCount').textContent = cartItems.length;
-        showNotification(`✓ Custom bracelet added to cart! Handcrafted in 3-5 days.`);
+        const price = beadPrices[bead] || 89;
+        const itemName = `Custom ${bead.charAt(0).toUpperCase() + bead.slice(1)} Bracelet`;
+        const itemDetails = `Size: ${size}mm${engraving ? ' | Engraving: ' + engraving : ''}`;
+
+        addToCart({
+            name: itemName,
+            price: price,
+            details: itemDetails
+        });
     }
 
     // ===== CHECKOUT =====
@@ -2231,16 +2333,18 @@
             };
 
             let html = '';
-            cartItems.forEach(item => {
+            cartItems.forEach((item, index) => {
                 let price = 89; // default for custom
                 let itemName = item;
                 let itemDetails = '';
+                let quantity = 1;
 
                 // Handle object format (new) or string format (legacy)
                 if (typeof item === 'object') {
                     itemName = item.name;
                     itemDetails = item.details || '';
                     price = item.price || 269;
+                    quantity = item.quantity || 1;
                 } else {
                     // Legacy string format
                     if (item.includes('Pixiu')) price = 129;
@@ -2256,10 +2360,20 @@
                     }
                 }
 
-                total += price;
+                const itemTotal = price * quantity;
+                total += itemTotal;
                 html += `<div class="checkout-item">
-                    <span class="checkout-item-name">${itemName}${itemDetails ? '<br><small style="color:#9A8F7E;font-size:0.75rem;">' + itemDetails + '</small>' : ''}</span>
-                    <span class="checkout-item-price">$${price}</span>
+                    <div class="checkout-item-info">
+                        <div class="checkout-item-name">${itemName}</div>
+                        ${itemDetails ? `<div class="checkout-item-details">${itemDetails}</div>` : ''}
+                    </div>
+                    <div class="checkout-item-controls">
+                        <button class="quantity-btn" onclick="decreaseQuantity(${index})">−</button>
+                        <span class="quantity-display">${quantity}</span>
+                        <button class="quantity-btn" onclick="increaseQuantity(${index})">+</button>
+                    </div>
+                    <span class="checkout-item-price">$${itemTotal}</span>
+                    <button class="remove-item-btn" onclick="removeItem(${index})" title="Remove">×</button>
                 </div>`;
             });
             itemsContainer.innerHTML = html;
@@ -2268,11 +2382,12 @@
 
         modal.classList.add('open');
 
-        // Render PayPal buttons if not already rendered and cart has items
-        if (!paypalButtonsRendered && cartItems.length > 0) {
-            renderPayPalButtons();
-            paypalButtonsRendered = true;
-        }
+        // Render PayPal buttons
+        setTimeout(() => {
+            if (cartItems.length > 0) {
+                renderPayPalButtons();
+            }
+        }, 100);
     }
 
     function closeCheckout() {
@@ -2280,8 +2395,19 @@
     }
 
     function renderPayPalButtons() {
+        const container = document.getElementById('paypal-button-container');
         const totalEl = document.getElementById('checkoutTotal');
         const total = parseFloat(totalEl.textContent.replace('$', '')) || 89;
+
+        // Clear previous buttons
+        container.innerHTML = '';
+
+        // Check if PayPal SDK is loaded
+        if (typeof paypal === 'undefined') {
+            container.innerHTML = '<p style="color: #C9A96E; text-align: center;">PayPal is loading... Please wait.</p>';
+            setTimeout(renderPayPalButtons, 1000);
+            return;
+        }
 
         paypal.Buttons({
             createOrder: function(data, actions) {
