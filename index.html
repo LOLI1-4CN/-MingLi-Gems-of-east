@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MingLi Gems — Personalized Chinese Fortune Bracelets</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Noto+Serif+SC:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- PayPal SDK - Sandbox Mode (Test) -->
+    <script src="https://www.paypal.com/sdk/js?client-id=AbHfw8ITDBlo7oq-lzA34t6cuZiXJQfS3sUroVE&currency=USD&intent=capture"></script>
     <style>
         :root {
             --gold: #C9A96E;
@@ -853,6 +855,275 @@
             display:flex; align-items:center; justify-content:center;
         }
 
+        /* ===== CHECKOUT MODAL ===== */
+        .checkout-modal {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 10000;
+            align-items: center; justify-content: center;
+            padding: 20px;
+        }
+        .checkout-modal.open { display: flex; }
+        .checkout-content {
+            background: var(--warm-gray);
+            border: 1px solid var(--gold);
+            max-width: 480px; width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 32px;
+            position: relative;
+        }
+        .checkout-close {
+            position: absolute; top: 16px; right: 16px;
+            background: none; border: none;
+            color: var(--text-muted);
+            font-size: 1.5rem; cursor: pointer;
+        }
+        .checkout-close:hover { color: var(--gold); }
+        .checkout-title {
+            font-family: var(--font-heading);
+            font-size: 1.2rem;
+            letter-spacing: 3px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        .checkout-items {
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 0;
+            margin-bottom: 16px;
+        }
+        .checkout-item {
+            display: flex; justify-content: space-between;
+            padding: 8px 0;
+            font-size: 0.9rem;
+        }
+        .checkout-item-name { color: var(--text-light); }
+        .checkout-item-price { color: var(--gold); font-family: var(--font-heading); }
+        .checkout-empty {
+            text-align: center; padding: 32px;
+            color: var(--text-muted);
+        }
+        .checkout-total {
+            display: flex; justify-content: space-between;
+            font-size: 1.1rem; font-weight: bold;
+            margin-bottom: 24px;
+            font-family: var(--font-heading);
+        }
+        .checkout-total span:last-child { color: var(--gold); }
+        .checkout-note {
+            font-size: 0.75rem; color: var(--text-muted);
+            text-align: center; margin-top: 16px;
+        }
+        #paypal-button-container { margin-top: 16px; }
+
+        /* ===== FULL CUSTOM MODAL ===== */
+        .fullcustom-modal {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.85);
+            z-index: 11000;
+            align-items: center; justify-content: center;
+            padding: 20px;
+        }
+        .fullcustom-modal.open { display: flex; }
+        .fullcustom-content {
+            background: var(--warm-gray);
+            border: 1px solid var(--gold);
+            max-width: 640px; width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 0;
+            position: relative;
+        }
+        .fullcustom-close {
+            position: absolute; top: 20px; right: 20px;
+            background: none; border: none;
+            color: var(--text-muted);
+            font-size: 1.8rem; cursor: pointer;
+            z-index: 10;
+        }
+        .fullcustom-close:hover { color: var(--gold); }
+        .fullcustom-header {
+            background: linear-gradient(135deg, rgba(201,169,110,0.15) 0%, rgba(201,169,110,0.05) 100%);
+            padding: 40px;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+        .fullcustom-badge {
+            display: inline-block;
+            border: 1px solid var(--gold);
+            padding: 6px 16px;
+            font-size: 0.7rem;
+            letter-spacing: 3px;
+            color: var(--gold);
+            margin-bottom: 16px;
+            font-family: var(--font-heading);
+        }
+        .fullcustom-title {
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            letter-spacing: 4px;
+            margin-bottom: 8px;
+        }
+        .fullcustom-subtitle {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 16px;
+        }
+        .fullcustom-price {
+            font-family: var(--font-heading);
+            font-size: 2rem;
+            color: var(--gold);
+            letter-spacing: 2px;
+        }
+        .fullcustom-form {
+            padding: 32px 40px;
+        }
+        .form-intro {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.8;
+            margin-bottom: 32px;
+            text-align: center;
+        }
+        .form-section-title {
+            font-family: var(--font-heading);
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            color: var(--gold);
+            margin-bottom: 20px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+        .fullcustom-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .form-label {
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-family: var(--font-heading);
+        }
+        .form-select, .form-textarea {
+            padding: 14px 16px;
+            background: var(--dark-bg);
+            border: 1px solid var(--border);
+            color: var(--text-light);
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            transition: all 0.3s;
+        }
+        .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        .select-wrapper { position: relative; }
+        .select-wrapper::after {
+            content: '▼';
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gold);
+            font-size: 0.7rem;
+            pointer-events: none;
+        }
+        .radio-group {
+            display: flex;
+            gap: 16px;
+        }
+        .radio-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            padding: 10px 16px;
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+            font-size: 0.85rem;
+        }
+        .radio-label:hover { border-color: var(--gold-dark); }
+        .radio-label input[type="radio"] {
+            appearance: none;
+            width: 14px;
+            height: 14px;
+            border: 1px solid var(--gold);
+            border-radius: 50%;
+            position: relative;
+        }
+        .radio-label input[type="radio"]:checked::after {
+            content: '';
+            position: absolute;
+            inset: 2px;
+            background: var(--gold);
+            border-radius: 50%;
+        }
+        .radio-label:has(input:checked) {
+            border-color: var(--gold);
+            background: rgba(201,169,110,0.1);
+        }
+        .fullcustom-info {
+            background: var(--dark-bg);
+            border: 1px solid var(--border);
+            padding: 24px;
+            margin: 32px 0;
+        }
+        .info-item {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        .info-item:last-child { margin-bottom: 0; }
+        .info-icon {
+            font-size: 1.5rem;
+            width: 40px;
+            text-align: center;
+        }
+        .info-item strong {
+            display: block;
+            color: var(--gold);
+            font-family: var(--font-heading);
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+        .info-item p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin: 0;
+        }
+        .btn-fullcustom {
+            display: block;
+            width: calc(100% - 80px);
+            margin: 0 40px 40px;
+            padding: 18px 32px;
+            background: var(--gold);
+            color: var(--black);
+            border: none;
+            font-family: var(--font-heading);
+            font-size: 0.9rem;
+            letter-spacing: 3px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-fullcustom:hover {
+            background: var(--gold-light);
+            transform: translateY(-2px);
+        }
+
         /* ===== RESPONSIVE ===== */
         @media (max-width: 900px) {
             .navbar { padding: 14px 24px; }
@@ -948,6 +1219,7 @@
         <ul class="nav-links">
             <li><a href="#collection">Collection</a></li>
             <li><a href="#customize">Customize</a></li>
+            <li><a href="bazi.html">Bazi</a></li>
             <li><a href="#astrology">Astrology</a></li>
             <li><a href="#testimonials">Reviews</a></li>
             <li><a href="#about">About</a></li>
@@ -1042,7 +1314,7 @@
             <div class="section-line"></div>
         </div>
         <div class="collection-grid">
-            <div class="product-card fade-in" onclick="addToCart('Pixiu Wealth Bracelet')">
+            <div class="product-card fade-in" onclick="addToCart('Pixiu Wealth Bracelet', 89)">
                 <div class="product-img">
                     🐉
                     <div class="overlay">
@@ -1061,7 +1333,7 @@
                     <span class="product-tag">BLACK OBSIDIAN</span>
                 </div>
             </div>
-            <div class="product-card fade-in" onclick="addToCart('Five Elements Balance Bracelet')">
+            <div class="product-card fade-in" onclick="addToCart('Five Elements Balance Bracelet', 109)">
                 <div class="product-img">
                     ☯
                     <div class="overlay">
@@ -1080,7 +1352,7 @@
                     <span class="product-tag">MIXED GEMSTONES</span>
                 </div>
             </div>
-            <div class="product-card fade-in" onclick="addToCart('Green Jade Prosperity Bracelet')">
+            <div class="product-card fade-in" onclick="addToCart('Green Jade Prosperity Bracelet', 149)">
                 <div class="product-img">
                     ◆
                     <div class="overlay">
@@ -1097,7 +1369,7 @@
                     <span class="product-tag">NEPHRITE JADE</span>
                 </div>
             </div>
-            <div class="product-card fade-in" onclick="addToCart('Red String Fate Bracelet')">
+            <div class="product-card fade-in" onclick="addToCart('Red String Fate Bracelet', 79)">
                 <div class="product-img">
                     ◎
                     <div class="overlay">
@@ -1114,6 +1386,24 @@
                         <span class="price-original">$99</span>
                     </div>
                     <span class="product-tag">ROSE QUARTZ + AGATE</span>
+                </div>
+            </div>
+            <div class="product-card fade-in" onclick="openFullCustomModal()">
+                <div class="product-img" style="background: linear-gradient(135deg, rgba(201,169,110,0.2) 0%, rgba(201,169,110,0.05) 100%);">
+                    ✦
+                    <div class="overlay">
+                        <span class="btn-primary" style="padding:10px 24px;font-size:0.7rem;">Start Custom Order</span>
+                    </div>
+                    <span class="product-badge" style="background: var(--gold); color: var(--black);">Premium</span>
+                </div>
+                <div class="product-info">
+                    <p class="product-category">Full Custom · 全定制</p>
+                    <h3 class="product-name">Destiny Bespoke Bracelet</h3>
+                    <p class="product-name-zh">命理八字定制手串</p>
+                    <div class="product-price">
+                        <span class="price-current">$269</span>
+                    </div>
+                    <span class="product-tag">7-DAY HANDCRAFTED</span>
                 </div>
             </div>
         </div>
@@ -1325,6 +1615,9 @@
                     <p class="astro-recommend-title">✦ Recommended Bracelet Elements</p>
                     <p id="astroRecommend"></p>
                 </div>
+                <a href="bazi.html" class="btn-outline" style="margin-top:20px; margin-right:12px; display:inline-block; padding:12px 30px; font-size:0.75rem;">
+                    Full Bazi Reading →
+                </a>
                 <a href="#customize" class="btn-primary" style="margin-top:20px; display:inline-block; padding:12px 30px; font-size:0.75rem;">
                     Design My Bracelet →
                 </a>
@@ -1497,9 +1790,132 @@
     <button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 
     <!-- Cart Fixed -->
-    <div class="cart-icon-fixed" onclick="showNotification('Cart feature coming soon! 🛒')">
+    <div class="cart-icon-fixed" onclick="openCheckout()">
         🛒
         <span class="cart-count" id="cartCount">0</span>
+    </div>
+
+    <!-- Full Custom Modal -->
+    <div class="fullcustom-modal" id="fullCustomModal">
+        <div class="fullcustom-content">
+            <button class="fullcustom-close" onclick="closeFullCustomModal()">×</button>
+            <div class="fullcustom-header">
+                <span class="fullcustom-badge">✦ Premium Service ✦</span>
+                <h2 class="fullcustom-title">Destiny Bespoke Bracelet</h2>
+                <p class="fullcustom-subtitle">命理八字定制手串 · Full Custom Order</p>
+                <div class="fullcustom-price">$269</div>
+            </div>
+            
+            <div class="fullcustom-form">
+                <p class="form-intro">Please provide your birth information for our master craftsman to create a bracelet perfectly aligned with your destiny.</p>
+                
+                <div class="form-section-title">Birth Information · 出生信息</div>
+                <div class="fullcustom-grid">
+                    <div class="form-group">
+                        <label class="form-label">Birth Year · 出生年</label>
+                        <div class="select-wrapper">
+                            <select class="form-select" id="customYear"></select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Birth Month · 出生月</label>
+                        <div class="select-wrapper">
+                            <select class="form-select" id="customMonth"></select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Birth Day · 出生日</label>
+                        <div class="select-wrapper">
+                            <select class="form-select" id="customDay"></select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Birth Hour · 出生时</label>
+                        <div class="select-wrapper">
+                            <select class="form-select" id="customHour"></select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section-title">Personal Details · 个人信息</div>
+                <div class="fullcustom-grid">
+                    <div class="form-group">
+                        <label class="form-label">Gender · 性别</label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="customGender" value="male" checked>
+                                <span>Male · 男</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="customGender" value="female">
+                                <span>Female · 女</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Wrist Size · 手腕尺寸</label>
+                        <div class="select-wrapper">
+                            <select class="form-select" id="customSize">
+                                <option value="15">15cm (XS)</option>
+                                <option value="16">16cm (S)</option>
+                                <option value="17" selected>17cm (M)</option>
+                                <option value="18">18cm (L)</option>
+                                <option value="19">19cm (XL)</option>
+                                <option value="20">20cm (XXL)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 20px;">
+                    <label class="form-label">Special Requests · 特殊要求 (Optional)</label>
+                    <textarea class="form-textarea" id="customNotes" placeholder="Any specific intentions, preferred colors, or personal preferences..."></textarea>
+                </div>
+
+                <div class="fullcustom-info">
+                    <div class="info-item">
+                        <span class="info-icon">⏱</span>
+                        <div>
+                            <strong>Processing Time</strong>
+                            <p>7 days for master craftsmanship</p>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-icon">✦</span>
+                        <div>
+                            <strong>What's Included</strong>
+                            <p>BaZi analysis + Custom bead selection + Blessing ceremony</p>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-icon">🎁</span>
+                        <div>
+                            <strong>Gift Packaging</strong>
+                            <p>Luxury silk box + Certificate of authenticity</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-fullcustom" onclick="addFullCustomToCart()">
+                ✦ Add to Cart — $269 ✦
+            </button>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div class="checkout-modal" id="checkoutModal">
+        <div class="checkout-content">
+            <button class="checkout-close" onclick="closeCheckout()">×</button>
+            <h3 class="checkout-title">Your Order</h3>
+            <div class="checkout-items" id="checkoutItems"></div>
+            <div class="checkout-total">
+                <span>Total:</span>
+                <span id="checkoutTotal">$0.00</span>
+            </div>
+            <div id="paypal-button-container"></div>
+            <p class="checkout-note">🔒 Secure payment powered by PayPal. You can pay with credit card or PayPal account.</p>
+        </div>
     </div>
 
 <script>
@@ -1537,10 +1953,106 @@
     let cartItems = [];
     let selectedBead = 'obsidian';
 
-    // Populate years
+    // ===== FULL CUSTOM MODAL INIT =====
+    const customYear = document.getElementById('customYear');
+    const customMonth = document.getElementById('customMonth');
+    const customDay = document.getElementById('customDay');
+    const customHour = document.getElementById('customHour');
+
+    // Populate years for full custom (1920-2025)
+    for (let y = 2025; y >= 1920; y--) {
+        customYear.add(new Option(y + ' 年', y));
+    }
+
+    // Populate months
+    for (let m = 1; m <= 12; m++) {
+        customMonth.add(new Option(m + ' 月', m));
+    }
+
+    // Populate hours (Shichen)
+    const SHICHEN = [
+        { label: '子', name: 'Zi', time: '23:00-01:00' },
+        { label: '丑', name: 'Chou', time: '01:00-03:00' },
+        { label: '寅', name: 'Yin', time: '03:00-05:00' },
+        { label: '卯', name: 'Mao', time: '05:00-07:00' },
+        { label: '辰', name: 'Chen', time: '07:00-09:00' },
+        { label: '巳', name: 'Si', time: '09:00-11:00' },
+        { label: '午', name: 'Wu', time: '11:00-13:00' },
+        { label: '未', name: 'Wei', time: '13:00-15:00' },
+        { label: '申', name: 'Shen', time: '15:00-17:00' },
+        { label: '酉', name: 'You', time: '17:00-19:00' },
+        { label: '戌', name: 'Xu', time: '19:00-21:00' },
+        { label: '亥', name: 'Hai', time: '21:00-23:00' }
+    ];
+    SHICHEN.forEach((s, i) => {
+        customHour.add(new Option(`${s.label}时 ${s.time}`, i));
+    });
+
+    // Update days based on year and month
+    function updateCustomDays() {
+        const year = parseInt(customYear.value) || 2020;
+        const month = parseInt(customMonth.value) || 1;
+        const daysInMonth = new Date(year, month, 0).getDate();
+        customDay.innerHTML = '';
+        for (let d = 1; d <= daysInMonth; d++) {
+            customDay.add(new Option(d + ' 日', d));
+        }
+    }
+    customMonth.addEventListener('change', updateCustomDays);
+    customYear.addEventListener('change', updateCustomDays);
+    updateCustomDays();
+
+    // Full Custom Modal Functions
+    function openFullCustomModal() {
+        document.getElementById('fullCustomModal').classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeFullCustomModal() {
+        document.getElementById('fullCustomModal').classList.remove('open');
+        document.body.style.overflow = '';
+    }
+
+    function addFullCustomToCart() {
+        const year = customYear.value;
+        const month = customMonth.value;
+        const day = customDay.value;
+        const hour = customHour.value;
+        const hourLabel = SHICHEN[hour].label;
+        const gender = document.querySelector('input[name="customGender"]:checked').value;
+        const size = document.getElementById('customSize').value;
+        const notes = document.getElementById('customNotes').value;
+
+        if (!year || !month || !day || !hour) {
+            showNotification('Please fill in all birth information');
+            return;
+        }
+
+        const itemName = `Destiny Bespoke Bracelet (Full Custom)`;
+        const itemDetails = `Birth: ${year}/${month}/${day} ${hourLabel}时 | Size: ${size}cm | Gender: ${gender}`;
+
+        cartItems.push({
+            name: itemName,
+            details: itemDetails,
+            price: 269,
+            notes: notes,
+            isFullCustom: true
+        });
+
+        document.getElementById('cartCount').textContent = cartItems.length;
+        closeFullCustomModal();
+        showNotification('✓ Destiny Bespoke Bracelet added! 7-day craftsmanship.');
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('fullCustomModal').addEventListener('click', function(e) {
+        if (e.target === this) closeFullCustomModal();
+    });
+
+    // Populate years (1920-2025)
     const yearSelect = document.getElementById('birthYear');
     const astroYear = document.getElementById('astroYear');
-    for (let y = 1990; y <= 2010; y++) {
+    for (let y = 2025; y >= 1920; y--) {
         const opt = new Option(y, y);
         yearSelect.add(opt);
         astroYear.add(new Option(y, y));
@@ -1678,10 +2190,14 @@
     }
 
     // ===== CART =====
-    function addToCart(name) {
-        cartItems.push(name);
+    function addToCart(name, price) {
+        if (typeof name === 'object') {
+            cartItems.push(name);
+        } else {
+            cartItems.push({ name: name, price: price });
+        }
         document.getElementById('cartCount').textContent = cartItems.length;
-        showNotification(`✓ ${name} added to cart!`);
+        showNotification(`✓ ${typeof name === 'object' ? name.name : name} added to cart!`);
     }
 
     function addCustomToCart() {
@@ -1692,6 +2208,128 @@
         document.getElementById('cartCount').textContent = cartItems.length;
         showNotification(`✓ Custom bracelet added to cart! Handcrafted in 3-5 days.`);
     }
+
+    // ===== CHECKOUT =====
+    let paypalButtonsRendered = false;
+
+    function openCheckout() {
+        const modal = document.getElementById('checkoutModal');
+        const itemsContainer = document.getElementById('checkoutItems');
+        const totalEl = document.getElementById('checkoutTotal');
+
+        if (cartItems.length === 0) {
+            itemsContainer.innerHTML = '<div class="checkout-empty">Your cart is empty.<br>Add some beautiful bracelets first!</div>';
+            totalEl.textContent = '$0.00';
+        } else {
+            // Calculate total based on items
+            let total = 0;
+            const itemPrices = {
+                'Pixiu Wealth Bracelet': 129,
+                'Five Elements Balance Bracelet': 99,
+                'Green Jade Prosperity Bracelet': 159,
+                'Red String Fate Bracelet': 49
+            };
+
+            let html = '';
+            cartItems.forEach(item => {
+                let price = 89; // default for custom
+                let itemName = item;
+                let itemDetails = '';
+
+                // Handle object format (new) or string format (legacy)
+                if (typeof item === 'object') {
+                    itemName = item.name;
+                    itemDetails = item.details || '';
+                    price = item.price || 269;
+                } else {
+                    // Legacy string format
+                    if (item.includes('Pixiu')) price = 129;
+                    else if (item.includes('Five Elements')) price = 99;
+                    else if (item.includes('Jade')) price = 159;
+                    else if (item.includes('Red String')) price = 49;
+                    else if (item.includes('Destiny Bespoke')) price = 269;
+                    else if (item.includes('Custom')) {
+                        const beadMatch = item.match(/Custom (\w+) bracelet/);
+                        if (beadMatch && beadPrices[beadMatch[1]]) {
+                            price = beadPrices[beadMatch[1]];
+                        }
+                    }
+                }
+
+                total += price;
+                html += `<div class="checkout-item">
+                    <span class="checkout-item-name">${itemName}${itemDetails ? '<br><small style="color:#9A8F7E;font-size:0.75rem;">' + itemDetails + '</small>' : ''}</span>
+                    <span class="checkout-item-price">$${price}</span>
+                </div>`;
+            });
+            itemsContainer.innerHTML = html;
+            totalEl.textContent = '$' + total.toFixed(2);
+        }
+
+        modal.classList.add('open');
+
+        // Render PayPal buttons if not already rendered and cart has items
+        if (!paypalButtonsRendered && cartItems.length > 0) {
+            renderPayPalButtons();
+            paypalButtonsRendered = true;
+        }
+    }
+
+    function closeCheckout() {
+        document.getElementById('checkoutModal').classList.remove('open');
+    }
+
+    function renderPayPalButtons() {
+        const totalEl = document.getElementById('checkoutTotal');
+        const total = parseFloat(totalEl.textContent.replace('$', '')) || 89;
+
+        paypal.Buttons({
+            createOrder: function(data, actions) {
+                return actions.order.create({
+                    purchase_units: [{
+                        amount: {
+                            value: total.toFixed(2),
+                            currency_code: 'USD'
+                        },
+                        description: 'MingLi Gems - Custom Fortune Bracelet',
+                        custom_id: 'ORDER_' + Date.now()
+                    }]
+                });
+            },
+            onApprove: function(data, actions) {
+                return actions.order.capture().then(function(details) {
+                    // Payment successful
+                    showNotification('✓ Payment successful! Thank you for your order.');
+                    cartItems = [];
+                    document.getElementById('cartCount').textContent = '0';
+                    closeCheckout();
+
+                    // Show success message
+                    setTimeout(() => {
+                        alert('🎉 Order Confirmed!\\n\\nOrder ID: ' + details.id + '\\nThank you for choosing MingLi Gems. We will handcrafted your bracelet and ship within 3-5 business days.\\n\\nA confirmation email will be sent shortly.');
+                    }, 500);
+                });
+            },
+            onError: function(err) {
+                console.error('PayPal error:', err);
+                showNotification('✗ Payment failed. Please try again.');
+            },
+            onCancel: function() {
+                showNotification('Payment cancelled.');
+            },
+            style: {
+                color: 'gold',
+                shape: 'rect',
+                label: 'pay',
+                height: 45
+            }
+        }).render('#paypal-button-container');
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('checkoutModal').addEventListener('click', function(e) {
+        if (e.target === this) closeCheckout();
+    });
 
     // ===== NEWSLETTER =====
     function subscribeNewsletter(e) {
