@@ -1588,24 +1588,13 @@
                         Your Energy Profile
                     </div>
                     <p class="step-zh">您的命理信息</p>
-                    <select class="select-custom" id="birthYear" onchange="updateElement()">
+                    <select class="select-custom" id="birthYear" onchange="updateYearAndZodiac()">
                         <option value="">— Select Birth Year —</option>
                     </select>
-                    <select class="select-custom" id="zodiacSign" onchange="updateElement()">
-                        <option value="">— Select Zodiac Sign —</option>
-                        <option value="rat">Rat · 鼠</option>
-                        <option value="ox">Ox · 牛</option>
-                        <option value="tiger">Tiger · 虎</option>
-                        <option value="rabbit">Rabbit · 兔</option>
-                        <option value="dragon">Dragon · 龙</option>
-                        <option value="snake">Snake · 蛇</option>
-                        <option value="horse">Horse · 马</option>
-                        <option value="goat">Goat · 羊</option>
-                        <option value="monkey">Monkey · 猴</option>
-                        <option value="rooster">Rooster · 鸡</option>
-                        <option value="dog">Dog · 狗</option>
-                        <option value="pig">Pig · 猪</option>
-                    </select>
+                    <div class="zodiac-display" id="zodiacDisplay" style="margin: 8px 0; padding: 12px; background: rgba(201,169,110,0.1); border: 1px solid var(--border); color: var(--gold); font-size: 0.95rem; text-align: center;">
+                        <span id="zodiacText">Select year to see your zodiac</span>
+                    </div>
+                    <input type="hidden" id="zodiacSign" value="">
                     <select class="select-custom" id="elementNeed" onchange="updateBracelet()">
                         <option value="">— What do you need most? —</option>
                         <option value="wealth">Wealth & Prosperity · 招财旺运</option>
@@ -2314,6 +2303,46 @@
 
     document.getElementById('braceletSize').addEventListener('change', updateSummary);
     document.getElementById('engraving').addEventListener('input', updateSummary);
+
+    // ===== ZODIAC CALCULATION =====
+    const zodiacData = [
+        { animal: 'Rat', chinese: '鼠', emoji: '🐀', value: 'rat' },
+        { animal: 'Ox', chinese: '牛', emoji: '🐂', value: 'ox' },
+        { animal: 'Tiger', chinese: '虎', emoji: '🐅', value: 'tiger' },
+        { animal: 'Rabbit', chinese: '兔', emoji: '🐇', value: 'rabbit' },
+        { animal: 'Dragon', chinese: '龙', emoji: '🐉', value: 'dragon' },
+        { animal: 'Snake', chinese: '蛇', emoji: '🐍', value: 'snake' },
+        { animal: 'Horse', chinese: '马', emoji: '🐎', value: 'horse' },
+        { animal: 'Goat', chinese: '羊', emoji: '🐐', value: 'goat' },
+        { animal: 'Monkey', chinese: '猴', emoji: '🐒', value: 'monkey' },
+        { animal: 'Rooster', chinese: '鸡', emoji: '🐓', value: 'rooster' },
+        { animal: 'Dog', chinese: '狗', emoji: '🐕', value: 'dog' },
+        { animal: 'Pig', chinese: '猪', emoji: '🐖', value: 'pig' }
+    ];
+
+    function getZodiacByYear(year) {
+        const index = (year - 4) % 12;
+        return zodiacData[index];
+    }
+
+    function updateYearAndZodiac() {
+        const year = document.getElementById('birthYear').value;
+        const zodiacText = document.getElementById('zodiacText');
+        const zodiacSign = document.getElementById('zodiacSign');
+
+        if (!year) {
+            zodiacText.textContent = 'Select year to see your zodiac';
+            zodiacSign.value = '';
+            return;
+        }
+
+        const zodiac = getZodiacByYear(parseInt(year));
+        zodiacText.textContent = `${zodiac.emoji} ${zodiac.animal} · ${zodiac.chinese}`;
+        zodiacSign.value = zodiac.value;
+
+        // Also call the original update function
+        updateElement();
+    }
 
     // ===== ELEMENT CALCULATION =====
     function updateElement() {
