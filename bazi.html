@@ -550,6 +550,9 @@
                         <div class="select-wrapper">
                             <select class="form-select" id="birthYear"></select>
                         </div>
+                        <div class="zodiac-display" id="zodiacDisplay" style="margin-top: 8px; font-size: 0.9rem; color: var(--gold);">
+                            Zodiac: <span id="zodiacName">—</span>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Birth Month</label>
@@ -753,8 +756,22 @@
             }
         }
         monthSelect.addEventListener('change', updateDays);
-        yearSelect.addEventListener('change', updateDays);
+        yearSelect.addEventListener('change', function() {
+            updateDays();
+            updateZodiac();
+        });
         updateDays();
+        updateZodiac();
+
+        // ===== ZODIAC CALCULATION =====
+        function updateZodiac() {
+            const year = parseInt(yearSelect.value) || new Date().getFullYear();
+            const zodiacIndex = (year - 4) % 12;
+            const zodiacNames = ['Rat 鼠', 'Ox 牛', 'Tiger 虎', 'Rabbit 兔', 'Dragon 龙', 'Snake 蛇', 
+                                 'Horse 马', 'Goat 羊', 'Monkey 猴', 'Rooster 鸡', 'Dog 狗', 'Pig 猪'];
+            const zodiacEmojis = ['🐀', '🐂', '🐅', '🐇', '🐉', '🐍', '🐎', '🐐', '🐒', '🐓', '🐕', '🐖'];
+            document.getElementById('zodiacName').textContent = zodiacEmojis[zodiacIndex] + ' ' + zodiacNames[zodiacIndex];
+        }
 
         // Hours (Shichen)
         SHICHEN.forEach((s, i) => {
