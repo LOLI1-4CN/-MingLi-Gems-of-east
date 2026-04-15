@@ -968,6 +968,93 @@
         }
         #paypal-button-container { margin-top: 16px; }
 
+        /* ===== CUSTOMER INFO FORM ===== */
+        .customer-info-section {
+            border-top: 1px solid var(--border);
+            padding-top: 20px;
+            margin-top: 20px;
+        }
+        .customer-info-title {
+            font-family: var(--font-heading);
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            color: var(--gold);
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        .form-row {
+            margin-bottom: 12px;
+        }
+        .form-row input,
+        .form-row textarea {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--dark-bg);
+            border: 1px solid var(--border);
+            color: var(--text-light);
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            transition: border-color 0.3s;
+        }
+        .form-row input:focus,
+        .form-row textarea:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+        .form-row input::placeholder,
+        .form-row textarea::placeholder {
+            color: var(--text-muted);
+        }
+        .form-row textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        .form-row-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .btn-proceed {
+            width: 100%;
+            padding: 14px;
+            background: var(--gold);
+            color: var(--black);
+            border: none;
+            font-family: var(--font-heading);
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s;
+            margin-top: 8px;
+        }
+        .btn-proceed:hover {
+            background: var(--gold-dark);
+            color: var(--text-light);
+        }
+        .btn-back {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .btn-back:hover { color: var(--gold); }
+        .payment-section { margin-top: 20px; }
+        .form-error {
+            color: var(--accent-red);
+            font-size: 0.8rem;
+            margin-top: -8px;
+            margin-bottom: 12px;
+        }
+
         /* ===== FULL CUSTOM MODAL ===== */
         .fullcustom-modal {
             display: none; position: fixed; inset: 0;
@@ -1253,7 +1340,9 @@
         <button class="mobile-close" onclick="closeMobile()">×</button>
         <a href="#collection" onclick="closeMobile()">Collection</a>
         <a href="#customize" onclick="closeMobile()">Customize</a>
+        <a href="bazi.html" onclick="closeMobile()">Bazi</a>
         <a href="#astrology" onclick="closeMobile()">Astrology</a>
+        <a href="track.html" onclick="closeMobile()">Track Order</a>
         <a href="#testimonials" onclick="closeMobile()">Reviews</a>
         <a href="#about" onclick="closeMobile()">About</a>
     </div>
@@ -1272,7 +1361,7 @@
             <li><a href="#customize">Customize</a></li>
             <li><a href="bazi.html">Bazi</a></li>
             <li><a href="#astrology">Astrology</a></li>
-            <li><a href="#testimonials">Reviews</a></li>
+            <li><a href="track.html">Track Order</a></li>
             <li><a href="#about">About</a></li>
             <li><a href="#customize" class="nav-cta">Get Yours</a></li>
         </ul>
@@ -1964,7 +2053,44 @@
                 <span>Total:</span>
                 <span id="checkoutTotal">$0.00</span>
             </div>
-            <div id="paypal-button-container"></div>
+            
+            <!-- Customer Information Form -->
+            <div class="customer-info-section" id="customerInfoSection">
+                <h4 class="customer-info-title">Shipping Information</h4>
+                <div class="form-row">
+                    <input type="text" id="customerName" placeholder="Full Name *" required>
+                </div>
+                <div class="form-row">
+                    <input type="email" id="customerEmail" placeholder="Email Address *" required>
+                </div>
+                <div class="form-row">
+                    <input type="tel" id="customerPhone" placeholder="Phone Number">
+                </div>
+                <div class="form-row">
+                    <input type="text" id="customerAddress" placeholder="Street Address *" required>
+                </div>
+                <div class="form-row form-row-2">
+                    <input type="text" id="customerCity" placeholder="City *" required>
+                    <input type="text" id="customerZip" placeholder="Postal Code *" required>
+                </div>
+                <div class="form-row">
+                    <input type="text" id="customerCountry" placeholder="Country *" value="United States" required>
+                </div>
+                <div class="form-row">
+                    <textarea id="orderNotes" placeholder="Special notes (optional): Birth date for custom bracelets, gift message, etc."></textarea>
+                </div>
+                <button class="btn-proceed" id="btnProceed" onclick="validateAndProceed()">
+                    Continue to Payment
+                    <span>→</span>
+                </button>
+            </div>
+            
+            <!-- Payment Section -->
+            <div class="payment-section" id="paymentSection" style="display: none;">
+                <button class="btn-back" onclick="showCustomerForm()">← Back to Information</button>
+                <div id="paypal-button-container"></div>
+            </div>
+            
             <p class="checkout-note">🔒 Secure payment powered by PayPal. You can pay with credit card or PayPal account.</p>
         </div>
     </div>
@@ -2313,15 +2439,24 @@
 
     // ===== CHECKOUT =====
     let paypalButtonsRendered = false;
+    let currentOrderId = null;
+    let currentCustomerInfo = null;
 
     function openCheckout() {
         const modal = document.getElementById('checkoutModal');
         const itemsContainer = document.getElementById('checkoutItems');
         const totalEl = document.getElementById('checkoutTotal');
 
+        // Reset to customer form view
+        const customerSection = document.getElementById('customerInfoSection');
+        const paymentSection = document.getElementById('paymentSection');
+        if (customerSection) customerSection.style.display = 'block';
+        if (paymentSection) paymentSection.style.display = 'none';
+
         if (cartItems.length === 0) {
             itemsContainer.innerHTML = '<div class="checkout-empty">Your cart is empty.<br>Add some beautiful bracelets first!</div>';
             totalEl.textContent = '$0.00';
+            if (customerSection) customerSection.style.display = 'none';
         } else {
             // Calculate total based on items
             let total = 0;
@@ -2381,13 +2516,98 @@
         }
 
         modal.classList.add('open');
+    }
+
+    // ===== ORDER MANAGEMENT =====
+    function generateOrderId() {
+        const date = new Date();
+        const dateStr = date.getFullYear().toString().substr(2) + 
+                       String(date.getMonth() + 1).padStart(2, '0') + 
+                       String(date.getDate()).padStart(2, '0');
+        const random = Math.random().toString(36).substr(2, 4).toUpperCase();
+        return 'MLG' + dateStr + random;
+    }
+
+    function validateAndProceed() {
+        const name = document.getElementById('customerName').value.trim();
+        const email = document.getElementById('customerEmail').value.trim();
+        const address = document.getElementById('customerAddress').value.trim();
+        const city = document.getElementById('customerCity').value.trim();
+        const zip = document.getElementById('customerZip').value.trim();
+        const country = document.getElementById('customerCountry').value.trim();
+
+        // Validation
+        if (!name || !email || !address || !city || !zip || !country) {
+            showNotification('✗ Please fill in all required fields');
+            return;
+        }
+
+        if (!email.includes('@') || !email.includes('.')) {
+            showNotification('✗ Please enter a valid email address');
+            return;
+        }
+
+        // Save customer info
+        currentCustomerInfo = {
+            name: name,
+            email: email,
+            phone: document.getElementById('customerPhone').value.trim(),
+            address: address,
+            city: city,
+            zip: zip,
+            country: country,
+            notes: document.getElementById('orderNotes').value.trim()
+        };
+
+        // Switch to payment section
+        document.getElementById('customerInfoSection').style.display = 'none';
+        document.getElementById('paymentSection').style.display = 'block';
 
         // Render PayPal buttons
         setTimeout(() => {
-            if (cartItems.length > 0) {
-                renderPayPalButtons();
-            }
+            renderPayPalButtons();
         }, 100);
+    }
+
+    function showCustomerForm() {
+        document.getElementById('customerInfoSection').style.display = 'block';
+        document.getElementById('paymentSection').style.display = 'none';
+    }
+
+    async function saveOrder(paypalOrderId, paypalDetails) {
+        const orderId = generateOrderId();
+        currentOrderId = orderId;
+
+        const totalEl = document.getElementById('checkoutTotal');
+        const total = parseFloat(totalEl.textContent.replace('$', '')) || 0;
+
+        const orderData = {
+            orderId: orderId,
+            paypalOrderId: paypalOrderId,
+            paypalPayerId: paypalDetails.payer?.payer_id || '',
+            customerName: currentCustomerInfo.name,
+            customerEmail: currentCustomerInfo.email,
+            customerPhone: currentCustomerInfo.phone,
+            customerAddress: `${currentCustomerInfo.address}, ${currentCustomerInfo.city}, ${currentCustomerInfo.zip}, ${currentCustomerInfo.country}`,
+            orderNotes: currentCustomerInfo.notes,
+            items: JSON.stringify(cartItems.map(item => ({
+                name: item.name || item,
+                price: item.price || 89,
+                quantity: item.quantity || 1,
+                details: item.details || ''
+            }))),
+            totalAmount: total.toFixed(2),
+            currency: 'USD',
+            status: 'paid',
+            createdAt: new Date().toISOString()
+        };
+
+        // Save to localStorage for admin view
+        let orders = JSON.parse(localStorage.getItem('mingli_orders') || '[]');
+        orders.unshift(orderData);
+        localStorage.setItem('mingli_orders', JSON.stringify(orders));
+
+        return orderId;
     }
 
     function closeCheckout() {
@@ -2423,16 +2643,19 @@
                 });
             },
             onApprove: function(data, actions) {
-                return actions.order.capture().then(function(details) {
+                return actions.order.capture().then(async function(details) {
+                    // Save order to system
+                    const orderId = await saveOrder(details.id, details);
+                    
                     // Payment successful
                     showNotification('✓ Payment successful! Thank you for your order.');
                     cartItems = [];
                     document.getElementById('cartCount').textContent = '0';
                     closeCheckout();
 
-                    // Show success message
+                    // Show success message with our order ID
                     setTimeout(() => {
-                        alert('🎉 Order Confirmed!\\n\\nOrder ID: ' + details.id + '\\nThank you for choosing MingLi Gems. We will handcrafted your bracelet and ship within 3-5 business days.\\n\\nA confirmation email will be sent shortly.');
+                        alert('🎉 Order Confirmed!\\n\\nYour Order Number: ' + orderId + '\\nPayPal Transaction ID: ' + details.id + '\\n\\nThank you for choosing MingLi Gems. We will handcrafted your bracelet and ship within 7 business days.\\n\\nPlease save your order number for tracking.\\n\\nA confirmation email will be sent shortly.');
                     }, 500);
                 });
             },

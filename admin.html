@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MingLi Gems — Order Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Noto+Serif+SC:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #C9A96E;
+            --gold-dark: #8B6914;
+            --black: #1A1A1A;
+            --dark-bg: #0D0D0D;
+            --warm-gray: #2A2A2A;
+            --text-light: #F5F0E8;
+            --text-muted: #9A8F7E;
+            --accent-red: #8B2500;
+            --accent-green: #2E5941;
+            --border: rgba(201,169,110,0.2);
+            --font-heading: 'Cinzel', serif;
+            --font-body: 'Playfair Display', serif;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            background: var(--dark-bg);
+            color: var(--text-light);
+            font-family: var(--font-body);
+            line-height: 1.7;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: var(--black);
+            border-bottom: 1px solid var(--border);
+            padding: 24px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            letter-spacing: 4px;
+            color: var(--gold);
+        }
+        .logo span {
+            display: block;
+            font-size: 0.6rem;
+            letter-spacing: 6px;
+            color: var(--text-muted);
+        }
+        .nav-links {
+            display: flex;
+            gap: 24px;
+        }
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover { color: var(--gold); }
+
+        /* Main Content */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+        .stat-card {
+            background: var(--warm-gray);
+            border: 1px solid var(--border);
+            padding: 24px;
+            text-align: center;
+        }
+        .stat-value {
+            font-family: var(--font-heading);
+            font-size: 2rem;
+            color: var(--gold);
+            margin-bottom: 8px;
+        }
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+
+        /* Filters */
+        .filters {
+            background: var(--warm-gray);
+            border: 1px solid var(--border);
+            padding: 20px;
+            margin-bottom: 24px;
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .filter-group label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        .filter-group input,
+        .filter-group select {
+            background: var(--dark-bg);
+            border: 1px solid var(--border);
+            color: var(--text-light);
+            padding: 8px 12px;
+            font-family: var(--font-body);
+        }
+        .filter-group input:focus,
+        .filter-group select:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+        .btn {
+            background: var(--gold);
+            color: var(--black);
+            border: none;
+            padding: 10px 20px;
+            font-family: var(--font-heading);
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn:hover { background: var(--gold-dark); color: var(--text-light); }
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--gold);
+            color: var(--gold);
+        }
+        .btn-secondary:hover { background: var(--gold); color: var(--black); }
+
+        /* Orders Table */
+        .orders-table-container {
+            background: var(--warm-gray);
+            border: 1px solid var(--border);
+            overflow-x: auto;
+        }
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        .orders-table th {
+            background: var(--black);
+            color: var(--gold);
+            font-family: var(--font-heading);
+            font-weight: 400;
+            letter-spacing: 1px;
+            padding: 16px;
+            text-align: left;
+            font-size: 0.75rem;
+        }
+        .orders-table td {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: top;
+        }
+        .orders-table tr:hover td {
+            background: rgba(201,169,110,0.05);
+        }
+        .order-id {
+            font-family: var(--font-heading);
+            color: var(--gold);
+            font-weight: 600;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+            border-radius: 2px;
+        }
+        .status-paid { background: rgba(46,89,65,0.3); color: #7FBA7A; }
+        .status-processing { background: rgba(201,169,110,0.2); color: var(--gold); }
+        .status-shipped { background: rgba(70,130,180,0.3); color: #87CEEB; }
+        .status-delivered { background: rgba(46,89,65,0.5); color: #90EE90; }
+        .status-select {
+            background: var(--dark-bg);
+            border: 1px solid var(--border);
+            color: var(--text-light);
+            padding: 6px 10px;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+        .customer-info {
+            max-width: 200px;
+        }
+        .customer-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .customer-email {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            word-break: break-all;
+        }
+        .items-summary {
+            max-width: 250px;
+            font-size: 0.8rem;
+        }
+        .item-line {
+            margin-bottom: 4px;
+            padding-bottom: 4px;
+            border-bottom: 1px solid var(--border);
+        }
+        .item-line:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .order-notes {
+            max-width: 200px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+        .amount {
+            font-family: var(--font-heading);
+            color: var(--gold);
+            font-size: 1rem;
+        }
+        .date {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 80px 40px;
+            color: var(--text-muted);
+        }
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .modal.open { display: flex; }
+        .modal-content {
+            background: var(--warm-gray);
+            border: 1px solid var(--gold);
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 40px;
+            position: relative;
+        }
+        .modal-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        .modal-close:hover { color: var(--gold); }
+
+        /* Login Screen */
+        .login-screen {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-box {
+            background: var(--warm-gray);
+            border: 1px solid var(--gold);
+            padding: 48px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+        .login-box h2 {
+            font-family: var(--font-heading);
+            letter-spacing: 3px;
+            margin-bottom: 8px;
+        }
+        .login-box p {
+            color: var(--text-muted);
+            margin-bottom: 32px;
+            font-size: 0.9rem;
+        }
+        .login-box input {
+            width: 100%;
+            padding: 14px;
+            background: var(--dark-bg);
+            border: 1px solid var(--border);
+            color: var(--text-light);
+            margin-bottom: 16px;
+            font-family: var(--font-body);
+        }
+        .login-box input:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+        .login-box .btn {
+            width: 100%;
+            padding: 14px;
+        }
+
+        /* Export Section */
+        .export-section {
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        @media (max-width: 1024px) {
+            .orders-table-container { font-size: 0.75rem; }
+            .orders-table th,
+            .orders-table td { padding: 12px 8px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-box">
+            <h2>ADMIN ACCESS</h2>
+            <p>Enter password to view orders</p>
+            <input type="password" id="adminPassword" placeholder="Password" onkeypress="if(event.key==='Enter')checkLogin()">
+            <button class="btn" onclick="checkLogin()">ENTER</button>
+            <p style="margin-top: 24px; font-size: 0.8rem;">
+                <a href="index.html" style="color: var(--text-muted);">← Back to Store</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div id="adminPanel" style="display: none;">
+        <header class="header">
+            <div class="logo">
+                MINGLI GEMS
+                <span>ORDER MANAGEMENT</span>
+            </div>
+            <nav class="nav-links">
+                <a href="index.html">Store</a>
+                <a href="track.html">Track Order</a>
+                <a href="#" onclick="logout()">Logout</a>
+            </nav>
+        </header>
+
+        <main class="container">
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalOrders">0</div>
+                    <div class="stat-label">TOTAL ORDERS</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="totalRevenue">$0</div>
+                    <div class="stat-label">TOTAL REVENUE</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="pendingOrders">0</div>
+                    <div class="stat-label">PENDING</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="todayOrders">0</div>
+                    <div class="stat-label">TODAY</div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="filters">
+                <div class="filter-group">
+                    <label>Search:</label>
+                    <input type="text" id="searchInput" placeholder="Order ID, Name, Email..." onkeyup="filterOrders()">
+                </div>
+                <div class="filter-group">
+                    <label>Status:</label>
+                    <select id="statusFilter" onchange="filterOrders()">
+                        <option value="">All Status</option>
+                        <option value="paid">Paid</option>
+                        <option value="processing">Processing</option>
+                        <option value="shipped">Shipped</option>
+                        <option value="delivered">Delivered</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>From:</label>
+                    <input type="date" id="dateFrom" onchange="filterOrders()">
+                </div>
+                <div class="filter-group">
+                    <label>To:</label>
+                    <input type="date" id="dateTo" onchange="filterOrders()">
+                </div>
+                <button class="btn btn-secondary" onclick="clearFilters()">Clear</button>
+                <button class="btn" onclick="exportCSV()">Export CSV</button>
+            </div>
+
+            <!-- Orders Table -->
+            <div class="orders-table-container">
+                <table class="orders-table">
+                    <thead>
+                        <tr>
+                            <th>ORDER ID</th>
+                            <th>DATE</th>
+                            <th>CUSTOMER</th>
+                            <th>ITEMS</th>
+                            <th>AMOUNT</th>
+                            <th>STATUS</th>
+                            <th>NOTES</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ordersTableBody">
+                        <!-- Orders will be loaded here -->
+                    </tbody>
+                </table>
+                <div id="emptyState" class="empty-state" style="display: none;">
+                    <div class="empty-state-icon">📭</div>
+                    <h3>No Orders Found</h3>
+                    <p>Orders will appear here when customers make purchases.</p>
+                </div>
+            </div>
+
+            <!-- Export Section -->
+            <div class="export-section">
+                <p style="color: var(--text-muted); font-size: 0.8rem;">
+                    Data is stored locally in this browser. For permanent storage, configure Google Sheets integration.
+                </p>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Admin password (you should change this)
+        const ADMIN_PASSWORD = 'mingli2024';
+
+        // Check login status
+        function checkLogin() {
+            const password = document.getElementById('adminPassword').value;
+            if (password === ADMIN_PASSWORD) {
+                sessionStorage.setItem('adminLoggedIn', 'true');
+                showAdminPanel();
+            } else {
+                alert('Incorrect password');
+            }
+        }
+
+        function logout() {
+            sessionStorage.removeItem('adminLoggedIn');
+            location.reload();
+        }
+
+        function showAdminPanel() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('adminPanel').style.display = 'block';
+            loadOrders();
+        }
+
+        // Load orders from localStorage
+        function loadOrders() {
+            const orders = JSON.parse(localStorage.getItem('mingli_orders') || '[]');
+            updateStats(orders);
+            renderOrders(orders);
+        }
+
+        // Update statistics
+        function updateStats(orders) {
+            const total = orders.length;
+            const revenue = orders.reduce((sum, o) => sum + parseFloat(o.totalAmount || 0), 0);
+            const pending = orders.filter(o => o.status === 'paid' || o.status === 'processing').length;
+            
+            const today = new Date().toDateString();
+            const todayOrders = orders.filter(o => new Date(o.createdAt).toDateString() === today).length;
+
+            document.getElementById('totalOrders').textContent = total;
+            document.getElementById('totalRevenue').textContent = '$' + revenue.toFixed(2);
+            document.getElementById('pendingOrders').textContent = pending;
+            document.getElementById('todayOrders').textContent = todayOrders;
+        }
+
+        // Render orders table
+        function renderOrders(orders) {
+            const tbody = document.getElementById('ordersTableBody');
+            const emptyState = document.getElementById('emptyState');
+
+            if (orders.length === 0) {
+                tbody.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+
+            tbody.innerHTML = orders.map(order => {
+                const items = JSON.parse(order.items || '[]');
+                const itemsHtml = items.map(item => 
+                    `<div class="item-line">${item.name} x${item.quantity}</div>`
+                ).join('');
+
+                const statusClass = {
+                    'paid': 'status-paid',
+                    'processing': 'status-processing',
+                    'shipped': 'status-shipped',
+                    'delivered': 'status-delivered'
+                }[order.status] || 'status-paid';
+
+                const statusText = {
+                    'paid': 'PAID',
+                    'processing': 'PROCESSING',
+                    'shipped': 'SHIPPED',
+                    'delivered': 'DELIVERED'
+                }[order.status] || 'PAID';
+
+                return `
+                    <tr>
+                        <td><span class="order-id">${order.orderId}</span></td>
+                        <td class="date">${new Date(order.createdAt).toLocaleDateString()}</td>
+                        <td class="customer-info">
+                            <div class="customer-name">${order.customerName}</div>
+                            <div class="customer-email">${order.customerEmail}</div>
+                        </td>
+                        <td class="items-summary">${itemsHtml}</td>
+                        <td class="amount">$${order.totalAmount}</td>
+                        <td>
+                            <span class="status-badge ${statusClass}">${statusText}</span>
+                            <br>
+                            <select class="status-select" onchange="updateStatus('${order.orderId}', this.value)">
+                                <option value="paid" ${order.status === 'paid' ? 'selected' : ''}>Paid</option>
+                                <option value="processing" ${order.status === 'processing' ? 'selected' : ''}>Processing</option>
+                                <option value="shipped" ${order.status === 'shipped' ? 'selected' : ''}>Shipped</option>
+                                <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>Delivered</option>
+                            </select>
+                        </td>
+                        <td class="order-notes">${order.orderNotes || '-'}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Filter orders
+        function filterOrders() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const status = document.getElementById('statusFilter').value;
+            const dateFrom = document.getElementById('dateFrom').value;
+            const dateTo = document.getElementById('dateTo').value;
+
+            let orders = JSON.parse(localStorage.getItem('mingli_orders') || '[]');
+
+            if (search) {
+                orders = orders.filter(o => 
+                    o.orderId.toLowerCase().includes(search) ||
+                    o.customerName.toLowerCase().includes(search) ||
+                    o.customerEmail.toLowerCase().includes(search)
+                );
+            }
+
+            if (status) {
+                orders = orders.filter(o => o.status === status);
+            }
+
+            if (dateFrom) {
+                orders = orders.filter(o => new Date(o.createdAt) >= new Date(dateFrom));
+            }
+
+            if (dateTo) {
+                orders = orders.filter(o => new Date(o.createdAt) <= new Date(dateTo + 'T23:59:59'));
+            }
+
+            renderOrders(orders);
+        }
+
+        function clearFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('statusFilter').value = '';
+            document.getElementById('dateFrom').value = '';
+            document.getElementById('dateTo').value = '';
+            loadOrders();
+        }
+
+        // Update order status
+        function updateStatus(orderId, newStatus) {
+            let orders = JSON.parse(localStorage.getItem('mingli_orders') || '[]');
+            const order = orders.find(o => o.orderId === orderId);
+            if (order) {
+                order.status = newStatus;
+                localStorage.setItem('mingli_orders', JSON.stringify(orders));
+                showNotification('Status updated');
+                filterOrders();
+            }
+        }
+
+        // Export to CSV
+        function exportCSV() {
+            const orders = JSON.parse(localStorage.getItem('mingli_orders') || '[]');
+            if (orders.length === 0) {
+                alert('No orders to export');
+                return;
+            }
+
+            const headers = ['Order ID', 'Date', 'Customer Name', 'Email', 'Phone', 'Address', 'Items', 'Total', 'Status', 'Notes'];
+            const rows = orders.map(o => [
+                o.orderId,
+                new Date(o.createdAt).toLocaleString(),
+                o.customerName,
+                o.customerEmail,
+                o.customerPhone,
+                o.customerAddress,
+                JSON.parse(o.items || '[]').map(i => `${i.name} x${i.quantity}`).join('; '),
+                o.totalAmount,
+                o.status,
+                o.orderNotes
+            ]);
+
+            const csv = [headers.join(','), ...rows.map(r => r.map(cell => `"${(cell || '').replace(/"/g, '""')}"`).join(','))].join('\n');
+            
+            const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `mingli_orders_${new Date().toISOString().split('T')[0]}.csv`;
+            link.click();
+        }
+
+        // Notification
+        function showNotification(msg) {
+            const div = document.createElement('div');
+            div.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: var(--gold);
+                color: var(--black);
+                padding: 16px 24px;
+                z-index: 10000;
+                font-family: var(--font-heading);
+            `;
+            div.textContent = msg;
+            document.body.appendChild(div);
+            setTimeout(() => div.remove(), 3000);
+        }
+
+        // Check if already logged in
+        if (sessionStorage.getItem('adminLoggedIn') === 'true') {
+            showAdminPanel();
+        }
+    </script>
+</body>
+</html>
