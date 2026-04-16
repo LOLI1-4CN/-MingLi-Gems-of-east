@@ -231,6 +231,62 @@
             color: var(--text-muted);
             font-style: italic;
         }
+
+        /* Tracking Styles */
+        .tracking-cell {
+            min-width: 180px;
+        }
+        .tracking-info {
+            font-size: 0.8rem;
+        }
+        .tracking-carrier {
+            color: var(--gold);
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .tracking-number {
+            color: var(--text-light);
+            font-family: monospace;
+            margin-bottom: 8px;
+            word-break: break-all;
+        }
+        .tracking-link {
+            color: var(--accent-green);
+            text-decoration: none;
+            font-size: 0.75rem;
+        }
+        .tracking-link:hover {
+            text-decoration: underline;
+        }
+        .tracking-input {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .carrier-select, .tracking-input-field {
+            background: var(--dark-bg);
+            border: 1px solid var(--border);
+            color: var(--text-light);
+            padding: 6px 8px;
+            font-size: 0.75rem;
+            font-family: var(--font-body);
+        }
+        .carrier-select:focus, .tracking-input-field:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+        .btn-add-tracking {
+            background: var(--accent-green);
+            color: var(--text-light);
+            border: none;
+            padding: 6px 10px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-add-tracking:hover {
+            background: #3d7a55;
+        }
         .amount {
             font-family: var(--font-heading);
             color: var(--gold);
@@ -432,6 +488,7 @@
                             <th>ITEMS</th>
                             <th>AMOUNT</th>
                             <th>STATUS</th>
+                            <th>TRACKING</th>
                             <th>NOTES</th>
                         </tr>
                     </thead>
@@ -536,6 +593,27 @@
                     'delivered': 'DELIVERED'
                 }[order.status] || 'PAID';
 
+                const trackingHtml = order.trackingNumber ? 
+                    `<div class="tracking-info">
+                        <div class="tracking-carrier">${getCarrierName(order.carrier)}</div>
+                        <div class="tracking-number">${order.trackingNumber}</div>
+                        <a href="${getTrackingUrl(order.carrier, order.trackingNumber)}" target="_blank" class="tracking-link">Track →</a>
+                    </div>` : 
+                    `<div class="tracking-input">
+                        <select id="carrier-${order.orderId}" class="carrier-select">
+                            <option value="">Select Carrier</option>
+                            <option value="ups">UPS</option>
+                            <option value="fedex">FedEx</option>
+                            <option value="dhl">DHL</option>
+                            <option value="usps">USPS</option>
+                            <option value="sf">SF Express</option>
+                            <option value="ems">EMS</option>
+                            <option value="other">Other</option>
+                        </select>
+                        <input type="text" id="tracking-${order.orderId}" placeholder="Tracking #" class="tracking-input-field">
+                        <button onclick="addTracking('${order.orderId}')" class="btn-add-tracking">Add</button>
+                    </div>`;
+
                 return `
                     <tr>
                         <td><span class="order-id">${order.orderId}</span></td>
@@ -556,6 +634,7 @@
                                 <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>Delivered</option>
                             </select>
                         </td>
+                        <td class="tracking-cell">${trackingHtml}</td>
                         <td class="order-notes">${order.orderNotes || '-'}</td>
                     </tr>
                 `;
@@ -612,6 +691,59 @@
                 showNotification('Status updated');
                 filterOrders();
             }
+        }
+
+        // Add tracking information
+        function addTracking(orderId) {
+            const carrier = document.getElementById(`carrier-${orderId}`).value;
+            const trackingNumber = document.getElementById(`tracking-${orderId}`).value.trim();
+
+            if (!carrier || !trackingNumber) {
+                alert('Please select a carrier and enter tracking number');
+                return;
+            }
+
+            let orders = JSON.parse(localStorage.getItem('mingli_orders') || '[]');
+            const order = orders.find(o => o.orderId === orderId);
+            if (order) {
+                order.carrier = carrier;
+                order.trackingNumber = trackingNumber;
+                // Auto update status to shipped if not already
+                if (order.status === 'paid' || order.status === 'processing') {
+                    order.status = 'shipped';
+                }
+                localStorage.setItem('mingli_orders', JSON.stringify(orders));
+                showNotification('Tracking info added');
+                filterOrders();
+            }
+        }
+
+        // Get carrier display name
+        function getCarrierName(carrier) {
+            const names = {
+                'ups': 'UPS',
+                'fedex': 'FedEx',
+                'dhl': 'DHL',
+                'usps': 'USPS',
+                'sf': 'SF Express',
+                'ems': 'EMS',
+                'other': 'Other'
+            };
+            return names[carrier] || carrier;
+        }
+
+        // Get tracking URL
+        function getTrackingUrl(carrier, trackingNumber) {
+            const urls = {
+                'ups': `https://www.ups.com/track?tracknum=${trackingNumber}`,
+                'fedex': `https://www.fedex.com/apps/fedextrack/?tracknumbers=${trackingNumber}`,
+                'dhl': `https://www.dhl.com/en/express/tracking.html?AWB=${trackingNumber}&brand=DHL`,
+                'usps': `https://tools.usps.com/go/TrackConfirmAction?tLabels=${trackingNumber}`,
+                'sf': `https://www.sf-express.com/us/en/dynamic_function/waybill/#search/bill-number/${trackingNumber}`,
+                'ems': `https://www.ems.post/en/global-network/tracking?tracking=${trackingNumber}`,
+                'other': '#'
+            };
+            return urls[carrier] || '#';
         }
 
         // Export to CSV

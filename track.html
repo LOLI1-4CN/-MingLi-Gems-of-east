@@ -264,6 +264,73 @@
             color: var(--text-muted);
         }
 
+        /* Tracking Section */
+        .tracking-section {
+            margin-top: 32px;
+            padding: 32px;
+            background: linear-gradient(135deg, rgba(201,169,110,0.1), rgba(201,169,110,0.05));
+            border: 1px solid var(--border);
+        }
+        .tracking-section h3 {
+            font-family: var(--font-heading);
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            color: var(--gold);
+            margin-bottom: 20px;
+        }
+        .tracking-box {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .tracking-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .tracking-carrier {
+            font-family: var(--font-heading);
+            font-size: 1.2rem;
+            color: var(--gold);
+            letter-spacing: 2px;
+        }
+        .tracking-status {
+            background: rgba(70,130,180,0.3);
+            color: #87CEEB;
+            padding: 4px 12px;
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+        }
+        .tracking-number-display {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        .tracking-number-display .number {
+            font-family: monospace;
+            font-size: 1.1rem;
+            color: var(--text-light);
+            letter-spacing: 1px;
+        }
+        .btn-track {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 24px;
+            background: var(--gold);
+            color: var(--black);
+            text-decoration: none;
+            font-family: var(--font-heading);
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            transition: all 0.3s;
+        }
+        .btn-track:hover {
+            background: var(--gold-dark);
+            color: var(--text-light);
+        }
+
         /* Items List */
         .items-list {
             margin-top: 32px;
@@ -463,6 +530,25 @@
                 </div>
             </div>
 
+            <!-- Tracking Info -->
+            <div class="tracking-section" id="trackingSection" style="display: none;">
+                <h3>SHIPPING INFORMATION</h3>
+                <div class="tracking-box">
+                    <div class="tracking-header">
+                        <span class="tracking-carrier" id="trackingCarrier">FedEx</span>
+                        <span class="tracking-status" id="trackingStatus">In Transit</span>
+                    </div>
+                    <div class="tracking-number-display">
+                        <span class="label">Tracking Number:</span>
+                        <span class="number" id="trackingNumber">1234567890</span>
+                    </div>
+                    <a href="#" target="_blank" class="btn-track" id="trackingLink">
+                        Track Your Package
+                        <span>→</span>
+                    </a>
+                </div>
+            </div>
+
             <!-- Items -->
             <div class="items-list">
                 <h3>ORDER ITEMS</h3>
@@ -569,6 +655,37 @@
             document.getElementById('displayAddress').innerHTML = order.customerAddress.replace(/, /g, '<br>');
             document.getElementById('displayEmail').textContent = order.customerEmail;
             document.getElementById('displayPhone').textContent = order.customerPhone || 'Not provided';
+
+            // Tracking info
+            const trackingSection = document.getElementById('trackingSection');
+            if (order.trackingNumber) {
+                trackingSection.style.display = 'block';
+                const carrierNames = {
+                    'ups': 'UPS',
+                    'fedex': 'FedEx',
+                    'dhl': 'DHL',
+                    'usps': 'USPS',
+                    'sf': 'SF Express',
+                    'ems': 'EMS',
+                    'other': 'Other'
+                };
+                document.getElementById('trackingCarrier').textContent = carrierNames[order.carrier] || order.carrier;
+                document.getElementById('trackingNumber').textContent = order.trackingNumber;
+                
+                // Set tracking link
+                const trackingUrls = {
+                    'ups': `https://www.ups.com/track?tracknum=${order.trackingNumber}`,
+                    'fedex': `https://www.fedex.com/apps/fedextrack/?tracknumbers=${order.trackingNumber}`,
+                    'dhl': `https://www.dhl.com/en/express/tracking.html?AWB=${order.trackingNumber}&brand=DHL`,
+                    'usps': `https://tools.usps.com/go/TrackConfirmAction?tLabels=${order.trackingNumber}`,
+                    'sf': `https://www.sf-express.com/us/en/dynamic_function/waybill/#search/bill-number/${order.trackingNumber}`,
+                    'ems': `https://www.ems.post/en/global-network/tracking?tracking=${order.trackingNumber}`,
+                    'other': '#'
+                };
+                document.getElementById('trackingLink').href = trackingUrls[order.carrier] || '#';
+            } else {
+                trackingSection.style.display = 'none';
+            }
 
             // Items
             const items = JSON.parse(order.items || '[]');
