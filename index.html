@@ -1734,7 +1734,7 @@
                     </div>
                     <div class="summary-row">
                         <span class="summary-label">Number of Beads</span>
-                        <span class="summary-value" id="summaryCount">6 beads</span>
+                        <span class="summary-value" id="summaryCount">11 beads (actual count may vary)</span>
                     </div>
                     <div class="summary-row">
                         <span class="summary-label">Size</span>
@@ -2346,8 +2346,10 @@
         const size = document.getElementById('braceletSize');
         const engraving = document.getElementById('engraving');
         const price = beadPrices[selectedBead] + 15;
+        const beadCount = 5;
+        const totalBeads = beadCount * 2 + 1;
         document.getElementById('summaryBead').textContent = selectedBead.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase());
-        document.getElementById('summaryCount').textContent = '11 beads';
+        document.getElementById('summaryCount').textContent = totalBeads + ' beads (actual count may vary)';
         document.getElementById('summarySize').textContent = size.options[size.selectedIndex].text.split('(')[0].trim();
         document.getElementById('summaryEngraving').textContent = engraving.value || '—';
         document.getElementById('totalPrice').textContent = '$' + price;
