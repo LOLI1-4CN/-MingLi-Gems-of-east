@@ -2759,6 +2759,19 @@
                     // Save order to system
                     const orderId = await saveOrder(details.id, details);
                     
+                    // Send order notification email
+                    const totalEl = document.getElementById('checkoutTotal');
+                    const total = parseFloat(totalEl.textContent.replace('$', '')) || 0;
+                    sendOrderNotification({
+                        orderId: orderId,
+                        customerName: currentCustomerInfo.name,
+                        customerEmail: currentCustomerInfo.email,
+                        customerPhone: currentCustomerInfo.phone,
+                        customerAddress: `${currentCustomerInfo.address}, ${currentCustomerInfo.city}, ${currentCustomerInfo.zip}, ${currentCustomerInfo.country}`,
+                        items: [...cartItems],
+                        total: total
+                    });
+                    
                     // Payment successful
                     showNotification('✓ Payment successful! Thank you for your order.');
                     cartItems = [];
@@ -2823,6 +2836,35 @@
 
 <!-- PayPal SDK - Loaded before checkout -->
 <script src="https://www.paypal.com/sdk/js?client-id=ATbJASLRcGGhO-_rZfA0Ma67XpkZnP3AQnvIAVRMp54u0wpLDZWWDDmo473sHbxPyzLastXkNrZfPijZ&currency=USD&intent=capture&components=buttons" defer></script>
+
+<!-- EmailJS SDK - Order Notification -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+    // Initialize EmailJS
+    emailjs.init("9WAT2RsSP-mMEGQErFUxD");
+    
+    // Send order notification email
+    function sendOrderNotification(orderData) {
+        const templateParams = {
+            order_id: orderData.orderId,
+            order_time: new Date().toLocaleString('zh-CN'),
+            customer_name: orderData.customerName,
+            customer_email: orderData.customerEmail,
+            customer_phone: orderData.customerPhone,
+            customer_address: orderData.customerAddress,
+            order_items: orderData.items.map(item => `${item.name} x${item.quantity} - $${item.price}`).join('\n'),
+            total_amount: orderData.total.toFixed(2),
+            email: '75576061@qq.com'
+        };
+        
+        emailjs.send('service_l51cwsj', 'template_17rkt5v', templateParams)
+            .then(function(response) {
+                console.log('Order notification email sent:', response.status, response.text);
+            }, function(error) {
+                console.error('Failed to send order notification:', error);
+            });
+    }
+</script>
 
 <!-- Botpress Webchat Widget -->
 <script src="https://cdn.botpress.cloud/webchat/v3.6/inject.js"></script>
