@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Not Found — MingLi Gems</title>
+    <meta name="description" content="Page not found. Return to MingLi Gems for personalized Chinese fortune bracelets.">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Noto+Serif+SC:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #C9A96E;
+            --gold-dark: #8B6914;
+            --black: #1A1A1A;
+            --dark-bg: #0D0D0D;
+            --warm-gray: #2A2A2A;
+            --text-light: #F5F0E8;
+            --text-muted: #9A8F7E;
+            --border: rgba(201,169,110,0.2);
+            --font-heading: 'Cinzel', serif;
+            --font-body: 'Playfair Display', serif;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            background: var(--dark-bg);
+            color: var(--text-light);
+            font-family: var(--font-body);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px;
+        }
+        .container { max-width: 600px; }
+        .error-code {
+            font-family: var(--font-heading);
+            font-size: 8rem;
+            color: var(--gold);
+            line-height: 1;
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+        .error-title {
+            font-family: var(--font-heading);
+            font-size: 1.8rem;
+            letter-spacing: 4px;
+            margin-bottom: 16px;
+        }
+        .error-desc {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+            line-height: 1.8;
+        }
+        .divider {
+            width: 60px;
+            height: 1px;
+            background: var(--gold);
+            margin: 30px auto;
+        }
+        .btn-home {
+            display: inline-block;
+            padding: 16px 40px;
+            background: var(--gold);
+            color: var(--black);
+            text-decoration: none;
+            font-family: var(--font-heading);
+            font-size: 0.85rem;
+            letter-spacing: 3px;
+            transition: all 0.3s;
+            border: 1px solid var(--gold);
+        }
+        .btn-home:hover {
+            background: transparent;
+            color: var(--gold);
+        }
+        .links {
+            margin-top: 40px;
+            display: flex;
+            gap: 24px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.3s;
+        }
+        .links a:hover { color: var(--gold); }
+        .symbol {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.6;
+        }
+        @media (max-width: 600px) {
+            .error-code { font-size: 5rem; }
+            .error-title { font-size: 1.3rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="symbol">☯</div>
+        <div class="error-code">404</div>
+        <h1 class="error-title">Page Not Found</h1>
+        <div class="divider"></div>
+        <p class="error-desc">
+            The page you are looking for seems to have wandered off its destined path.<br>
+            Perhaps the energies have shifted, or the URL has been reincarnated.
+        </p>
+        <a href="/" class="btn-home">Return to Home</a>
+        <div class="links">
+            <a href="/bazi.html">Your Fortune</a>
+            <a href="/#collection">Collection</a>
+            <a href="/#customize">Customize</a>
+            <a href="/track.html">Track Order</a>
+        </div>
+    </div>
+</body>
+</html>

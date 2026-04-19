@@ -13,6 +13,21 @@
     <meta name="twitter:card" content="summary_large_image">
     <link rel="canonical" href="https://fengshui-east.com">
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Noto+Serif+SC:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- Schema.org Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "MingLi Gems",
+      "url": "https://fengshui-east.com",
+      "logo": "https://fengshui-east.com/logo.png",
+      "description": "Personalized Chinese fortune bracelets based on BaZi birth charts and Five Elements",
+      "sameAs": [
+        "https://instagram.com/mingligems",
+        "https://tiktok.com/@mingligems"
+      ]
+    }
+    </script>
     <!-- Matomo Analytics -->
     <script>
       var _paq = window._paq = window._paq || [];
@@ -27,8 +42,6 @@
       })();
     </script>
     <!-- End Matomo Code -->
-    <!-- PayPal SDK - Live Mode (Production) -->
-    <script src="https://www.paypal.com/sdk/js?client-id=ATbJASLRcGGhO-_rZfA0Ma67XpkZnP3AQnvIAVRMp54u0wpLDZWWDDmo473sHbxPyzLastXkNrZfPijZ&currency=USD&intent=capture&components=buttons"></script>
     <style>
         :root {
             --gold: #C9A96E;
@@ -1351,8 +1364,29 @@
             z-index: 10000;
             transform: translateX(120%);
             transition: transform 0.4s;
+            max-width: 320px;
+            border-radius: 4px;
         }
         .notification.show { transform: translateX(0); }
+        .notification.success { border-color: var(--accent-green); }
+        .notification.error { border-color: var(--accent-red); }
+        
+        /* Loading State */
+        .loading-overlay {
+            position: fixed; inset: 0;
+            background: rgba(13,13,13,0.9);
+            display: none; align-items: center; justify-content: center;
+            z-index: 20000;
+        }
+        .loading-overlay.show { display: flex; }
+        .loading-spinner {
+            width: 50px; height: 50px;
+            border: 3px solid var(--border);
+            border-top-color: var(--gold);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
@@ -1476,8 +1510,8 @@
             <div class="section-line"></div>
         </div>
         <div class="collection-grid">
-            <div class="product-card fade-in" onclick="addToCart('Pixiu Wealth Bracelet', 89)">
-                <div class="product-img" style="background: url('images/貔貅聚宝手串.png') center/cover no-repeat;">
+            <div class="product-card fade-in" onclick="addToCart('Pixiu Wealth Bracelet', 129)">
+                <div class="product-img" style="background: url('images/貔貅聚宝手串.png') center/cover no-repeat;" role="img" aria-label="Black Obsidian Pixiu Wealth Bracelet with golden mantra beads - Handmade Chinese Feng Shui jewelry for prosperity">
                     <div class="overlay">
                         <span class="btn-primary" style="padding:10px 24px;font-size:0.7rem;">View Details</span>
                     </div>
@@ -1488,14 +1522,14 @@
                     <h3 class="product-name">Pixiu Wealth Bracelet</h3>
                     <p class="product-name-zh">貔貅聚宝手串</p>
                     <div class="product-price">
-                        <span class="price-current">$89</span>
-                        <span class="price-original">$129</span>
+                        <span class="price-current">$129</span>
+                        <span class="price-original">$159</span>
                     </div>
                     <span class="product-tag">BLACK OBSIDIAN</span>
                 </div>
             </div>
-            <div class="product-card fade-in" onclick="addToCart('Five Elements Balance Bracelet', 109)">
-                <div class="product-img" style="background: url('images/五行.png') center/cover no-repeat;">
+            <div class="product-card fade-in" onclick="addToCart('Five Elements Balance Bracelet', 99)">
+                <div class="product-img" style="background: url('images/五行.png') center/cover no-repeat;" role="img" aria-label="Five Elements Balance Bracelet with Wood Fire Earth Metal Water crystals - Chinese metaphysics jewelry for harmony">
                     <div class="overlay">
                         <span class="btn-primary" style="padding:10px 24px;font-size:0.7rem;">View Details</span>
                     </div>
@@ -1506,14 +1540,14 @@
                     <h3 class="product-name">Five Elements Bracelet</h3>
                     <p class="product-name-zh">五行调和手串</p>
                     <div class="product-price">
-                        <span class="price-current">$109</span>
-                        <span class="price-original">$159</span>
+                        <span class="price-current">$99</span>
+                        <span class="price-original">$139</span>
                     </div>
                     <span class="product-tag">MIXED GEMSTONES</span>
                 </div>
             </div>
-            <div class="product-card fade-in" onclick="addToCart('Green Jade Prosperity Bracelet', 149)">
-                <div class="product-img" style="background: url('images/翡翠.png') center/cover no-repeat;">
+            <div class="product-card fade-in" onclick="addToCart('Green Jade Prosperity Bracelet', 159)">
+                <div class="product-img" style="background: url('images/翡翠.png') center/cover no-repeat;" role="img" aria-label="Natural Nephrite Jade Bracelet - Chinese lucky charm for health and longevity with mountain landscape background">
                     <div class="overlay">
                         <span class="btn-primary" style="padding:10px 24px;font-size:0.7rem;">View Details</span>
                     </div>
@@ -1523,13 +1557,14 @@
                     <h3 class="product-name">Jade Prosperity Bracelet</h3>
                     <p class="product-name-zh">翡翠平安手串</p>
                     <div class="product-price">
-                        <span class="price-current">$149</span>
+                        <span class="price-current">$159</span>
+                        <span class="price-original">$199</span>
                     </div>
                     <span class="product-tag">NEPHRITE JADE</span>
                 </div>
             </div>
-            <div class="product-card fade-in" onclick="addToCart('Red String Fate Bracelet', 79)">
-                <div class="product-img" style="background: url('images/红绳.png') center/cover no-repeat;">
+            <div class="product-card fade-in" onclick="addToCart('Red String Fate Bracelet', 49)">
+                <div class="product-img" style="background: url('images/红绳.png') center/cover no-repeat;" role="img" aria-label="Red String of Fate Bracelet with gold fortune charm - Chinese love and marriage lucky bracelet handmade with moonstone beads">
                     <div class="overlay">
                         <span class="btn-primary" style="padding:10px 24px;font-size:0.7rem;">View Details</span>
                     </div>
@@ -1540,8 +1575,8 @@
                     <h3 class="product-name">Red String of Fate</h3>
                     <p class="product-name-zh">姻缘红绳手串</p>
                     <div class="product-price">
-                        <span class="price-current">$79</span>
-                        <span class="price-original">$99</span>
+                        <span class="price-current">$49</span>
+                        <span class="price-original">$79</span>
                     </div>
                     <span class="product-tag">ROSE QUARTZ + AGATE</span>
                 </div>
@@ -2582,15 +2617,43 @@
         const city = document.getElementById('customerCity').value.trim();
         const zip = document.getElementById('customerZip').value.trim();
         const country = document.getElementById('customerCountry').value.trim();
+        const phone = document.getElementById('customerPhone').value.trim();
 
-        // Validation
-        if (!name || !email || !address || !city || !zip || !country) {
-            showNotification('✗ Please fill in all required fields');
+        // Enhanced Validation
+        if (!name || name.length < 2) {
+            showNotification('✗ Please enter your full name (at least 2 characters)');
+            document.getElementById('customerName').focus();
             return;
         }
 
-        if (!email.includes('@') || !email.includes('.')) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
             showNotification('✗ Please enter a valid email address');
+            document.getElementById('customerEmail').focus();
+            return;
+        }
+
+        if (!address || address.length < 5) {
+            showNotification('✗ Please enter a valid street address');
+            document.getElementById('customerAddress').focus();
+            return;
+        }
+
+        if (!city || city.length < 2) {
+            showNotification('✗ Please enter your city');
+            document.getElementById('customerCity').focus();
+            return;
+        }
+
+        if (!zip || zip.length < 3) {
+            showNotification('✗ Please enter a valid postal code');
+            document.getElementById('customerZip').focus();
+            return;
+        }
+
+        if (!country || country.length < 2) {
+            showNotification('✗ Please enter your country');
+            document.getElementById('customerCountry').focus();
             return;
         }
 
@@ -2755,6 +2818,9 @@
         });
     });
 </script>
+
+<!-- PayPal SDK - Loaded before checkout -->
+<script src="https://www.paypal.com/sdk/js?client-id=ATbJASLRcGGhO-_rZfA0Ma67XpkZnP3AQnvIAVRMp54u0wpLDZWWDDmo473sHbxPyzLastXkNrZfPijZ&currency=USD&intent=capture&components=buttons" defer></script>
 
 <!-- Botpress Webchat Widget -->
 <script src="https://cdn.botpress.cloud/webchat/v3.6/inject.js"></script>
