@@ -498,6 +498,22 @@
             position: relative;
             overflow: hidden;
         }
+        .product-img img {
+            transition: transform 0.4s ease;
+            z-index: 1;
+        }
+        .product-card:hover .product-img img {
+            transform: scale(1.05);
+        }
+        .product-img .fallback-icon {
+            z-index: 2;
+        }
+        .product-img .overlay {
+            z-index: 3;
+        }
+        .product-badge {
+            z-index: 4;
+        }
         .product-img .overlay {
             position:absolute; inset:0;
             background: rgba(201,169,110,0.1);
@@ -1087,13 +1103,11 @@
             flex-wrap: nowrap;
             white-space: nowrap;
         }
-        .checkout-total span:first-child {
         .checkout-total > span:first-child {
             color: var(--text-light);
             font-size: 1.1rem;
             margin-right: 10px;
         }
-        .checkout-total span:last-child {
         #checkoutTotal {
             color: var(--gold);
             font-size: 1.4rem;
@@ -1454,6 +1468,15 @@
         .fade-in.visible {
             opacity: 1; transform: translateY(0);
         }
+        /* Ensure product cards are visible even if animation fails */
+        .product-card.fade-in {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .product-card.fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
 
         /* Notification */
         .notification {
@@ -1613,9 +1636,11 @@
         </div>
         <div class="collection-grid">
             <div class="product-card fade-in" onclick="addToCart('Pixiu Wealth Bracelet', 129)">
-                <div class="product-img" style="background: url('images/貔貅聚宝手串.png') center/cover no-repeat;" role="img" aria-label="Black Obsidian Pixiu Wealth Bracelet with golden mantra beads - Handmade Chinese Feng Shui jewelry for prosperity">
+                <div class="product-img" role="img" aria-label="Pixiu Wealth Bracelet">
+                    <img src="images/貔貅聚宝手串.png" alt="Pixiu Wealth Bracelet" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;" onerror="this.style.display='none';this.parentElement.querySelector('.fallback-icon').style.display='flex';">
+                    <div class="fallback-icon" style="display:none;align-items:center;justify-content:center;font-size:4rem;opacity:0.6;position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(135deg, #1a1208, #2d1f0a);">🐲</div>
                     <div class="overlay">
-                        <span class="btn-primary" style="padding:10px 24px;font-size:0.7rem;">View Details</span>
+                        <span class="btn-primary" style="padding:10px 24px;font-size:0.7rem;">Add to Cart</span>
                     </div>
                     <span class="product-badge">Best Seller</span>
                 </div>
@@ -1631,9 +1656,11 @@
                 </div>
             </div>
             <div class="product-card fade-in" onclick="addToCart('Five Elements Balance Bracelet', 99)">
-                <div class="product-img" style="background: url('images/五行.png') center/cover no-repeat;" role="img" aria-label="Five Elements Balance Bracelet with Wood Fire Earth Metal Water crystals - Chinese metaphysics jewelry for harmony">
+                <div class="product-img" role="img" aria-label="Five Elements Bracelet">
+                    <img src="images/五行.png" alt="Five Elements Bracelet" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;" onerror="this.style.display='none';this.parentElement.querySelector('.fallback-icon').style.display='flex';">
+                    <div class="fallback-icon" style="display:none;align-items:center;justify-content:center;font-size:4rem;opacity:0.6;position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(135deg, #0a1a0a, #1a3a2a);">☯</div>
                     <div class="overlay">
-                        <span class="btn-primary" style="padding:10px 24px;font-size:0.7rem;">View Details</span>
+                        <span class="btn-primary" style="padding:10px 24px;font-size:0.7rem;">Add to Cart</span>
                     </div>
                     <span class="product-badge">Popular</span>
                 </div>
@@ -1649,9 +1676,11 @@
                 </div>
             </div>
             <div class="product-card fade-in" onclick="addToCart('Green Jade Prosperity Bracelet', 159)">
-                <div class="product-img" style="background: url('images/翡翠.png') center/cover no-repeat;" role="img" aria-label="Natural Nephrite Jade Bracelet - Chinese lucky charm for health and longevity with mountain landscape background">
+                <div class="product-img" role="img" aria-label="Jade Prosperity Bracelet">
+                    <img src="images/翡翠.png" alt="Jade Prosperity Bracelet" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;" onerror="this.style.display='none';this.parentElement.querySelector('.fallback-icon').style.display='flex';">
+                    <div class="fallback-icon" style="display:none;align-items:center;justify-content:center;font-size:4rem;opacity:0.6;position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(135deg, #0a2a1a, #1a5a3a);">💚</div>
                     <div class="overlay">
-                        <span class="btn-primary" style="padding:10px 24px;font-size:0.7rem;">View Details</span>
+                        <span class="btn-primary" style="padding:10px 24px;font-size:0.7rem;">Add to Cart</span>
                     </div>
                 </div>
                 <div class="product-info">
@@ -1666,9 +1695,11 @@
                 </div>
             </div>
             <div class="product-card fade-in" onclick="addToCart('Red String Fate Bracelet', 49)">
-                <div class="product-img" style="background: url('images/红绳.png') center/cover no-repeat;" role="img" aria-label="Red String of Fate Bracelet with gold fortune charm - Chinese love and marriage lucky bracelet handmade with moonstone beads">
+                <div class="product-img" role="img" aria-label="Red String of Fate">
+                    <img src="images/红绳.png" alt="Red String of Fate" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;" onerror="this.style.display='none';this.parentElement.querySelector('.fallback-icon').style.display='flex';">
+                    <div class="fallback-icon" style="display:none;align-items:center;justify-content:center;font-size:4rem;opacity:0.6;position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(135deg, #2a0a0a, #5a1a1a);">❤️</div>
                     <div class="overlay">
-                        <span class="btn-primary" style="padding:10px 24px;font-size:0.7rem;">View Details</span>
+                        <span class="btn-primary" style="padding:10px 24px;font-size:0.7rem;">Add to Cart</span>
                     </div>
                     <span class="product-badge">New</span>
                 </div>
@@ -2193,7 +2224,7 @@
             <button class="checkout-close" onclick="closeCheckout()">×</button>
             <h3 class="checkout-title">Your Order</h3>
             <div class="checkout-items" id="checkoutItems"></div>
-                <div class="checkout-total">
+            <div class="checkout-total">
                 <span>Total:</span>
                 <span id="checkoutTotal" style="font-size:1.2rem;color:var(--gold);">$0.00</span>
             </div>
@@ -2570,10 +2601,8 @@
         let itemKey;
         let itemData;
 
-        if (typeof name === 'object') {
         if (typeof name === 'object' && name !== null) {
             itemKey = JSON.stringify({ name: name.name, details: name.details || '' });
-            itemData = { ...name, quantity: 1 };
             itemData = { 
                 name: name.name, 
                 price: parseFloat(name.price) || 0, 
@@ -2582,13 +2611,12 @@
             };
         } else {
             itemKey = name;
-            itemData = { name: name, price: price, quantity: 1 };
             itemData = { name: name, price: parseFloat(price) || 0, quantity: 1 };
         }
 
         // Check if item already exists
         const existingIndex = cartItems.findIndex(item => {
-            if (typeof name === 'object') {
+            if (typeof name === 'object' && name !== null) {
                 return JSON.stringify({ name: item.name, details: item.details || '' }) === itemKey;
             }
             return item.name === name;
@@ -2689,14 +2717,12 @@
                 let quantity = 1;
 
                 // Handle object format (new) or string format (legacy)
-                if (typeof item === 'object') {
                 if (typeof item === 'object' && item !== null) {
                     itemName = item.name || 'Custom Bracelet';
                     itemDetails = item.details || '';
                     itemPrice = parseFloat(item.price) || 89;
                     quantity = parseInt(item.quantity) || 1;
                 } else if (typeof item === 'string') {
-                    // Legacy string format
                     // Legacy string format - map to prices
                     itemName = item;
                     if (item.includes('Pixiu')) itemPrice = 129;
@@ -2740,13 +2766,10 @@
             itemsContainer.innerHTML = html;
 
             // Update total display
-            const finalTotal = calculatedTotal.toFixed(2);
-            // Update total display - ensure proper formatting
             const finalTotal = parseFloat(calculatedTotal).toFixed(2);
             totalEl.textContent = '$' + finalTotal;
 
             // Debug log
-            console.log('Cart Total:', finalTotal, 'Items:', cartItems.length);
             console.log('Cart Total:', finalTotal, 'Items:', cartItems.length, 'Raw:', calculatedTotal);
         }
 
