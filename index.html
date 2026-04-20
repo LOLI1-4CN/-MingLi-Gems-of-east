@@ -1711,10 +1711,10 @@
                     </div>
                     <p class="step-zh">手串尺寸</p>
                     <select class="select-custom" id="braceletSize">
-                        <option value="small">Small (16-17cm) — Women</option>
-                        <option value="medium" selected>Medium (18-19cm) — Most Adults</option>
-                        <option value="large">Large (20-21cm) — Men</option>
-                        <option value="xlarge">XL (22cm+) — Custom Fit</option>
+                        <option value="small" data-size-index="0">Small (16-17cm) — Women</option>
+                        <option value="medium" data-size-index="1" selected>Medium (18-19cm) — Most Adults +$5</option>
+                        <option value="large" data-size-index="2">Large (20-21cm) — Men +$10</option>
+                        <option value="xlarge" data-size-index="3">XL (22cm+) — Custom Fit +$15</option>
                     </select>
                 </div>
 
@@ -1744,17 +1744,21 @@
                         <span class="summary-label">Engraving</span>
                         <span class="summary-value" id="summaryEngraving">—</span>
                     </div>
+                    <div class="summary-row" id="sizePriceRow">
+                        <span class="summary-label">Size Upgrade</span>
+                        <span class="summary-value" id="sizePriceValue">+$5</span>
+                    </div>
                     <div class="summary-row">
                         <span class="summary-label">Custom Design Fee</span>
                         <span class="summary-value">+$15</span>
                     </div>
                     <div class="summary-total">
                         <span>Estimated Total</span>
-                        <span id="totalPrice">$89</span>
+                        <span id="totalPrice">$104</span>
                     </div>
                 </div>
                 <button class="btn-builder" onclick="addCustomToCart()">
-                    ✦ Add to Cart — <span id="btnPrice">$89</span> ✦
+                    ✦ Add to Cart — <span id="btnPrice">$104</span> ✦
                 </button>
                 <p style="text-align:center; margin-top:12px; font-size:0.75rem; color:var(--text-muted);">
                     Handcrafted in 3-5 days · Free shipping over $100
@@ -2359,9 +2363,24 @@
     function updateSummary() {
         const size = document.getElementById('braceletSize');
         const engraving = document.getElementById('engraving');
-        const price = beadPrices[selectedBead] + 15;
+        const selectedOption = size.options[size.selectedIndex];
+        const sizeIndex = parseInt(selectedOption.getAttribute('data-size-index')) || 0;
+        const sizePriceAdd = sizeIndex * 5; // Each size up adds $5
+        const basePrice = beadPrices[selectedBead] + 15;
+        const price = basePrice + sizePriceAdd;
         const beadCount = 5;
         const totalBeads = beadCount * 2 + 1;
+        
+        // Update size price display
+        const sizePriceRow = document.getElementById('sizePriceRow');
+        const sizePriceValue = document.getElementById('sizePriceValue');
+        if (sizePriceAdd > 0) {
+            sizePriceRow.style.display = 'flex';
+            sizePriceValue.textContent = '+$' + sizePriceAdd;
+        } else {
+            sizePriceRow.style.display = 'none';
+        }
+        
         document.getElementById('summaryBead').textContent = selectedBead.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase());
         document.getElementById('summaryCount').textContent = totalBeads + ' beads (actual count may vary)';
         document.getElementById('summarySize').textContent = size.options[size.selectedIndex].text.split('(')[0].trim();
@@ -2523,10 +2542,15 @@
     function addCustomToCart() {
         const engraving = document.getElementById('engraving').value;
         const bead = selectedBead;
-        const size = document.getElementById('braceletSize').value;
-        const price = beadPrices[bead] || 89;
+        const sizeSelect = document.getElementById('braceletSize');
+        const size = sizeSelect.value;
+        const selectedOption = sizeSelect.options[sizeSelect.selectedIndex];
+        const sizeIndex = parseInt(selectedOption.getAttribute('data-size-index')) || 0;
+        const sizePriceAdd = sizeIndex * 5; // Each size up adds $5
+        const basePrice = beadPrices[bead] || 89;
+        const price = basePrice + sizePriceAdd;
         const itemName = `Custom ${bead.charAt(0).toUpperCase() + bead.slice(1)} Bracelet`;
-        const itemDetails = `Size: ${size}mm${engraving ? ' | Engraving: ' + engraving : ''}`;
+        const itemDetails = `Size: ${size}${engraving ? ' | Engraving: ' + engraving : ''}`;
 
         addToCart({
             name: itemName,
