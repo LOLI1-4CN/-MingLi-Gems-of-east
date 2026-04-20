@@ -1087,11 +1087,13 @@
             flex-wrap: nowrap;
             white-space: nowrap;
         }
+        .checkout-total span:first-child {
         .checkout-total > span:first-child {
             color: var(--text-light);
             font-size: 1.1rem;
             margin-right: 10px;
         }
+        .checkout-total span:last-child {
         #checkoutTotal {
             color: var(--gold);
             font-size: 1.4rem;
@@ -1470,7 +1472,7 @@
         .notification.show { transform: translateX(0); }
         .notification.success { border-color: var(--accent-green); }
         .notification.error { border-color: var(--accent-red); }
-        
+
         /* Loading State */
         .loading-overlay {
             position: fixed; inset: 0;
@@ -1519,7 +1521,7 @@
             <li><a href="#astrology">Astrology</a></li>
             <li><a href="track.html">Track Order</a></li>
             <li><a href="#about">About</a></li>
-            <li><a href="#customize" class="nav-cta">Get Yours</a></li>
+            <li><a href="#customize" class="nav-cta">Master Custom</a></li>
         </ul>
         <button class="hamburger" onclick="openMobile()">
             <span></span><span></span><span></span>
@@ -1533,12 +1535,12 @@
         <div class="hero-content">
             <div class="hero-badge">✦ Ancient Wisdom · Modern Craft ✦</div>
             <h1 class="hero-title">MingLi Gems</h1>
-            <p class="hero-title-zh">命理手串 · 定制珠宝</p>
+            <p class="hero-title-zh">Destiny Bracelets · Bespoke Jewelry</p>
             <p class="hero-desc">
                 Discover your destiny through the art of Chinese metaphysics. Each bracelet is thoughtfully crafted to harmonize with your Five Elements, zodiac sign, and personal energy.
             </p>
             <div class="hero-actions">
-                <a href="#customize" class="btn-primary">Design Your Bracelet</a>
+                <a href="#customize" class="btn-primary">Book Master Custom</a>
                 <a href="#collection" class="btn-outline">Explore Collection</a>
             </div>
         </div>
@@ -1690,18 +1692,18 @@
                     <span class="product-badge" style="background: var(--gold); color: var(--black);">Premium</span>
                 </div>
                 <div class="product-info">
-                    <p class="product-category">Master Service · 师傅服务</p>
+                    <p class="product-category">Master Service · Personalized</p>
                     <h3 class="product-name">Destiny Bespoke Bracelet</h3>
                     <p class="product-name-zh">命理八字全定制手串</p>
                     <div class="product-price">
                         <span class="price-current">$269</span>
                     </div>
-                    <span class="product-tag">八字推算 · 五行补缺 · 开光加持</span>
+                    <span class="product-tag">BaZi Reading · Five Elements · Blessed</span>
                 </div>
             </div>
         </div>
         <div style="text-align:center; margin-top:50px;">
-            <a href="#customize" class="btn-outline">咨询师傅定制 →</a>
+            <a href="#customize" class="btn-outline">Consult Master Custom →</a>
         </div>
     </section>
 
@@ -1713,35 +1715,35 @@
             <p class="section-title-zh">Master Analysis & Blessed Customization</p>
             <div class="section-line"></div>
             <p style="max-width: 600px; margin: 20px auto; color: var(--text-muted); font-size: 0.95rem; line-height: 1.8;">
-                提供您的生辰八字，由资深命理师傅为您推算五行缺失，<br>
-                 handcrafted a personalized bracelet infused with blessing ceremonies.
+                Share your birth details for a personalized BaZi reading by our Feng Shui Master.<br>
+                Receive a custom-crafted bracelet blessed through traditional ceremonies to balance your Five Elements.
             </p>
         </div>
         <div class="builder-layout">
-            <!-- Preview -->
+            <!-- Preview - Master Service Display -->
             <div class="builder-preview">
                 <div class="bracelet-display" id="braceletDisplay" style="background: linear-gradient(135deg, rgba(201,169,110,0.1) 0%, rgba(139,37,0,0.05) 50%, rgba(46,89,65,0.1) 100%);">
                     <div style="text-align: center; padding: 40px 20px;">
                         <div style="font-size: 4rem; margin-bottom: 20px;">☯</div>
-                        <h3 style="color: var(--gold); font-family: var(--font-heading); margin-bottom: 16px; letter-spacing: 2px;">命理八字全定制</h3>
+                        <h3 style="color: var(--gold); font-family: var(--font-heading); margin-bottom: 16px; letter-spacing: 2px;">Destiny Bespoke</h3>
                         <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.8; max-width: 300px; margin: 0 auto;">
-                            传承千年命理智慧<br>
-                            师傅一对一八字推算<br>
-                            五行缺什么，手串补什么
+                            Ancient Wisdom, Modern Craft<br>
+                            One-on-One Master Reading<br>
+                            Balance What You Lack
                         </p>
                         <div style="margin-top: 30px; padding: 20px; background: rgba(0,0,0,0.3); border: 1px solid var(--border);">
                             <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 16px;">
                                 <div style="text-align: center;">
                                     <div style="font-size: 1.5rem;">📿</div>
-                                    <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 4px;">八字推算</div>
+                                    <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 4px;">BaZi Reading</div>
                                 </div>
                                 <div style="text-align: center;">
                                     <div style="font-size: 1.5rem;">☯</div>
-                                    <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 4px;">五行补缺</div>
+                                    <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 4px;">Five Elements</div>
                                 </div>
                                 <div style="text-align: center;">
                                     <div style="font-size: 1.5rem;">✦</div>
-                                    <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 4px;">开光加持</div>
+                                    <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 4px;">Blessing</div>
                                 </div>
                             </div>
                             <p style="color: var(--gold); font-size: 0.85rem; font-style: italic;">
@@ -1751,7 +1753,7 @@
                     </div>
                 </div>
                 <div style="margin-top:16px; padding: 12px; background: rgba(201,169,110,0.05); border: 1px solid var(--border); text-align: center;">
-                    <span style="color: var(--text-muted); font-size: 0.85rem;">师傅将根据您的生辰八字，为您量身定制专属手串</span>
+                    <span style="color: var(--text-muted); font-size: 0.85rem;">Our Feng Shui Master will craft your personalized bracelet based on your birth chart</span>
                 </div>
             </div>
 
@@ -1760,38 +1762,38 @@
                 <div class="step-section" style="background: rgba(201,169,110,0.05); padding: 24px; border: 1px solid var(--border);">
                     <div class="step-title">
                         <span class="step-num">1</span>
-                        师傅八字推算服务
+                        Master BaZi Analysis
                     </div>
-                    <p class="step-zh">Master BaZi Analysis Service</p>
+                    <p class="step-zh">Personal Destiny Reading</p>
                     <div style="background: var(--dark-bg); padding: 20px; border-left: 3px solid var(--gold); margin: 16px 0;">
                         <p style="color: var(--text-light); margin-bottom: 12px; font-size: 0.95rem;">
-                            <strong>无需自行选择珠子</strong><br>
-                            点击下方按钮提交您的生辰八字，我们的资深命理师傅将为您：
+                            <strong>No need to choose beads yourself</strong><br>
+                            Submit your birth details below. Our Feng Shui Master will:
                         </p>
                         <ul style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.8; margin-left: 20px;">
-                            <li>精确排盘，分析八字格局</li>
-                            <li>推算五行缺失与喜用神</li>
-                            <li>量身定制最适合的水晶搭配</li>
-                            <li>进行传统开光加持仪式</li>
+                            <li>Analyze your Eight Characters (BaZi) birth chart</li>
+                            <li>Calculate your Five Elements balance</li>
+                            <li>Craft the perfect crystal combination</li>
+                            <li>Perform traditional blessing ceremony</li>
                         </ul>
                     </div>
                     <button onclick="openFullCustomModal()" style="width: 100%; padding: 16px; background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: var(--black); border: none; font-family: var(--font-heading); font-size: 0.9rem; letter-spacing: 2px; cursor: pointer; margin-top: 16px;">
-                        提交生辰八字，开启定制 →
+                        Submit Birth Details →
                     </button>
                 </div>
 
                 <div class="step-section" style="background: rgba(46,89,65,0.1); padding: 24px; border: 1px solid var(--border);">
                     <div class="step-title">
                         <span class="step-num">2</span>
-                        师傅五行定制
+                        Five Elements Crafting
                     </div>
-                    <p class="step-zh">Master Five Elements Customization</p>
+                    <p class="step-zh">Personalized Crystal Selection</p>
                     <div style="text-align: center; padding: 20px;">
                         <div style="font-size: 3rem; margin-bottom: 16px;">☯</div>
                         <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.8;">
-                            师傅根据您的八字推算结果<br>
-                            为您<span style="color: var(--gold);">量身定制</span>最适合的水晶搭配<br>
-                            <span style="font-size: 0.8rem; opacity: 0.7;">五行缺失什么，手串补什么</span>
+                            Based on your BaZi reading,<br>
+                            the Master <span style="color: var(--gold);">tailors</span> your crystal selection<br>
+                            <span style="font-size: 0.8rem; opacity: 0.7;">Balance what you lack, enhance what you need</span>
                         </p>
                     </div>
                     <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 16px; text-align: center; font-size: 0.8rem; color: var(--text-muted);">
@@ -1803,36 +1805,36 @@
                     </div>
                 </div>
 
-                <div class="step-section" style="background: rgba(139,37,0,0.1); padding: 24px; border: 1px solid var(--border); margin-top: 20px;">
+                <div class="step-section" style="background: rgba(139,37,0,0.1); padding: 24px; border: 1px solid var(--border);">
                     <div class="step-title">
                         <span class="step-num">3</span>
-                        开光加持仪式
+                        Blessing Ceremony
                     </div>
-                    <p class="step-zh">Blessing Ceremony</p>
+                    <p class="step-zh">Sacred Activation Ritual</p>
                     <div style="text-align: center; padding: 20px;">
                         <div style="font-size: 2.5rem; margin-bottom: 12px;">✦</div>
                         <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.8;">
-                            每条手串均由师傅在吉时吉日进行开光<br>
-                            <span style="color: var(--gold);">注入吉祥能量，增强护佑功效</span>
+                            Each bracelet is blessed by the Master<br>
+                            <span style="color: var(--gold);">Infused with auspicious energy for your protection</span>
                         </p>
                     </div>
                 </div>
 
                 <div class="builder-summary" id="builderSummary" style="margin-top: 24px;">
                     <div style="text-align: center; padding: 20px; background: rgba(201,169,110,0.05); border: 1px solid var(--border); margin-bottom: 20px;">
-                        <h4 style="color: var(--gold); font-family: var(--font-heading); margin-bottom: 12px;">命理八字全定制服务</h4>
+                        <h4 style="color: var(--gold); font-family: var(--font-heading); margin-bottom: 12px;">Destiny Bespoke Service</h4>
                         <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.6;">
-                            八字排盘 · 五行推算 · 定制配珠 · 开光加持
+                            BaZi Reading · Five Elements · Custom Crafting · Sacred Blessing
                         </p>
                         <div style="font-size: 2rem; color: var(--gold); margin: 16px 0;">$269</div>
-                        <p style="color: var(--text-muted); font-size: 0.8rem;">制作周期 7-10 天</p>
+                        <p style="color: var(--text-muted); font-size: 0.8rem;">Crafting Time: 7-10 Days</p>
                     </div>
                 </div>
                 <button class="btn-builder" onclick="openFullCustomModal()" style="background: linear-gradient(135deg, var(--gold), var(--gold-dark)); font-size: 1rem;">
-                    ✦ 立即预约师傅定制 ✦
+                    ✦ Book Master Custom Now ✦
                 </button>
                 <p style="text-align:center; margin-top:12px; font-size:0.75rem; color:var(--text-muted);">
-                    资深命理师傅一对一服务 · 传统开光仪式 · 免费全球配送
+                    Personal Feng Shui Master Service · Sacred Blessing Ceremony · Free Global Shipping
                 </p>
             </div>
         </div>
@@ -1847,9 +1849,9 @@
             <div class="section-line"></div>
         </div>
         <div class="astro-section">
-            <p style="color:var(--text-muted); margin-bottom:20px; font-size:0.9rem; text-align:center;">
-                Enter your birth details to discover your dominant Five Elements and get personalized bracelet recommendations.
-            </p>
+                <p style="color:var(--text-muted); margin-bottom:20px; font-size:0.9rem; text-align:center;">
+                    Enter your birth details to discover your dominant Five Elements and receive personalized bracelet recommendations from our Feng Shui Master.
+                </p>
             <div style="display:grid; gap:12px;">
                 <select class="select-custom" id="astroYear">
                     <option value="">Select Birth Year</option>
@@ -1973,7 +1975,7 @@
     <div class="newsletter">
         <span class="section-label">Stay Connected</span>
         <h2 class="section-title" style="font-size:2rem;">Join the MingLi Circle</h2>
-        <p class="section-title-zh">订阅获取命理资讯与专属折扣</p>
+        <p class="section-title-zh">Feng Shui Tips & Exclusive Discounts</p>
         <form class="newsletter-form" onsubmit="return subscribeNewsletter(event)">
             <input type="email" class="newsletter-input" placeholder="Enter your email address" required>
             <button type="submit" class="newsletter-btn">Subscribe</button>
@@ -2072,58 +2074,58 @@
             <button class="fullcustom-close" onclick="closeFullCustomModal()">×</button>
             <div class="fullcustom-header">
                 <span class="fullcustom-badge">✦ Mastercrafted Divination ✦</span>
-                <h2 class="fullcustom-title">命理八字全定制</h2>
-                <p class="fullcustom-subtitle">Master Analysis · 师傅推算 · 开光加持</p>
+                <h2 class="fullcustom-title">Destiny Bespoke</h2>
+                <p class="fullcustom-subtitle">Master Analysis · Personal Reading · Sacred Blessing</p>
                 <div class="fullcustom-price">$269</div>
             </div>
-            
+
             <div class="fullcustom-form">
                 <p class="form-intro" style="background: rgba(201,169,110,0.1); padding: 16px; border-left: 3px solid var(--gold); margin-bottom: 24px;">
-                    <strong>Service Process · 服务流程</strong><br>
-                    ① 提供生辰八字 → ② 师傅推算五行缺失 → ③ 定制专属手串 → ④ 开光加持<br>
-                    <span style="color: var(--gold); font-size: 0.9rem;">Your birth chart will be analyzed by our Feng Shui master to determine your Five Elements balance and create a personalized blessed bracelet.</span>
+                    <strong>Service Process</strong><br>
+                    ① Submit Birth Details → ② Master Analyzes Five Elements → ③ Custom Bracelet Crafted → ④ Sacred Blessing<br>
+                    <span style="color: var(--gold); font-size: 0.9rem;">Your birth chart will be analyzed by our Feng Shui Master to determine your Five Elements balance and create a personalized blessed bracelet.</span>
                 </p>
-                
-                <div class="form-section-title">Birth Information · 出生信息</div>
+
+                <div class="form-section-title">Birth Information</div>
                 <div class="fullcustom-grid">
                     <div class="form-group">
-                        <label class="form-label">Birth Year · 出生年</label>
+                        <label class="form-label">Birth Year</label>
                         <div class="select-wrapper">
                             <select class="form-select" id="customYear"></select>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Birth Month · 出生月</label>
+                        <label class="form-label">Birth Month</label>
                         <div class="select-wrapper">
                             <select class="form-select" id="customMonth"></select>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Birth Day · 出生日</label>
+                        <label class="form-label">Birth Day</label>
                         <div class="select-wrapper">
                             <select class="form-select" id="customDay"></select>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Birth Hour · 出生时</label>
+                        <label class="form-label">Birth Hour</label>
                         <div class="select-wrapper">
                             <select class="form-select" id="customHour"></select>
                         </div>
                     </div>
                 </div>
 
-                <div class="form-section-title">Personal Details · 个人信息</div>
+                <div class="form-section-title">Personal Details</div>
                 <div class="fullcustom-grid">
                     <div class="form-group">
-                        <label class="form-label">Gender · 性别</label>
+                        <label class="form-label">Gender</label>
                         <div class="radio-group">
                             <label class="radio-label">
                                 <input type="radio" name="customGender" value="male" checked>
-                                <span>Male · 男</span>
+                                <span>Male</span>
                             </label>
                             <label class="radio-label">
                                 <input type="radio" name="customGender" value="female">
-                                <span>Female · 女</span>
+                                <span>Female</span>
                             </label>
                         </div>
                     </div>
@@ -2151,36 +2153,36 @@
                     <div class="info-item">
                         <span class="info-icon">☯</span>
                         <div>
-                            <strong>BaZi Analysis · 八字推算</strong>
-                            <p>资深命理师傅根据您的生辰八字，精确推算五行缺失与喜用神</p>
+                            <strong>BaZi Analysis</strong>
+                            <p>Our Feng Shui Master analyzes your birth chart to calculate Five Elements balance</p>
                         </div>
                     </div>
                     <div class="info-item">
                         <span class="info-icon">✦</span>
                         <div>
-                            <strong>Blessing Ceremony · 开光加持</strong>
-                            <p>传统仪式开光，注入吉祥能量，增强手串灵性与护佑力</p>
+                            <strong>Blessing Ceremony</strong>
+                            <p>Traditional blessing ritual to infuse auspicious energy and protective power</p>
                         </div>
                     </div>
                     <div class="info-item">
                         <span class="info-icon">⏱</span>
                         <div>
-                            <strong>Crafting Time · 制作周期</strong>
-                            <p>7-10天精心制作，确保每颗珠子都符合您的命理需求</p>
+                            <strong>Crafting Time</strong>
+                            <p>7-10 days of careful crafting, ensuring each bead aligns with your destiny</p>
                         </div>
                     </div>
                     <div class="info-item">
                         <span class="info-icon">🎁</span>
                         <div>
-                            <strong>Gift Package · 礼盒包装</strong>
-                            <p> luxury silk box + Five Elements analysis report + Certificate of blessing</p>
+                            <strong>Gift Package</strong>
+                            <p>Luxury silk box + Five Elements analysis report + Certificate of blessing</p>
                         </div>
                     </div>
                 </div>
             </div>
 
             <button class="btn-fullcustom" onclick="addFullCustomToCart()">
-                ✦ 提交八字定制 — $269 ✦
+                ✦ Submit Custom Order — $269 ✦
             </button>
         </div>
     </div>
@@ -2191,11 +2193,11 @@
             <button class="checkout-close" onclick="closeCheckout()">×</button>
             <h3 class="checkout-title">Your Order</h3>
             <div class="checkout-items" id="checkoutItems"></div>
-            <div class="checkout-total">
-                <span>Total / 总计:</span>
-                <span id="checkoutTotal">$0.00</span>
+                <div class="checkout-total">
+                <span>Total:</span>
+                <span id="checkoutTotal" style="font-size:1.2rem;color:var(--gold);">$0.00</span>
             </div>
-            
+
             <!-- Customer Information Form -->
             <div class="customer-info-section" id="customerInfoSection">
                 <h4 class="customer-info-title">Shipping Information</h4>
@@ -2226,13 +2228,13 @@
                     <span>→</span>
                 </button>
             </div>
-            
+
             <!-- Payment Section -->
             <div class="payment-section" id="paymentSection" style="display: none;">
                 <button class="btn-back" onclick="showCustomerForm()">← Back to Information</button>
                 <div id="paypal-button-container"></div>
             </div>
-            
+
             <p class="checkout-note">🔒 Secure payment powered by PayPal. You can pay with credit card or PayPal account.</p>
         </div>
     </div>
@@ -2280,12 +2282,12 @@
 
     // Populate years for full custom (1920-2025)
     for (let y = 2025; y >= 1920; y--) {
-        customYear.add(new Option(y + ' 年', y));
+        customYear.add(new Option(y, y));
     }
 
     // Populate months
     for (let m = 1; m <= 12; m++) {
-        customMonth.add(new Option(m + ' 月', m));
+        customMonth.add(new Option(m, m));
     }
 
     // Populate hours (Shichen)
@@ -2314,7 +2316,7 @@
         const daysInMonth = new Date(year, month, 0).getDate();
         customDay.innerHTML = '';
         for (let d = 1; d <= daysInMonth; d++) {
-            customDay.add(new Option(d + ' 日', d));
+            customDay.add(new Option(d, d));
         }
     }
     customMonth.addEventListener('change', updateCustomDays);
@@ -2348,7 +2350,7 @@
         }
 
         const itemName = `Destiny Bespoke Bracelet (Full Custom)`;
-        const itemDetails = `Birth: ${year}/${month}/${day} ${hourLabel}时 | Size: ${size}cm | Gender: ${gender}`;
+        const itemDetails = `Birth: ${year}/${month}/${day} ${hourLabel}h | Size: ${size}cm | Gender: ${gender}`;
 
         addToCart({
             name: itemName,
@@ -2376,11 +2378,11 @@
     }
     const astroMonth = document.getElementById('astroMonth');
     for (let m = 1; m <= 12; m++) {
-        astroMonth.add(new Option(m + ' 月', m));
+        astroMonth.add(new Option(m, m));
     }
     const astroDay = document.getElementById('astroDay');
     for (let d = 1; d <= 31; d++) {
-        astroDay.add(new Option(d + ' 日', d));
+        astroDay.add(new Option(d, d));
     }
 
     // ===== NAVBAR SCROLL =====
@@ -2452,7 +2454,7 @@
         const price = basePrice + sizePriceAdd;
         const beadCount = 5;
         const totalBeads = beadCount * 2 + 1;
-        
+
         // Update size price display
         const sizePriceRow = document.getElementById('sizePriceRow');
         const sizePriceValue = document.getElementById('sizePriceValue');
@@ -2462,7 +2464,7 @@
         } else {
             sizePriceRow.style.display = 'none';
         }
-        
+
         document.getElementById('summaryBead').textContent = selectedBead.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase());
         document.getElementById('summaryCount').textContent = totalBeads + ' beads (actual count may vary)';
         document.getElementById('summarySize').textContent = size.options[size.selectedIndex].text.split('(')[0].trim();
@@ -2568,8 +2570,10 @@
         let itemKey;
         let itemData;
 
+        if (typeof name === 'object') {
         if (typeof name === 'object' && name !== null) {
             itemKey = JSON.stringify({ name: name.name, details: name.details || '' });
+            itemData = { ...name, quantity: 1 };
             itemData = { 
                 name: name.name, 
                 price: parseFloat(name.price) || 0, 
@@ -2578,6 +2582,7 @@
             };
         } else {
             itemKey = name;
+            itemData = { name: name, price: price, quantity: 1 };
             itemData = { name: name, price: parseFloat(price) || 0, quantity: 1 };
         }
 
@@ -2684,12 +2689,14 @@
                 let quantity = 1;
 
                 // Handle object format (new) or string format (legacy)
+                if (typeof item === 'object') {
                 if (typeof item === 'object' && item !== null) {
                     itemName = item.name || 'Custom Bracelet';
                     itemDetails = item.details || '';
                     itemPrice = parseFloat(item.price) || 89;
                     quantity = parseInt(item.quantity) || 1;
                 } else if (typeof item === 'string') {
+                    // Legacy string format
                     // Legacy string format - map to prices
                     itemName = item;
                     if (item.includes('Pixiu')) itemPrice = 129;
@@ -2713,7 +2720,7 @@
 
                 const itemTotal = itemPrice * quantity;
                 calculatedTotal += itemTotal;
-                
+
                 html += `<div class="checkout-item" data-index="${index}">
                     <div class="checkout-item-info">
                         <div class="checkout-item-name">${itemName}</div>
@@ -2729,14 +2736,17 @@
                     <button class="remove-item-btn" onclick="removeItem(${index})" title="Remove">×</button>
                 </div>`;
             });
-            
+
             itemsContainer.innerHTML = html;
-            
+
+            // Update total display
+            const finalTotal = calculatedTotal.toFixed(2);
             // Update total display - ensure proper formatting
             const finalTotal = parseFloat(calculatedTotal).toFixed(2);
             totalEl.textContent = '$' + finalTotal;
-            
+
             // Debug log
+            console.log('Cart Total:', finalTotal, 'Items:', cartItems.length);
             console.log('Cart Total:', finalTotal, 'Items:', cartItems.length, 'Raw:', calculatedTotal);
         }
 
@@ -2906,7 +2916,7 @@
                 return actions.order.capture().then(async function(details) {
                     // Save order to system
                     const orderId = await saveOrder(details.id, details);
-                    
+
                     // Send order notification email
                     const totalEl = document.getElementById('checkoutTotal');
                     const total = parseFloat(totalEl.textContent.replace('$', '')) || 0;
@@ -2919,7 +2929,7 @@
                         items: [...cartItems],
                         total: total
                     });
-                    
+
                     // Payment successful
                     showNotification('✓ Payment successful! Thank you for your order.');
                     cartItems = [];
@@ -2990,7 +3000,7 @@
 <script>
     // Initialize EmailJS
     emailjs.init("9WAT2RsSP-mMEGQErFUxD");
-    
+
     // Send order notification email
     function sendOrderNotification(orderData) {
         const templateParams = {
@@ -3004,7 +3014,7 @@
             total_amount: orderData.total.toFixed(2),
             email: '75576061@qq.com'
         };
-        
+
         emailjs.send('service_l51cwsj', 'template_17rkt5v', templateParams)
             .then(function(response) {
                 console.log('Order notification email sent:', response.status, response.text);
