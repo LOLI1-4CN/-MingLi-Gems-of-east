@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Returns & Refunds | MingLi Gems</title>
+    <meta name="description" content="30-day spiritual satisfaction guarantee. Learn about our return policy, exchange process, and refund options for MingLi Gems fortune bracelets.">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Noto+Serif+SC:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #C9A96E;
+            --gold-dark: #8B6914;
+            --black: #1A1A1A;
+            --dark-bg: #0D0D0D;
+            --warm-gray: #2A2A2A;
+            --text-light: #F5F0E8;
+            --text-muted: #9A8F7E;
+            --border: rgba(201,169,110,0.2);
+            --font-heading: 'Cinzel', serif;
+            --font-body: 'Playfair Display', serif;
+            --font-chinese: 'Noto Serif SC', serif;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            background: var(--dark-bg);
+            color: var(--text-light);
+            font-family: var(--font-body);
+            line-height: 1.7;
+        }
+        
+        .navbar {
+            position: fixed; top:0; left:0; right:0; z-index:1000;
+            padding: 18px 60px;
+            display: flex; justify-content:space-between; align-items:center;
+            background: rgba(13,13,13,0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+        }
+        .nav-logo {
+            font-family: var(--font-heading);
+            font-size: 1.3rem;
+            color: var(--gold);
+            text-decoration: none;
+            display:flex; align-items:center; gap:8px;
+        }
+        .logo-icon { font-size: 1.5rem; }
+        .nav-links {
+            display: flex; gap: 40px; list-style: none;
+        }
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover { color: var(--gold); }
+        
+        .page-content {
+            padding: 140px 60px 80px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .page-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        .page-title {
+            font-family: var(--font-heading);
+            font-size: 2.5rem;
+            color: var(--gold);
+            margin-bottom: 16px;
+        }
+        .page-subtitle {
+            font-family: var(--font-chinese);
+            font-size: 1.1rem;
+            color: var(--text-muted);
+        }
+        
+        .policy-section {
+            margin-bottom: 50px;
+        }
+        .policy-section h2 {
+            font-family: var(--font-heading);
+            font-size: 1.4rem;
+            color: var(--gold);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+        .policy-section p {
+            margin-bottom: 16px;
+            color: var(--text-muted);
+        }
+        .policy-section ul {
+            margin-left: 24px;
+            color: var(--text-muted);
+        }
+        .policy-section li {
+            margin-bottom: 12px;
+        }
+        
+        .highlight-box {
+            background: rgba(201,169,110,0.08);
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--gold);
+            padding: 24px;
+            margin: 30px 0;
+        }
+        .highlight-box h3 {
+            font-family: var(--font-heading);
+            color: var(--gold);
+            margin-bottom: 12px;
+        }
+        
+        .highlight-box.guarantee {
+            background: rgba(46,89,65,0.15);
+            border-left-color: var(--accent-green);
+        }
+        .highlight-box.guarantee h3 {
+            color: #6ee7b7;
+        }
+        
+        .process-steps {
+            display: grid;
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .process-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            padding: 20px;
+            background: rgba(201,169,110,0.05);
+            border: 1px solid var(--border);
+        }
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: var(--gold);
+            color: var(--black);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-heading);
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .step-content h4 {
+            font-family: var(--font-heading);
+            color: var(--gold);
+            margin-bottom: 8px;
+        }
+        .step-content p {
+            color: var(--text-muted);
+            margin: 0;
+        }
+        
+        .footer {
+            background: var(--black);
+            padding: 60px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 24px;
+        }
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.3s;
+        }
+        .footer-links a:hover { color: var(--gold); }
+        .footer-copy {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+        
+        @media (max-width: 768px) {
+            .navbar { padding: 18px 20px; }
+            .nav-links { display: none; }
+            .page-content { padding: 120px 20px 60px; }
+            .page-title { font-size: 1.8rem; }
+            .process-step { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="index.html" class="nav-logo">
+            <span class="logo-icon">☰</span>
+            MingLi Gems
+        </a>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="index.html#collection">Shop</a></li>
+            <li><a href="bazi.html">Your Fortune</a></li>
+            <li><a href="track.html">Track Order</a></li>
+        </ul>
+    </nav>
+
+    <div class="page-content">
+        <div class="page-header">
+            <h1 class="page-title">Returns & Refunds</h1>
+            <p class="page-subtitle">30天灵性满意保证 · 30-Day Spiritual Guarantee</p>
+        </div>
+
+        <div class="highlight-box guarantee">
+            <h3>✦ Our Spiritual Satisfaction Promise</h3>
+            <p>We believe your MingLi Gems bracelet should resonate with your energy and intentions. If for any reason you are not spiritually satisfied with your purchase, we offer a full refund within 30 days of delivery — no questions asked. Your peace of mind is as important to us as the quality of our craft.</p>
+        </div>
+
+        <div class="policy-section">
+            <h2>Return Eligibility</h2>
+            <p>To be eligible for a return, your item must be:</p>
+            <ul>
+                <li>Returned within 30 days of delivery date</li>
+                <li>In original condition with all tags attached</li>
+                <li>Unworn and unused (we understand you may have tried it on)</li>
+                <li>Accompanied by the original order confirmation or receipt</li>
+                <li>Returned in the original packaging (the pouch and gift box are part of the experience)</li>
+            </ul>
+            <p><strong>Note on Custom Orders:</strong> Custom-designed and Destiny Bespoke (八字定制) bracelets are created specifically for you based on your birth chart. These items can only be returned if there is a defect in craftsmanship or materials.</p>
+        </div>
+
+        <div class="policy-section">
+            <h2>How to Return</h2>
+            <div class="process-steps">
+                <div class="process-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>Request Return Authorization</h4>
+                        <p>Email us at <a href="mailto:support@fengshui-east.com" style="color:var(--gold);">support@fengshui-east.com</a> with your order number and reason for return. We'll respond within 24 hours with your Return Authorization Number (RAN).</p>
+                    </div>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>Package Your Return</h4>
+                        <p>Securely pack the bracelet in its original pouch and box. Include a note with your RAN and original order number. We recommend using the original shipping materials when possible.</p>
+                    </div>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>Ship to Us</h4>
+                        <p>Send your return to the address provided in your RAN email. We recommend using a trackable shipping method. Return shipping costs are the responsibility of the customer unless the item was defective.</p>
+                    </div>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h4>Receive Your Refund</h4>
+                        <p>Once we receive and inspect your return, we'll process your refund within 3-5 business days. You'll receive an email confirmation when the refund is issued.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="policy-section">
+            <h2>Refund Options</h2>
+            <p>We offer the following refund methods:</p>
+            <ul>
+                <li><strong>Original Payment Method:</strong> Refund to your original credit card or PayPal account (5-10 business days depending on your bank)</li>
+                <li><strong>Store Credit:</strong> Immediate credit to your MingLi Gems account with a 10% bonus as our thank you for choosing to stay with us</li>
+                <li><strong>Exchange:</strong> Swap for a different size, style, or energy alignment at equal or lesser value</li>
+            </ul>
+        </div>
+
+        <div class="policy-section">
+            <h2>Damaged or Defective Items</h2>
+            <p>If your bracelet arrives damaged or has a craftsmanship defect:</p>
+            <ul>
+                <li>Contact us within 7 days of delivery</li>
+                <li>Provide photos of the damage and packaging</li>
+                <li>We will arrange a free replacement at no cost to you</li>
+                <li>No return shipping fees for defective items</li>
+            </ul>
+            <p>All our bracelets are inspected before shipping, but if something slipped through, we take full responsibility.</p>
+        </div>
+
+        <div class="policy-section">
+            <h2>Size Exchanges</h2>
+            <p>Wrong size? No problem! We offer free size exchanges within 30 days:</p>
+            <ul>
+                <li>Contact us with your order number and desired new size</li>
+                <li>We'll send you a prepaid return label (for US orders)</li>
+                <li>Once we receive your return, we'll ship the new size within 1-2 business days</li>
+            </ul>
+            <p>International customers: We offer the same exchange policy, though return shipping costs may apply depending on your location.</p>
+        </div>
+
+        <div class="policy-section">
+            <h2>Non-Returnable Items</h2>
+            <p>For hygiene and energetic reasons, the following cannot be returned:</p>
+            <ul>
+                <li>Items that show signs of wear beyond trying on</li>
+                <li>Items missing original tags or packaging</li>
+                <li>Custom orders that have been properly crafted according to your specifications</li>
+                <li>Gift cards and promotional items</li>
+            </ul>
+        </div>
+
+        <div class="policy-section">
+            <h2>Gift Returns</h2>
+            <p>Received a MingLi Gems bracelet as a gift? We can help:</p>
+            <ul>
+                <li>Gift recipients can exchange for store credit or a different item</li>
+                <li>We'll need the order number or gift giver's name to locate the order</li>
+                <li>Gift recipients will receive store credit via email</li>
+            </ul>
+        </div>
+
+        <div class="highlight-box">
+            <h3>Questions About Returns?</h3>
+            <p>We're here to make the process as smooth as possible. Email us at <a href="mailto:support@fengshui-east.com" style="color:var(--gold);">support@fengshui-east.com</a> or use our live chat. Our customer care team responds within 24 hours.</p>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="shipping.html">Shipping</a>
+            <a href="returns.html">Returns</a>
+            <a href="size-guide.html">Size Guide</a>
+            <a href="privacy.html">Privacy</a>
+            <a href="terms.html">Terms</a>
+            <a href="faq.html">FAQ</a>
+        </div>
+        <p class="footer-copy">© 2026 MingLi Gems. All rights reserved.</p>
+    </footer>
+</body>
+</html>
