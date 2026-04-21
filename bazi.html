@@ -99,6 +99,121 @@
         }
         .nav-links a:hover { color: var(--gold); }
         .nav-links a.active { color: var(--gold); }
+        .nav-cart {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: var(--gold);
+            text-decoration: none;
+            padding: 8px;
+        }
+        .nav-cart:hover { color: var(--gold-light); }
+        .nav-cart-count {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 18px;
+            height: 18px;
+            background: var(--accent-red);
+            color: white;
+            font-size: 0.6rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-heading);
+        }
+
+        /* ===== CART DRAWER ===== */
+        .cart-icon-fixed {
+            position: fixed; bottom: 30px; left: 30px;
+            width: 50px; height:50px;
+            background: var(--warm-gray);
+            border: 1px solid var(--gold);
+            display:flex; align-items:center; justify-content:center;
+            color: var(--gold); font-size: 1.2rem;
+            cursor:pointer; z-index: 999;
+            transition: all 0.3s;
+        }
+        .cart-icon-fixed:hover {
+            background: var(--gold); color: var(--black);
+        }
+        .cart-count {
+            position:absolute; top:-6px; right:-6px;
+            width: 20px; height:20px;
+            background: var(--accent-red);
+            color: white;
+            font-size: 0.65rem;
+            border-radius:50%;
+            display:flex; align-items:center; justify-content:center;
+        }
+
+        /* ===== CHECKOUT MODAL ===== */
+        .checkout-modal {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.85);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .checkout-modal.open { display: flex; }
+        .checkout-content {
+            background: var(--warm-gray);
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 32px;
+            position: relative;
+        }
+        .checkout-close {
+            position: absolute; top: 16px; right: 16px;
+            background: none; border: none;
+            color: var(--text-muted); font-size: 1.5rem;
+            cursor: pointer;
+        }
+        .checkout-close:hover { color: var(--gold); }
+        .checkout-title {
+            font-family: var(--font-heading);
+            font-size: 1.2rem;
+            letter-spacing: 3px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        .checkout-items { margin-bottom: 24px; }
+        .checkout-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .checkout-item-name { font-size: 0.9rem; }
+        .checkout-item-details { font-size: 0.75rem; color: var(--text-muted); }
+        .checkout-item-price { color: var(--gold); font-family: var(--font-heading); }
+        .checkout-total {
+            display: flex; justify-content: space-between;
+            padding-top: 16px; border-top: 2px solid var(--gold);
+            font-family: var(--font-heading);
+            letter-spacing: 1px;
+        }
+        .btn-checkout {
+            width: 100%; margin-top: 24px;
+            background: var(--gold); color: var(--black);
+            border: none; padding: 14px;
+            font-family: var(--font-heading);
+            font-size: 0.8rem; letter-spacing: 2px;
+            cursor: pointer; transition: all 0.3s;
+        }
+        .btn-checkout:hover { background: var(--gold-light); }
+        .checkout-note {
+            font-size: 0.75rem; color: var(--text-muted);
+            text-align: center; margin-top: 16px;
+        }
         .nav-cta {
             padding: 8px 20px;
             border: 1px solid var(--gold);
@@ -501,6 +616,142 @@
         .dayun-gan { color: var(--gold); margin-bottom: 4px; }
         .dayun-zhi { color: var(--text-light); }
 
+        /* Premium Report Card */
+        .premium-report-card {
+            background: linear-gradient(135deg, rgba(46, 89, 65, 0.15) 0%, rgba(201, 169, 110, 0.1) 100%);
+            border: 2px solid var(--gold);
+            padding: 48px 40px;
+            text-align: center;
+            margin-top: 48px;
+            position: relative;
+            overflow: hidden;
+        }
+        .premium-report-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+        }
+        .premium-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+            color: var(--black);
+            padding: 8px 24px;
+            font-size: 0.75rem;
+            letter-spacing: 3px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            font-family: var(--font-heading);
+        }
+        .premium-title {
+            font-family: var(--font-heading);
+            font-size: 1.4rem;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+            color: var(--gold);
+        }
+        .premium-subtitle {
+            font-family: var(--font-chinese);
+            font-size: 1rem;
+            color: var(--text-muted);
+            margin-bottom: 32px;
+        }
+        .premium-features {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            text-align: left;
+            max-width: 700px;
+            margin: 0 auto 32px;
+        }
+        .premium-feature {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 16px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+        }
+        .feature-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+        .feature-content {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .feature-content strong {
+            color: var(--gold-light);
+            font-size: 0.9rem;
+        }
+        .feature-content span {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            line-height: 1.5;
+        }
+        .premium-pricing {
+            margin-bottom: 24px;
+        }
+        .price-tag {
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            gap: 4px;
+            margin-bottom: 8px;
+        }
+        .price-tag .currency {
+            font-size: 1.5rem;
+            color: var(--gold);
+            font-family: var(--font-heading);
+        }
+        .price-tag .amount {
+            font-size: 3.5rem;
+            color: var(--gold);
+            font-family: var(--font-heading);
+            font-weight: 700;
+        }
+        .price-tag .period {
+            font-size: 1rem;
+            color: var(--text-muted);
+            margin-left: 4px;
+        }
+        .price-note {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+        .btn-premium {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+            color: var(--black);
+            border: none;
+            padding: 16px 48px;
+            font-family: var(--font-heading);
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        .btn-premium:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(201,169,110,0.3);
+        }
+        .premium-note {
+            margin-top: 16px;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+        }
+        @media (max-width: 768px) {
+            .premium-features {
+                grid-template-columns: 1fr;
+            }
+        }
+
         /* Footer */
         .footer-note {
             text-align: center;
@@ -541,6 +792,12 @@
             <li><a href="index.html#testimonials">Reviews</a></li>
             <li><a href="index.html#about">About</a></li>
             <li><a href="index.html#customize" class="nav-cta">Get Yours</a></li>
+            <li>
+                <a href="#" class="nav-cart" onclick="openCheckout(); return false;">
+                    🛒
+                    <span class="nav-cart-count" id="cartCount">0</span>
+                </a>
+            </li>
         </ul>
     </nav>
 
@@ -712,12 +969,91 @@
                 </div>
                 <a href="index.html#customize" class="btn-shop">Shop Recommended Bracelets</a>
             </div>
+
+            <!-- Premium Bazi Report -->
+            <div class="premium-report-card">
+                <div class="premium-badge">✦ Premium Service ✦</div>
+                <h3 class="premium-title">Detailed Destiny Report & Future Forecast</h3>
+                <p class="premium-subtitle">命理详批与未来运势报告</p>
+                
+                <div class="premium-features">
+                    <div class="premium-feature">
+                        <span class="feature-icon">📜</span>
+                        <div class="feature-content">
+                            <strong>Comprehensive Bazi Analysis</strong>
+                            <span>In-depth interpretation of your Four Pillars, personality traits, and life path</span>
+                        </div>
+                    </div>
+                    <div class="premium-feature">
+                        <span class="feature-icon">🔮</span>
+                        <div class="feature-content">
+                            <strong>10-Year Luck Forecast</strong>
+                            <span>Detailed predictions for career, wealth, relationships, and health</span>
+                        </div>
+                    </div>
+                    <div class="premium-feature">
+                        <span class="feature-icon">💎</span>
+                        <div class="feature-content">
+                            <strong>Feng Shui Recommendations</strong>
+                            <span>Lucky colors, directions, and personalized bracelet suggestions</span>
+                        </div>
+                    </div>
+                    <div class="premium-feature">
+                        <span class="feature-icon">📧</span>
+                        <div class="feature-content">
+                            <strong>Delivered to Your Email</strong>
+                            <span>Professional PDF report sent within 24-48 hours</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="premium-pricing">
+                    <div class="price-tag">
+                        <span class="currency">$</span>
+                        <span class="amount">99</span>
+                        <span class="period">USD</span>
+                    </div>
+                    <p class="price-note">One-time payment • 30-day satisfaction guarantee</p>
+                </div>
+
+                <button class="btn-premium" onclick="orderBaziReport()">
+                    Order My Destiny Report
+                    <span>→</span>
+                </button>
+                
+                <p class="premium-note">
+                    🔒 Secure payment • Report prepared by certified Feng Shui Master
+                </p>
+            </div>
         </section>
 
         <div class="footer-note">
             <p>Note: This calculator is for reference and entertainment purposes. For professional Bazi consultation, please consult a qualified Chinese metaphysics master.</p>
         </div>
     </main>
+
+    <!-- Cart Fixed -->
+    <div class="cart-icon-fixed" onclick="openCheckout()">
+        🛒
+        <span class="cart-count" id="cartCountFixed">0</span>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div class="checkout-modal" id="checkoutModal" onclick="closeCheckoutOutside(event)">
+        <div class="checkout-content" onclick="event.stopPropagation()">
+            <button class="checkout-close" onclick="closeCheckout()">×</button>
+            <h3 class="checkout-title">Your Order</h3>
+            <div class="checkout-items" id="checkoutItems"></div>
+            <div class="checkout-total">
+                <span>Total:</span>
+                <span id="checkoutTotal" style="font-size:1.2rem;color:var(--gold);">$0.00</span>
+            </div>
+            <button class="btn-checkout" onclick="goToMainCheckout()">
+                Proceed to Checkout →
+            </button>
+            <p class="checkout-note">🔒 Secure checkout on our main site</p>
+        </div>
+    </div>
 
     <script>
         // ===== NAVBAR SCROLL =====
@@ -726,6 +1062,107 @@
             if (window.scrollY > 50) { nav.classList.add('scrolled'); }
             else { nav.classList.remove('scrolled'); }
         });
+
+        // ===== CART FUNCTIONS =====
+        // Load cart from localStorage
+        let cartItems = JSON.parse(localStorage.getItem('mingli_cart') || '[]');
+
+        function updateCartCount() {
+            const totalCount = cartItems.reduce((sum, item) => sum + (item.quantity || 1), 0);
+            document.getElementById('cartCount').textContent = totalCount;
+            document.getElementById('cartCountFixed').textContent = totalCount;
+        }
+
+        function openCheckout() {
+            const modal = document.getElementById('checkoutModal');
+            const itemsContainer = document.getElementById('checkoutItems');
+            const totalEl = document.getElementById('checkoutTotal');
+
+            // Reload cart from localStorage to get latest
+            cartItems = JSON.parse(localStorage.getItem('mingli_cart') || '[]');
+
+            // Render items
+            itemsContainer.innerHTML = cartItems.length === 0 
+                ? '<p style="text-align:center;color:var(--text-muted);padding:20px;">Your cart is empty</p>'
+                : cartItems.map((item, index) => `
+                    <div class="checkout-item">
+                        <div>
+                            <div class="checkout-item-name">${item.name || item}</div>
+                            ${item.details ? `<div class="checkout-item-details">${item.details}</div>` : ''}
+                        </div>
+                        <div class="checkout-item-price">$${(item.price || 0).toFixed(2)}</div>
+                    </div>
+                `).join('');
+
+            // Calculate total
+            const total = cartItems.reduce((sum, item) => sum + ((item.price || 0) * (item.quantity || 1)), 0);
+            totalEl.textContent = '$' + total.toFixed(2);
+
+            modal.classList.add('open');
+        }
+
+        function closeCheckout() {
+            document.getElementById('checkoutModal').classList.remove('open');
+        }
+
+        function closeCheckoutOutside(event) {
+            if (event.target.id === 'checkoutModal') {
+                closeCheckout();
+            }
+        }
+
+        function goToMainCheckout() {
+            // Redirect to main page checkout
+            window.location.href = 'index.html#checkout';
+        }
+
+        function addToCart(item) {
+            if (typeof item === 'string') {
+                item = { name: item, price: 0, quantity: 1 };
+            }
+
+            // Check if item already exists
+            const existingIndex = cartItems.findIndex(i => 
+                i.name === item.name && i.details === item.details
+            );
+
+            if (existingIndex > -1) {
+                cartItems[existingIndex].quantity = (cartItems[existingIndex].quantity || 1) + 1;
+            } else {
+                cartItems.push({ ...item, quantity: 1 });
+            }
+
+            // Save to localStorage
+            localStorage.setItem('mingli_cart', JSON.stringify(cartItems));
+
+            updateCartCount();
+
+            // Show notification
+            showNotification(`✓ ${item.name} added to cart!`);
+        }
+
+        function showNotification(msg) {
+            const n = document.createElement('div');
+            n.style.cssText = `
+                position: fixed; top: 80px; right: 20px;
+                background: var(--warm-gray); border: 1px solid var(--gold);
+                padding: 16px 24px; color: var(--text-light);
+                font-size: 0.85rem; z-index: 10000;
+                transform: translateX(120%);
+                transition: transform 0.4s; max-width: 320px;
+                border-radius: 4px;
+            `;
+            n.textContent = msg;
+            document.body.appendChild(n);
+            setTimeout(() => n.style.transform = 'translateX(0)', 10);
+            setTimeout(() => {
+                n.style.transform = 'translateX(120%)';
+                setTimeout(() => n.remove(), 400);
+            }, 3000);
+        }
+
+        // Initialize cart count on page load
+        updateCartCount();
 
         // ===== BAZI DATA =====
         const TIANGAN = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'];
@@ -957,6 +1394,81 @@
                 water: 'wisdom, adaptability, and intuition'
             };
             return qualities[element];
+        }
+
+        // Order Premium Bazi Report
+        function orderBaziReport() {
+            // Get birth info from the form
+            const calendarType = document.getElementById('calendarType').value;
+            const year = document.getElementById('year').value;
+            const month = document.getElementById('month').value;
+            const day = document.getElementById('day').value;
+            const hour = document.getElementById('hour').value;
+            const gender = document.querySelector('input[name="gender"]:checked')?.value || 'not specified';
+
+            // Validate that bazi has been calculated
+            const yearGan = document.getElementById('yearGan').textContent;
+            if (yearGan === '—' || yearGan === '') {
+                alert('Please calculate your Bazi first before ordering the report.\n请先计算您的八字。');
+                document.getElementById('calendarType').scrollIntoView({ behavior: 'smooth' });
+                return;
+            }
+
+            // Create report order data
+            const reportData = {
+                product: 'Detailed Destiny Report & Future Forecast',
+                price: 99,
+                birthInfo: {
+                    calendar: calendarType,
+                    year: year,
+                    month: month,
+                    day: day,
+                    hour: hour,
+                    gender: gender
+                },
+                baziSnapshot: {
+                    year: yearGan + document.getElementById('yearZhi').textContent,
+                    month: document.getElementById('monthGan').textContent + document.getElementById('monthZhi').textContent,
+                    day: document.getElementById('dayGan').textContent + document.getElementById('dayZhi').textContent,
+                    hour: document.getElementById('hourGan').textContent + document.getElementById('hourZhi').textContent
+                }
+            };
+
+            // Store in localStorage for checkout
+            localStorage.setItem('bazi_report_order', JSON.stringify(reportData));
+
+            // Create cart item
+            const cartItem = {
+                name: 'Detailed Destiny Report & Future Forecast',
+                price: 99,
+                details: `Bazi: ${reportData.baziSnapshot.year} ${reportData.baziSnapshot.month} ${reportData.baziSnapshot.day} ${reportData.baziSnapshot.hour}`,
+                quantity: 1
+            };
+
+            // Add to cart using localStorage (same key as main page)
+            let currentCart = JSON.parse(localStorage.getItem('mingli_cart') || '[]');
+            
+            // Check if already exists
+            const existingIndex = currentCart.findIndex(item => item.name === cartItem.name);
+            if (existingIndex > -1) {
+                currentCart[existingIndex].quantity = (currentCart[existingIndex].quantity || 1) + 1;
+            } else {
+                currentCart.push(cartItem);
+            }
+            
+            // Save to localStorage
+            localStorage.setItem('mingli_cart', JSON.stringify(currentCart));
+            
+            // Update cart display
+            updateCartCount();
+            
+            // Show success notification
+            showNotification('✓ Detailed Destiny Report added to cart!');
+            
+            // Open checkout modal instead of redirecting
+            setTimeout(() => {
+                openCheckout();
+            }, 500);
         }
     </script>
 </body>
