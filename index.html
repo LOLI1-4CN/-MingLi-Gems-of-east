@@ -1119,6 +1119,78 @@
         }
         #paypal-button-container { margin-top: 16px; }
 
+        /* ===== PAYMENT METHOD SELECTION ===== */
+        .payment-method-section {
+            margin-top: 20px;
+        }
+        .payment-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .payment-option {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            background: var(--dark-bg);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .payment-option:hover {
+            border-color: var(--gold);
+        }
+        .payment-option.selected {
+            border-color: var(--gold);
+            background: rgba(201,169,110,0.05);
+        }
+        .payment-option-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #003087, #009cde);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            flex-shrink: 0;
+        }
+        .payment-option-info {
+            flex: 1;
+        }
+        .payment-option-info strong {
+            display: block;
+            color: var(--text-light);
+            font-family: var(--font-heading);
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+        .payment-option-info span {
+            display: block;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+        }
+        .payment-option-check {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--gold);
+            color: var(--black);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        .lianlian-form {
+            background: var(--dark-bg);
+            border: 1px solid var(--border);
+            padding: 20px;
+        }
+
         /* ===== CUSTOMER INFO FORM ===== */
         .customer-info-section {
             border-top: 1px solid var(--border);
@@ -1732,6 +1804,25 @@
                     <span class="product-tag">BaZi Reading · Five Elements · Blessed</span>
                 </div>
             </div>
+            <!-- Test Product - 测试用红绳 -->
+            <div class="product-card fade-in" onclick="addToCart('Test Red String', 0.1)">
+                <div class="product-img" role="img" aria-label="Test Red String" style="background: linear-gradient(135deg, #8B0000 0%, #DC143C 100%);">
+                    <div style="display:flex;align-items:center;justify-content:center;font-size:4rem;position:absolute;top:0;left:0;right:0;bottom:0;">🧶</div>
+                    <div class="overlay">
+                        <span class="btn-primary" style="padding:10px 24px;font-size:0.7rem;">Add to Cart</span>
+                    </div>
+                    <span class="product-badge" style="background: #666;">Test</span>
+                </div>
+                <div class="product-info">
+                    <p class="product-category">Test · 测试</p>
+                    <h3 class="product-name">Test Red String</h3>
+                    <p class="product-name-zh">测试用红绳</p>
+                    <div class="product-price">
+                        <span class="price-current">$0.10</span>
+                    </div>
+                    <span class="product-tag">TEST PRODUCT</span>
+                </div>
+            </div>
         </div>
         <div style="text-align:center; margin-top:50px;">
             <a href="#customize" class="btn-outline">Consult Master Custom →</a>
@@ -2260,13 +2351,76 @@
                 </button>
             </div>
 
-            <!-- Payment Section -->
-            <div class="payment-section" id="paymentSection" style="display: none;">
+            <!-- Payment Method Selection -->
+            <div class="payment-method-section" id="paymentMethodSection" style="display: none;">
                 <button class="btn-back" onclick="showCustomerForm()">← Back to Information</button>
+                <h4 class="customer-info-title" style="margin-bottom: 20px;">Select Payment Method</h4>
+                
+                <div class="payment-options">
+                    <div class="payment-option" onclick="selectPaymentMethod('paypal')">
+                        <div class="payment-option-icon">💳</div>
+                        <div class="payment-option-info">
+                            <strong>PayPal / Credit Card</strong>
+                            <span>Pay with PayPal account or credit card</span>
+                        </div>
+                        <div class="payment-option-check" id="paypalCheck">✓</div>
+                    </div>
+                    
+                    <!-- 连连支付选项已隐藏 - 保留代码以备后用
+                    <div class="payment-option" onclick="selectPaymentMethod('lianlian')">
+                        <div class="payment-option-icon" style="background: linear-gradient(135deg, #FF6B00, #FF8C00);">连</div>
+                        <div class="payment-option-info">
+                            <strong>LianLian Pay (Personal)</strong>
+                            <span>Card Payment via Payment Link</span>
+                        </div>
+                        <div class="payment-option-check" id="lianlianCheck" style="display:none;">✓</div>
+                    </div>
+                    -->
+                </div>
+                
+                <button class="btn-proceed" onclick="confirmPaymentMethod()" style="margin-top: 20px;">
+                    Continue
+                    <span>→</span>
+                </button>
+            </div>
+
+            <!-- PayPal Payment Section -->
+            <div class="payment-section" id="paypalSection" style="display: none;">
+                <button class="btn-back" onclick="backToPaymentMethod()">← Change Method</button>
+                <h4 class="customer-info-title">Pay with PayPal</h4>
                 <div id="paypal-button-container"></div>
             </div>
 
-            <p class="checkout-note">🔒 Secure payment powered by PayPal. You can pay with credit card or PayPal account.</p>
+            <!-- LianLian Payment Section -->
+            <div class="payment-section" id="lianlianSection" style="display: none;">
+                <button class="btn-back" onclick="backToPaymentMethod()">← Change Method</button>
+                <h4 class="customer-info-title">Pay with LianLian (Personal)</h4>
+                <div class="lianlian-form">
+                    <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 16px;">
+                        As a LianLian Personal user, you'll receive a secure payment request via email or messaging app.
+                    </p>
+                    <div class="form-row" style="background: rgba(201,169,110,0.1); padding: 12px; border-left: 3px solid var(--gold); margin-bottom: 16px;">
+                        <label style="color: var(--text-light); font-size: 0.85rem; display: block;">
+                            <strong>How it works:</strong><br>
+                            1. Submit your order<br>
+                            2. We'll send you a LianLian payment link within 2 hours<br>
+                            3. Pay securely with your card<br>
+                            4. We ship after payment confirmation
+                        </label>
+                    </div>
+                    <div class="form-row">
+                        <label style="color: var(--text-muted); font-size: 0.8rem; display: block; margin-bottom: 8px;">
+                            Supported payment methods: Credit/Debit Card (Visa, MasterCard, Amex), WeChat Pay, Alipay
+                        </label>
+                    </div>
+                    <button class="btn-proceed" onclick="processLianLianPayment()">
+                        Request Payment Link
+                        <span>→</span>
+                    </button>
+                </div>
+            </div>
+
+            <p class="checkout-note">🔒 Secure payment powered by PayPal & LianLian Pay. SSL encrypted.</p>
         </div>
     </div>
 
@@ -2845,19 +2999,131 @@
             notes: document.getElementById('orderNotes').value.trim()
         };
 
-        // Switch to payment section
+        // Switch to payment method selection
         document.getElementById('customerInfoSection').style.display = 'none';
-        document.getElementById('paymentSection').style.display = 'block';
-
-        // Render PayPal buttons
-        setTimeout(() => {
-            renderPayPalButtons();
-        }, 100);
+        document.getElementById('paymentMethodSection').style.display = 'block';
+        
+        // Default select PayPal
+        selectPaymentMethod('paypal');
     }
 
     function showCustomerForm() {
         document.getElementById('customerInfoSection').style.display = 'block';
-        document.getElementById('paymentSection').style.display = 'none';
+        document.getElementById('paymentMethodSection').style.display = 'none';
+        document.getElementById('paypalSection').style.display = 'none';
+        document.getElementById('lianlianSection').style.display = 'none';
+    }
+
+    let selectedPaymentMethod = 'paypal';
+
+    function selectPaymentMethod(method) {
+        selectedPaymentMethod = method;
+        
+        // Update UI
+        document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('selected'));
+        
+        const paypalCheck = document.getElementById('paypalCheck');
+        const lianlianCheck = document.getElementById('lianlianCheck');
+        
+        if (paypalCheck) paypalCheck.style.display = 'none';
+        if (lianlianCheck) lianlianCheck.style.display = 'none';
+        
+        if (method === 'paypal') {
+            document.querySelectorAll('.payment-option')[0].classList.add('selected');
+            if (paypalCheck) paypalCheck.style.display = 'flex';
+        } else {
+            document.querySelectorAll('.payment-option')[1].classList.add('selected');
+            if (lianlianCheck) lianlianCheck.style.display = 'flex';
+        }
+    }
+
+    function confirmPaymentMethod() {
+        document.getElementById('paymentMethodSection').style.display = 'none';
+        
+        if (selectedPaymentMethod === 'paypal') {
+            document.getElementById('paypalSection').style.display = 'block';
+            setTimeout(() => {
+                renderPayPalButtons();
+            }, 100);
+        } else {
+            document.getElementById('lianlianSection').style.display = 'block';
+        }
+    }
+
+    function backToPaymentMethod() {
+        document.getElementById('paypalSection').style.display = 'none';
+        document.getElementById('lianlianSection').style.display = 'none';
+        document.getElementById('paymentMethodSection').style.display = 'block';
+    }
+
+    function processLianLianPayment() {
+        // Generate order first
+        const orderId = generateOrderId();
+        currentOrderId = orderId;
+        
+        const totalEl = document.getElementById('checkoutTotal');
+        const total = parseFloat(totalEl.textContent.replace('$', '')) || 0;
+        
+        // Save order as pending
+        const orderData = {
+            orderId: orderId,
+            customerName: currentCustomerInfo.name,
+            customerEmail: currentCustomerInfo.email,
+            customerPhone: currentCustomerInfo.phone,
+            customerAddress: `${currentCustomerInfo.address}, ${currentCustomerInfo.city}, ${currentCustomerInfo.zip}, ${currentCustomerInfo.country}`,
+            orderNotes: currentCustomerInfo.notes,
+            items: JSON.stringify(cartItems.map(item => ({
+                name: item.name || item,
+                price: item.price || 89,
+                quantity: item.quantity || 1,
+                details: item.details || ''
+            }))),
+            totalAmount: total.toFixed(2),
+            currency: 'USD',
+            status: 'pending_lianlian',
+            paymentMethod: 'lianlian',
+            createdAt: new Date().toISOString()
+        };
+        
+        // Save to localStorage
+        let orders = JSON.parse(localStorage.getItem('mingli_orders') || '[]');
+        orders.unshift(orderData);
+        localStorage.setItem('mingli_orders', JSON.stringify(orders));
+        
+        // Show instructions
+        showNotification('Redirecting to LianLian Pay...');
+        
+        // Build LianLian payment URL (placeholder - replace with actual API)
+        const lianlianParams = new URLSearchParams({
+            merchant_id: 'YOUR_LIANLIAN_MERCHANT_ID',
+            order_id: orderId,
+            amount: total.toFixed(2),
+            currency: 'USD',
+            return_url: 'https://fengshui-east.com/success.html',
+            notify_url: 'https://fengshui-east.com/webhook/lianlian'
+        });
+        
+        // For now, show manual payment instructions
+        setTimeout(() => {
+            alert(`📧 Payment Instructions Sent!
+
+Order Number: ${orderId}
+Amount: $${total.toFixed(2)}
+
+We will send a secure payment link to your email (${currentCustomerInfo.email}) within 24 hours.
+
+You can pay with:
+• Credit/Debit Card (Visa, MasterCard, Amex)
+• Local payment methods
+
+Please check your inbox (and spam folder) for the payment link.
+
+Thank you for your order!`);
+            
+            cartItems = [];
+            document.getElementById('cartCount').textContent = '0';
+            closeCheckout();
+        }, 500);
     }
 
     async function saveOrder(paypalOrderId, paypalDetails) {
