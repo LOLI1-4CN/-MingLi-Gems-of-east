@@ -2345,7 +2345,7 @@
                 <div class="form-row">
                     <textarea id="orderNotes" placeholder="Special notes (optional): Birth date for custom bracelets, gift message, etc."></textarea>
                 </div>
-                <button class="btn-proceed" id="btnProceed" onclick="validateAndProceed()">
+                <button class="btn-proceed" id="btnProceed" onclick="try { validateAndProceed(); } catch(e) { console.error('Button click error:', e); alert('Error: ' + e.message); }">
                     Continue to Payment
                     <span>→</span>
                 </button>
@@ -2366,16 +2366,14 @@
                         <div class="payment-option-check" id="paypalCheck">✓</div>
                     </div>
                     
-                    <!-- 连连支付选项已隐藏 - 保留代码以备后用
                     <div class="payment-option" onclick="selectPaymentMethod('lianlian')">
-                        <div class="payment-option-icon" style="background: linear-gradient(135deg, #FF6B00, #FF8C00);">连</div>
+                        <div class="payment-option-icon" style="background: linear-gradient(135deg, #2C5F2D, #97BC62);">🏦</div>
                         <div class="payment-option-info">
-                            <strong>LianLian Pay (Personal)</strong>
-                            <span>Card Payment via Payment Link</span>
+                            <strong>Bank Wire Transfer</strong>
+                            <span>International SWIFT/Wire Transfer</span>
                         </div>
                         <div class="payment-option-check" id="lianlianCheck" style="display:none;">✓</div>
                     </div>
-                    -->
                 </div>
                 
                 <button class="btn-proceed" onclick="confirmPaymentMethod()" style="margin-top: 20px;">
@@ -2394,33 +2392,53 @@
             <!-- LianLian Payment Section -->
             <div class="payment-section" id="lianlianSection" style="display: none;">
                 <button class="btn-back" onclick="backToPaymentMethod()">← Change Method</button>
-                <h4 class="customer-info-title">Pay with LianLian (Personal)</h4>
+                <h4 class="customer-info-title">Bank Transfer / Wire Transfer</h4>
                 <div class="lianlian-form">
                     <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 16px;">
-                        As a LianLian Personal user, you'll receive a secure payment request via email or messaging app.
+                        Pay via international bank wire transfer to our LianLian account.
                     </p>
-                    <div class="form-row" style="background: rgba(201,169,110,0.1); padding: 12px; border-left: 3px solid var(--gold); margin-bottom: 16px;">
+                    
+                    <!-- Bank Account Information -->
+                    <div class="form-row" style="background: rgba(201,169,110,0.1); padding: 16px; border-left: 3px solid var(--gold); margin-bottom: 16px; border-radius: 4px;">
                         <label style="color: var(--text-light); font-size: 0.85rem; display: block;">
-                            <strong>How it works:</strong><br>
-                            1. Submit your order<br>
-                            2. We'll send you a LianLian payment link within 2 hours<br>
-                            3. Pay securely with your card<br>
-                            4. We ship after payment confirmation
+                            <strong style="color: var(--gold); font-size: 1rem; display: block; margin-bottom: 12px;">🏦 Bank Account Details</strong>
+                            <div style="line-height: 1.8;">
+                                <strong>Bank Name:</strong> Deutsche Bank Trust Company Americas<br>
+                                <strong>Bank Location:</strong> United States<br>
+                                <strong>Bank Address:</strong> 1 Columbus Circle, New York, NY 10019<br>
+                                <strong>Branch Address:</strong> 60 Wall Street, 15th FL, New York, NY 10005<br>
+                                <strong>Routing Number (ABA):</strong> 021001033<br>
+                                <strong>SWIFT/BIC Code:</strong> BKTRUS33<br>
+                                <strong>Account Number:</strong> 003744757743<br>
+                                <strong>Account Holder:</strong> Your registered business name
+                            </div>
                         </label>
                     </div>
+                    
+                    <div class="form-row" style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 4px; margin-bottom: 16px;">
+                        <label style="color: var(--text-light); font-size: 0.85rem; display: block;">
+                            <strong>How to pay:</strong><br>
+                            1. Submit your order below<br>
+                            2. Use your Order Number as payment reference<br>
+                            3. Complete the wire transfer using the bank details above<br>
+                            4. Email your payment receipt to 75576061@qq.com<br>
+                            5. We'll confirm and ship within 24 hours
+                        </label>
+                    </div>
+                    
                     <div class="form-row">
                         <label style="color: var(--text-muted); font-size: 0.8rem; display: block; margin-bottom: 8px;">
-                            Supported payment methods: Credit/Debit Card (Visa, MasterCard, Amex), WeChat Pay, Alipay
+                            💡 Supported methods: International Wire Transfer, SWIFT Transfer, ACH Transfer
                         </label>
                     </div>
                     <button class="btn-proceed" onclick="processLianLianPayment()">
-                        Request Payment Link
+                        Submit Order & Request Bank Details
                         <span>→</span>
                     </button>
                 </div>
             </div>
 
-            <p class="checkout-note">🔒 Secure payment powered by PayPal & LianLian Pay. SSL encrypted.</p>
+            <p class="checkout-note">🔒 Secure payment powered by PayPal & Bank Wire Transfer. SSL encrypted.</p>
         </div>
     </div>
 
@@ -2834,9 +2852,9 @@
     }
 
     // ===== CHECKOUT =====
-    let paypalButtonsRendered = false;
-    let currentOrderId = null;
-    let currentCustomerInfo = null;
+    var paypalButtonsRendered = false;
+    var currentOrderId = null;
+    var currentCustomerInfo = null;
 
     function openCheckout() {
         const modal = document.getElementById('checkoutModal');
@@ -3014,7 +3032,7 @@
         document.getElementById('lianlianSection').style.display = 'none';
     }
 
-    let selectedPaymentMethod = 'paypal';
+    var selectedPaymentMethod = 'paypal';
 
     function selectPaymentMethod(method) {
         selectedPaymentMethod = method;
@@ -3091,32 +3109,31 @@
         localStorage.setItem('mingli_orders', JSON.stringify(orders));
         
         // Show instructions
-        showNotification('Redirecting to LianLian Pay...');
-        
-        // Build LianLian payment URL (placeholder - replace with actual API)
-        const lianlianParams = new URLSearchParams({
-            merchant_id: 'YOUR_LIANLIAN_MERCHANT_ID',
-            order_id: orderId,
-            amount: total.toFixed(2),
-            currency: 'USD',
-            return_url: 'https://fengshui-east.com/success.html',
-            notify_url: 'https://fengshui-east.com/webhook/lianlian'
-        });
+        showNotification('Order submitted! Bank details sent...');
         
         // For now, show manual payment instructions
         setTimeout(() => {
-            alert(`📧 Payment Instructions Sent!
+            alert(`🏦 Order Confirmed - Bank Transfer Instructions
 
 Order Number: ${orderId}
 Amount: $${total.toFixed(2)}
 
-We will send a secure payment link to your email (${currentCustomerInfo.email}) within 24 hours.
+Please complete payment via International Wire Transfer:
 
-You can pay with:
-• Credit/Debit Card (Visa, MasterCard, Amex)
-• Local payment methods
+Bank: Deutsche Bank Trust Company Americas
+Address: 1 Columbus Circle, New York, NY 10019
+Branch: 60 Wall Street, 15th FL, New York, NY 10005
 
-Please check your inbox (and spam folder) for the payment link.
+Routing Number: 021001033
+SWIFT/BIC: BKTRUS33
+Account Number: 003744757743
+
+⚠️ IMPORTANT: Use Order Number "${orderId}" as payment reference
+
+After payment, please email your receipt to:
+75576061@qq.com
+
+We will confirm your payment and ship within 24 hours.
 
 Thank you for your order!`);
             
@@ -3188,63 +3205,87 @@ Thank you for your order!`);
             return;
         }
 
-        paypal.Buttons({
-            createOrder: function(data, actions) {
-                return actions.order.create({
-                    purchase_units: [{
-                        amount: {
-                            value: total.toFixed(2),
-                            currency_code: 'USD'
-                        },
-                        description: 'MingLi Gems - Custom Fortune Bracelet',
-                        custom_id: 'ORDER_' + Date.now()
-                    }]
-                });
-            },
-            onApprove: function(data, actions) {
-                return actions.order.capture().then(async function(details) {
-                    // Save order to system
-                    const orderId = await saveOrder(details.id, details);
+        // Check minimum amount (PayPal requires at least $0.01)
+        if (total < 0.01) {
+            container.innerHTML = '<p style="color: #ff6b6b; text-align: center;">Minimum payment amount is $0.01 USD</p>';
+            return;
+        }
 
-                    // Send order notification email
-                    const totalEl = document.getElementById('checkoutTotal');
-                    const total = parseFloat(totalEl.textContent.replace('$', '')) || 0;
-                    sendOrderNotification({
-                        orderId: orderId,
-                        customerName: currentCustomerInfo.name,
-                        customerEmail: currentCustomerInfo.email,
-                        customerPhone: currentCustomerInfo.phone,
-                        customerAddress: `${currentCustomerInfo.address}, ${currentCustomerInfo.city}, ${currentCustomerInfo.zip}, ${currentCustomerInfo.country}`,
-                        items: [...cartItems],
-                        total: total
+        try {
+            const buttons = paypal.Buttons({
+                createOrder: function(data, actions) {
+                    return actions.order.create({
+                        purchase_units: [{
+                            amount: {
+                                value: total.toFixed(2),
+                                currency_code: 'USD'
+                            },
+                            description: 'MingLi Gems - Custom Fortune Bracelet',
+                            custom_id: 'ORDER_' + Date.now()
+                        }]
+                    }).catch(function(err) {
+                        console.error('Create order error:', err);
+                        showNotification('✗ Unable to create order. PayPal account may be restricted.');
+                        container.innerHTML = '<p style="color: #ff6b6b; text-align: center; padding: 20px;">⚠️ PayPal payment temporarily unavailable.<br>Please contact support at 75576061@qq.com</p>';
                     });
+                },
+                onApprove: function(data, actions) {
+                    return actions.order.capture().then(async function(details) {
+                        // Save order to system
+                        const orderId = await saveOrder(details.id, details);
 
-                    // Payment successful
-                    showNotification('✓ Payment successful! Thank you for your order.');
-                    cartItems = [];
-                    document.getElementById('cartCount').textContent = '0';
-                    closeCheckout();
+                        // Send order notification email
+                        const totalEl = document.getElementById('checkoutTotal');
+                        const total = parseFloat(totalEl.textContent.replace('$', '')) || 0;
+                        sendOrderNotification({
+                            orderId: orderId,
+                            customerName: currentCustomerInfo.name,
+                            customerEmail: currentCustomerInfo.email,
+                            customerPhone: currentCustomerInfo.phone,
+                            customerAddress: `${currentCustomerInfo.address}, ${currentCustomerInfo.city}, ${currentCustomerInfo.zip}, ${currentCustomerInfo.country}`,
+                            items: [...cartItems],
+                            total: total
+                        });
 
-                    // Show success message with our order ID
-                    setTimeout(() => {
-                        alert('🎉 Order Confirmed!\\n\\nYour Order Number: ' + orderId + '\\nPayPal Transaction ID: ' + details.id + '\\n\\nThank you for choosing MingLi Gems. We will handcrafted your bracelet and ship within 7 business days.\\n\\nPlease save your order number for tracking.\\n\\nA confirmation email will be sent shortly.');
-                    }, 500);
-                });
-            },
-            onError: function(err) {
-                console.error('PayPal error:', err);
-                showNotification('✗ Payment failed. Please try again.');
-            },
-            onCancel: function() {
-                showNotification('Payment cancelled.');
-            },
-            style: {
-                color: 'gold',
-                shape: 'rect',
-                label: 'pay',
-                height: 45
+                        // Payment successful
+                        showNotification('✓ Payment successful! Thank you for your order.');
+                        cartItems = [];
+                        document.getElementById('cartCount').textContent = '0';
+                        closeCheckout();
+
+                        // Show success message with our order ID
+                        setTimeout(() => {
+                            alert('🎉 Order Confirmed!\\n\\nYour Order Number: ' + orderId + '\\nPayPal Transaction ID: ' + details.id + '\\n\\nThank you for choosing MingLi Gems. We will handcrafted your bracelet and ship within 7 business days.\\n\\nPlease save your order number for tracking.\\n\\nA confirmation email will be sent shortly.');
+                        }, 500);
+                    });
+                },
+                onError: function(err) {
+                    console.error('PayPal error:', err);
+                    showNotification('✗ Payment failed. Please try again.');
+                    container.innerHTML = '<p style="color: #ff6b6b; text-align: center; padding: 20px;">⚠️ PayPal payment error.<br>Error: ' + (err.message || 'Unknown error') + '</p>';
+                },
+                onCancel: function() {
+                    showNotification('Payment cancelled.');
+                },
+                style: {
+                    color: 'gold',
+                    shape: 'rect',
+                    label: 'pay',
+                    height: 45
+                }
+            });
+
+            // Check if buttons can be rendered
+            if (!buttons.isEligible()) {
+                container.innerHTML = '<p style="color: #ff6b6b; text-align: center; padding: 20px;">⚠️ PayPal payment is not available for this transaction.<br>This may be due to account restrictions or regional limitations.</p>';
+                return;
             }
-        }).render('#paypal-button-container');
+
+            buttons.render('#paypal-button-container');
+        } catch (e) {
+            console.error('PayPal render error:', e);
+            container.innerHTML = '<p style="color: #ff6b6b; text-align: center; padding: 20px;">⚠️ Unable to load PayPal buttons.<br>Please try again later or contact support.</p>';
+        }
     }
 
     // Close modal when clicking outside
