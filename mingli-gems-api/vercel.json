@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "name": "mingli-gems-api",
   "builds": [
     {
       "src": "index.js",
@@ -12,9 +11,5 @@
       "src": "/(.*)",
       "dest": "index.js"
     }
-  ],
-  "env": {
-    "MONGODB_URI": "@mongodb_uri",
-    "ADMIN_API_KEY": "@admin_api_key"
-  }
+  ]
 }

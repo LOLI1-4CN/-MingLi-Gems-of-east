@@ -13,10 +13,17 @@ app.use(express.json());
 
 // MongoDB Connection
 const MONGODB_URI = process.env.MONGODB_URI;
+let mongoConnected = false;
 
 mongoose.connect(MONGODB_URI)
-  .then(() => console.log('Connected to MongoDB'))
-  .catch(err => console.error('MongoDB connection error:', err));
+  .then(() => {
+    console.log('Connected to MongoDB');
+    mongoConnected = true;
+  })
+  .catch(err => {
+    console.error('MongoDB connection error:', err);
+    mongoConnected = false;
+  });
 
 // Generate Order ID
 function generateOrderId() {
@@ -37,6 +44,22 @@ function checkAdminKey(req, res, next) {
   next();
 }
 
+// Root route - API Home
+app.get('/', (req, res) => {
+  res.json({
+    name: 'MingLi Gems API',
+    version: '1.0.0',
+    status: 'running',
+    mongoConnected: mongoConnected,
+    timestamp: new Date().toISOString(),
+    endpoints: {
+      health: '/api/health',
+      orders: '/api/orders',
+      admin: '/api/admin/orders'
+    }
+  });
+});
+
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
@@ -45,6 +68,15 @@ app.get('/api/health', (req, res) => {
 // Create new order
 app.post('/api/orders', async (req, res) => {
   try {
+    // Check MongoDB connection
+    if (!mongoConnected || mongoose.connection.readyState !== 1) {
+      return res.status(503).json({
+        success: false,
+        error: 'Database not connected',
+        mongoState: mongoose.connection.readyState
+      });
+    }
+
     const orderData = req.body;
     
     // Generate unique order ID
@@ -66,7 +98,8 @@ app.post('/api/orders', async (req, res) => {
     console.error('Error creating order:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to create order'
+      error: 'Failed to create order',
+      details: error.message
     });
   }
 });
@@ -122,6 +155,15 @@ app.get('/api/orders/email/:email', async (req, res) => {
 // Get all orders (admin only)
 app.get('/api/admin/orders', checkAdminKey, async (req, res) => {
   try {
+    // Check MongoDB connection
+    if (!mongoConnected || mongoose.connection.readyState !== 1) {
+      return res.status(503).json({
+        success: false,
+        error: 'Database not connected',
+        mongoState: mongoose.connection.readyState
+      });
+    }
+
     const { status, page = 1, limit = 50 } = req.query;
     
     const query = {};
@@ -151,7 +193,8 @@ app.get('/api/admin/orders', checkAdminKey, async (req, res) => {
     console.error('Error fetching orders:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to fetch orders'
+      error: 'Failed to fetch orders',
+      details: error.message
     });
   }
 });
