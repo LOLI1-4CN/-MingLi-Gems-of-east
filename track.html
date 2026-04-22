@@ -600,8 +600,11 @@
     </footer>
 
     <script>
+        // API Configuration
+        const API_BASE_URL = 'https://mingli-gems-api.vercel.app';
+        
         // Search order
-        function searchOrder() {
+        async function searchOrder() {
             const orderNumber = document.getElementById('orderNumberInput').value.trim().toUpperCase();
             
             if (!orderNumber) {
@@ -609,7 +612,34 @@
                 return;
             }
 
-            // Get orders from localStorage
+            // Try to get order from Backend API first
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/orders/${orderNumber}`);
+                const data = await response.json();
+                
+                if (data.success && data.order) {
+                    // Convert API format to display format
+                    const apiOrder = data.order;
+                    const order = {
+                        orderId: apiOrder.orderId,
+                        customerName: apiOrder.customer?.name || '',
+                        customerEmail: apiOrder.customer?.email || '',
+                        customerAddress: `${apiOrder.customer?.address || ''}, ${apiOrder.customer?.city || ''}, ${apiOrder.customer?.zipCode || ''}, ${apiOrder.customer?.country || ''}`,
+                        items: JSON.stringify(apiOrder.items || []),
+                        totalAmount: apiOrder.total?.toFixed(2) || '0.00',
+                        status: apiOrder.orderStatus?.toLowerCase() || 'pending',
+                        carrier: apiOrder.shippingCarrier?.toLowerCase() || '',
+                        trackingNumber: apiOrder.trackingNumber || '',
+                        createdAt: apiOrder.createdAt
+                    };
+                    displayOrder(order);
+                    return;
+                }
+            } catch (error) {
+                console.error('Error fetching from API:', error);
+            }
+            
+            // Fallback to localStorage
             const orders = JSON.parse(localStorage.getItem('mingli_orders') || '[]');
             const order = orders.find(o => o.orderId.toUpperCase() === orderNumber);
 

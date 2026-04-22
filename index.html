@@ -3137,7 +3137,26 @@
         let orders = JSON.parse(localStorage.getItem('mingli_orders') || '[]');
         orders.unshift(orderData);
         localStorage.setItem('mingli_orders', JSON.stringify(orders));
-        
+
+        // Send order notification email
+        if (typeof sendOrderNotification === 'function') {
+            sendOrderNotification({
+                orderId: orderId,
+                customerName: currentCustomerInfo.name,
+                customerEmail: currentCustomerInfo.email,
+                customerPhone: currentCustomerInfo.phone,
+                customerAddress: `${currentCustomerInfo.address}, ${currentCustomerInfo.city}, ${currentCustomerInfo.zip}, ${currentCustomerInfo.country}`,
+                items: [...cartItems],
+                total: total,
+                paymentMethod: 'Bank Wire Transfer (Pending)'
+            });
+        }
+
+        // Sync to Google Sheets if available
+        if (typeof syncOrderToGoogleSheets === 'function') {
+            syncOrderToGoogleSheets(orderData);
+        }
+
         // Show instructions
         showNotification('Order submitted! Bank details sent...');
         
@@ -3201,10 +3220,63 @@ Thank you for your order!`);
             createdAt: new Date().toISOString()
         };
 
-        // Save to localStorage for admin view
+        // Save to localStorage for backup
         let orders = JSON.parse(localStorage.getItem('mingli_orders') || '[]');
         orders.unshift(orderData);
         localStorage.setItem('mingli_orders', JSON.stringify(orders));
+
+        // Save to Backend API
+        try {
+            const apiOrderData = {
+                orderId: orderId,
+                customer: {
+                    name: currentCustomerInfo.name,
+                    email: currentCustomerInfo.email,
+                    phone: currentCustomerInfo.phone,
+                    address: currentCustomerInfo.address,
+                    city: currentCustomerInfo.city,
+                    state: currentCustomerInfo.state || '',
+                    zipCode: currentCustomerInfo.zip,
+                    country: currentCustomerInfo.country
+                },
+                items: cartItems.map(item => ({
+                    name: item.name || item,
+                    price: item.price || 89,
+                    quantity: item.quantity || 1,
+                    details: item.details || ''
+                })),
+                subtotal: total,
+                shipping: 0,
+                total: total,
+                currency: 'USD',
+                paymentMethod: 'paypal',
+                paymentStatus: 'paid',
+                paypalOrderId: paypalOrderId,
+                orderStatus: 'Paid',
+                notes: currentCustomerInfo.notes
+            };
+            
+            fetch('https://mingli-gems-api.vercel.app/api/orders', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(apiOrderData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('[Backend API] Order saved successfully:', data.orderId);
+                } else {
+                    console.error('[Backend API] Failed to save order:', data.error);
+                }
+            })
+            .catch(err => {
+                console.error('[Backend API] Error:', err);
+            });
+        } catch (apiError) {
+            console.error('[Backend API] Error saving order:', apiError);
+        }
 
         // Sync to Google Sheets
         if (window.GoogleSheetsIntegration) {

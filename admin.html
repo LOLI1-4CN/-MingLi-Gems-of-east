@@ -503,11 +503,26 @@
                 </div>
             </div>
 
-            <!-- Export Section -->
+            <!-- Data Storage Warning -->
             <div class="export-section">
-                <p style="color: var(--text-muted); font-size: 0.8rem;">
-                    Data is stored locally in this browser. For permanent storage, configure Google Sheets integration.
-                </p>
+                <div style="background: rgba(139, 37, 0, 0.2); border: 1px solid var(--accent-red); padding: 16px 20px; margin-bottom: 20px; border-radius: 4px;">
+                    <p style="color: var(--gold-light); font-size: 0.9rem; margin-bottom: 8px;">
+                        <strong>⚠️ Important: Data Storage Limitation</strong>
+                    </p>
+                    <p style="color: var(--text-muted); font-size: 0.8rem; line-height: 1.6;">
+                        Order data is stored locally in this browser only. To prevent data loss:
+                        <br>• Regularly click "Export CSV" to backup orders
+                        <br>• Clear browser cache/data will DELETE all orders
+                        <br>• Orders are NOT accessible from other devices
+                        <br>• Email notifications are sent to 75576061@qq.com for each order
+                    </p>
+                </div>
+                <button class="btn btn-secondary" onclick="exportCSV()" style="margin-right: 12px;">
+                    📥 Export CSV Backup
+                </button>
+                <span style="color: var(--text-muted); font-size: 0.8rem;">
+                    Recommended: Export orders daily
+                </span>
             </div>
         </main>
     </div>
@@ -538,11 +553,58 @@
             loadOrders();
         }
 
-        // Load orders from localStorage
-        function loadOrders() {
-            const orders = JSON.parse(localStorage.getItem('mingli_orders') || '[]');
-            updateStats(orders);
-            renderOrders(orders);
+        // API Configuration
+        const API_BASE_URL = 'https://mingli-gems-api.vercel.app';
+        const ADMIN_API_KEY = 'mingli2024_secure_key';
+        
+        // Load orders from Backend API
+        async function loadOrders() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/admin/orders`, {
+                    headers: {
+                        'x-admin-key': ADMIN_API_KEY
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch orders from API');
+                }
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Convert API format to local format for compatibility
+                    const orders = data.orders.map(apiOrder => ({
+                        orderId: apiOrder.orderId,
+                        customerName: apiOrder.customer?.name || '',
+                        customerEmail: apiOrder.customer?.email || '',
+                        customerPhone: apiOrder.customer?.phone || '',
+                        customerAddress: `${apiOrder.customer?.address || ''}, ${apiOrder.customer?.city || ''}, ${apiOrder.customer?.zipCode || ''}, ${apiOrder.customer?.country || ''}`,
+                        items: JSON.stringify(apiOrder.items || []),
+                        totalAmount: apiOrder.total?.toFixed(2) || '0.00',
+                        status: apiOrder.orderStatus?.toLowerCase() || 'pending',
+                        carrier: apiOrder.shippingCarrier?.toLowerCase() || '',
+                        trackingNumber: apiOrder.trackingNumber || '',
+                        notes: apiOrder.notes || '',
+                        createdAt: apiOrder.createdAt
+                    }));
+                    
+                    // Also save to localStorage as backup
+                    localStorage.setItem('mingli_orders', JSON.stringify(orders));
+                    
+                    updateStats(orders);
+                    renderOrders(orders);
+                } else {
+                    throw new Error(data.error || 'Failed to load orders');
+                }
+            } catch (error) {
+                console.error('Error loading orders from API:', error);
+                // Fallback to localStorage
+                const orders = JSON.parse(localStorage.getItem('mingli_orders') || '[]');
+                updateStats(orders);
+                renderOrders(orders);
+                showNotification('Using local data (API unavailable)');
+            }
         }
 
         // Update statistics
@@ -682,19 +744,43 @@
         }
 
         // Update order status
-        function updateStatus(orderId, newStatus) {
+        async function updateStatus(orderId, newStatus) {
+            // Update localStorage
             let orders = JSON.parse(localStorage.getItem('mingli_orders') || '[]');
             const order = orders.find(o => o.orderId === orderId);
             if (order) {
                 order.status = newStatus;
                 localStorage.setItem('mingli_orders', JSON.stringify(orders));
-                showNotification('Status updated');
-                filterOrders();
             }
+            
+            // Update Backend API
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/admin/orders/${orderId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-admin-key': ADMIN_API_KEY
+                    },
+                    body: JSON.stringify({
+                        orderStatus: newStatus.charAt(0).toUpperCase() + newStatus.slice(1)
+                    })
+                });
+                
+                if (response.ok) {
+                    showNotification('Status updated (synced to cloud)');
+                } else {
+                    showNotification('Status updated (local only)');
+                }
+            } catch (error) {
+                console.error('Error updating status:', error);
+                showNotification('Status updated (local only)');
+            }
+            
+            filterOrders();
         }
 
         // Add tracking information
-        function addTracking(orderId) {
+        async function addTracking(orderId) {
             const carrier = document.getElementById(`carrier-${orderId}`).value;
             const trackingNumber = document.getElementById(`tracking-${orderId}`).value.trim();
 
@@ -703,6 +789,7 @@
                 return;
             }
 
+            // Update localStorage
             let orders = JSON.parse(localStorage.getItem('mingli_orders') || '[]');
             const order = orders.find(o => o.orderId === orderId);
             if (order) {
@@ -713,9 +800,34 @@
                     order.status = 'shipped';
                 }
                 localStorage.setItem('mingli_orders', JSON.stringify(orders));
-                showNotification('Tracking info added');
-                filterOrders();
             }
+            
+            // Update Backend API
+            try {
+                const carrierUpper = carrier.toUpperCase();
+                const response = await fetch(`${API_BASE_URL}/api/admin/orders/${orderId}/tracking`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-admin-key': ADMIN_API_KEY
+                    },
+                    body: JSON.stringify({
+                        trackingNumber: trackingNumber,
+                        shippingCarrier: carrierUpper
+                    })
+                });
+                
+                if (response.ok) {
+                    showNotification('Tracking info added (synced to cloud)');
+                } else {
+                    showNotification('Tracking info added (local only)');
+                }
+            } catch (error) {
+                console.error('Error adding tracking:', error);
+                showNotification('Tracking info added (local only)');
+            }
+            
+            filterOrders();
         }
 
         // Get carrier display name
