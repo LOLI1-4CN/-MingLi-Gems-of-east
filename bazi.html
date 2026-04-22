@@ -1400,10 +1400,10 @@
         function orderBaziReport() {
             // Get birth info from the form
             const calendarType = document.getElementById('calendarType').value;
-            const year = document.getElementById('year').value;
-            const month = document.getElementById('month').value;
-            const day = document.getElementById('day').value;
-            const hour = document.getElementById('hour').value;
+            const year = document.getElementById('birthYear').value;
+            const month = document.getElementById('birthMonth').value;
+            const day = document.getElementById('birthDay').value;
+            const hour = document.getElementById('birthHour').value;
             const gender = document.querySelector('input[name="gender"]:checked')?.value || 'not specified';
 
             // Validate that bazi has been calculated

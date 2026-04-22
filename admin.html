@@ -528,17 +528,68 @@
     </div>
 
     <script>
-        // Admin password (you should change this)
-        const ADMIN_PASSWORD = 'mingli2024';
+        // ============================================
+        // SECURITY CONFIGURATION
+        // ============================================
+        // IMPORTANT: Change these values before deployment!
+        // Default password should be changed to a strong random string
+        const ADMIN_PASSWORD_HASH = 'e9d7c5f3a8b2m1n0p4q6r7s9t0u2v3w4x5y6z7a8b9c0d1e2f3g4h5i6j7k8l9m0';
+        // ^ This is a placeholder hash. Use a strong password generator to create a real one.
+        // Or better yet, implement server-side authentication
+        
+        const ADMIN_API_KEY = 'CHANGE_THIS_TO_YOUR_SECURE_API_KEY_FROM_VERCEL_ENV';
+        
+        // Login attempt tracking (prevent brute force)
+        let loginAttempts = parseInt(sessionStorage.getItem('loginAttempts') || '0');
+        const MAX_LOGIN_ATTEMPTS = 5;
+        const LOCKOUT_DURATION = 15 * 60 * 1000; // 15 minutes
+        
+        // Hash function for password comparison (simple implementation)
+        function simpleHash(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                const char = str.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash;
+            }
+            return hash.toString(16);
+        }
 
         // Check login status
         function checkLogin() {
+            // Check if locked out
+            const lockoutEnd = parseInt(localStorage.getItem('lockoutEnd') || '0');
+            if (Date.now() < lockoutEnd) {
+                const minutesLeft = Math.ceil((lockoutEnd - Date.now()) / 60000);
+                alert(`Too many failed attempts. Please try again in ${minutesLeft} minutes.`);
+                return;
+            }
+            
             const password = document.getElementById('adminPassword').value;
-            if (password === ADMIN_PASSWORD) {
+            const passwordHash = simpleHash(password);
+            
+            // Compare with expected hash (use a strong password!)
+            const expectedHash = simpleHash('mingli2024_secure_key'); // CHANGE THIS!
+            
+            if (passwordHash === expectedHash) {
+                // Reset attempts on success
+                sessionStorage.setItem('loginAttempts', '0');
+                localStorage.removeItem('lockoutEnd');
                 sessionStorage.setItem('adminLoggedIn', 'true');
                 showAdminPanel();
             } else {
-                alert('Incorrect password');
+                // Track failed attempts
+                loginAttempts++;
+                sessionStorage.setItem('loginAttempts', loginAttempts.toString());
+                
+                if (loginAttempts >= MAX_LOGIN_ATTEMPTS) {
+                    const lockoutUntil = Date.now() + LOCKOUT_DURATION;
+                    localStorage.setItem('lockoutEnd', lockoutUntil.toString());
+                    alert(`Too many failed attempts. Account locked for 15 minutes.`);
+                } else {
+                    const attemptsLeft = MAX_LOGIN_ATTEMPTS - loginAttempts;
+                    alert(`Incorrect password. ${attemptsLeft} attempts remaining.`);
+                }
             }
         }
 
