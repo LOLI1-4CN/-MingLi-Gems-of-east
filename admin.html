@@ -605,18 +605,45 @@
         // API Configuration
         const API_BASE_URL = 'https://mingli-gems-api.vercel.app';
         const ADMIN_API_KEY = 'mingli2024_secure_key';
+
+        // Fetch with timeout helper
+        function fetchWithTimeout(url, options = {}, timeoutMs = 15000) {
+            const controller = new AbortController();
+            const timer = setTimeout(() => controller.abort(), timeoutMs);
+            return fetch(url, { ...options, signal: controller.signal })
+                .finally(() => clearTimeout(timer));
+        }
+
+        // Show API status banner
+        function showApiBanner(type, message) {
+            let banner = document.getElementById('apiBanner');
+            if (!banner) {
+                banner = document.createElement('div');
+                banner.id = 'apiBanner';
+                banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;padding:10px 20px;text-align:center;font-size:13px;font-weight:bold;';
+                document.body.prepend(banner);
+            }
+            if (type === 'loading') {
+                banner.style.background = '#C9A96E'; banner.style.color = '#1A1A1A';
+            } else if (type === 'success') {
+                banner.style.background = '#2E5941'; banner.style.color = '#fff';
+                setTimeout(() => banner.remove(), 3000);
+            } else if (type === 'error') {
+                banner.style.background = '#8B2500'; banner.style.color = '#fff';
+            }
+            banner.textContent = message;
+        }
         
         // Load orders from Backend API
         async function loadOrders() {
+            showApiBanner('loading', '⏳ Loading orders from cloud database...');
             try {
-                const response = await fetch(`${API_BASE_URL}/api/admin/orders`, {
-                    headers: {
-                        'x-admin-key': ADMIN_API_KEY
-                    }
-                });
+                const response = await fetchWithTimeout(`${API_BASE_URL}/api/admin/orders`, {
+                    headers: { 'x-admin-key': ADMIN_API_KEY }
+                }, 20000); // 20 seconds timeout for cold start
                 
                 if (!response.ok) {
-                    throw new Error('Failed to fetch orders from API');
+                    throw new Error(`API returned ${response.status}`);
                 }
                 
                 const data = await response.json();
@@ -638,21 +665,25 @@
                         createdAt: apiOrder.createdAt
                     }));
                     
-                    // Also save to localStorage as backup
+                    // Save to localStorage as backup
                     localStorage.setItem('mingli_orders', JSON.stringify(orders));
                     
+                    showApiBanner('success', `✅ Cloud data loaded — ${orders.length} orders`);
                     updateStats(orders);
                     renderOrders(orders);
                 } else {
-                    throw new Error(data.error || 'Failed to load orders');
+                    throw new Error(data.error || 'API returned failure');
                 }
             } catch (error) {
                 console.error('Error loading orders from API:', error);
+                const isTimeout = error.name === 'AbortError';
+                showApiBanner('error', isTimeout
+                    ? '⚠️ API timeout (cold start) — showing local data. Refresh to retry.'
+                    : '⚠️ API unavailable — showing local data. Refresh to retry.');
                 // Fallback to localStorage
                 const orders = JSON.parse(localStorage.getItem('mingli_orders') || '[]');
                 updateStats(orders);
                 renderOrders(orders);
-                showNotification('Using local data (API unavailable)');
             }
         }
 
