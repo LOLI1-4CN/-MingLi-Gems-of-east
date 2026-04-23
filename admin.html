@@ -537,8 +537,6 @@
         // ^ This is a placeholder hash. Use a strong password generator to create a real one.
         // Or better yet, implement server-side authentication
         
-        const ADMIN_API_KEY = 'CHANGE_THIS_TO_YOUR_SECURE_API_KEY_FROM_VERCEL_ENV';
-        
         // Login attempt tracking (prevent brute force)
         let loginAttempts = parseInt(sessionStorage.getItem('loginAttempts') || '0');
         const MAX_LOGIN_ATTEMPTS = 5;
