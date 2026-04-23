@@ -607,7 +607,7 @@
         const ADMIN_API_KEY = 'mingli2024_secure_key';
 
         // Fetch with timeout helper
-        function fetchWithTimeout(url, options = {}, timeoutMs = 65000) {
+        function fetchWithTimeout(url, options = {}, timeoutMs = 120000) {
             const controller = new AbortController();
             const timer = setTimeout(() => controller.abort(), timeoutMs);
             return fetch(url, { ...options, signal: controller.signal })
