@@ -640,7 +640,7 @@
             try {
                 const response = await fetchWithTimeout(`${API_BASE_URL}/api/admin/orders`, {
                     headers: { 'x-admin-key': ADMIN_API_KEY }
-                }, 65000); // 65 seconds - Vercel cold start can take up to 60s
+                }, 120000); // 120 seconds - Vercel cold start can take up to 60s
                 
                 if (!response.ok) {
                     throw new Error(`API returned ${response.status}`);
@@ -677,8 +677,9 @@
             } catch (error) {
                 console.error('Error loading orders from API:', error);
                 const isTimeout = error.name === 'AbortError';
+                const retryBtn = '<button onclick="loadOrders()" style="margin-left:10px;padding:4px 12px;cursor:pointer;background:#C9A96E;color:#1A1A1A;border:none;border-radius:4px;font-weight:bold;">Retry</button>';
                 showApiBanner('error', isTimeout
-                    ? '⚠️ API timeout (cold start) — showing local data. Refresh to retry.'
+                    ? '⚠️ API timeout (Vercel cold start) — click Retry when API is ready. Showing local backup below.' + retryBtn
                     : '⚠️ API unavailable — showing local data. Refresh to retry.');
                 // Fallback to localStorage
                 const orders = JSON.parse(localStorage.getItem('mingli_orders') || '[]');
