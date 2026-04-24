@@ -603,8 +603,8 @@
         // API Configuration
         const API_BASE_URL = 'https://mingli-gems-api.vercel.app';
 
-        // Fetch with timeout helper
-        function fetchWithTimeout(url, options = {}, timeoutMs = 20000) {
+        // Fetch with timeout helper (120s for Vercel cold start)
+        function fetchWithTimeout(url, options = {}, timeoutMs = 120000) {
             const controller = new AbortController();
             const timer = setTimeout(() => controller.abort(), timeoutMs);
             return fetch(url, { ...options, signal: controller.signal })
@@ -625,13 +625,24 @@
             const origText = btn.textContent;
             btn.textContent = 'Searching...';
             btn.disabled = true;
+            
+            // Show loading overlay
+            const loadingText = document.createElement('div');
+            loadingText.id = 'searchStatus';
+            loadingText.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.9);color:#fff;padding:20px 40px;border-radius:10px;font-size:14px;z-index:9999;text-align:center;';
+            loadingText.innerHTML = '<div style="font-size:24px;margin-bottom:10px;">⏳</div>Searching for order...<br><small style="color:#aaa;">Please wait, server may be starting up...</small>';
+            document.body.appendChild(loadingText);
 
             // Try to get order from Backend API first
+            let apiSuccess = false;
             try {
-                const response = await fetchWithTimeout(`${API_BASE_URL}/api/orders/${orderNumber}`, {}, 20000);
+                updateLoadingStatus(loadingText, 'Connecting to server...');
+                const response = await fetchWithTimeout(`${API_BASE_URL}/api/orders/${orderNumber}`, {}, 120000);
+                updateLoadingStatus(loadingText, 'Fetching order data...');
                 const data = await response.json();
                 
                 if (data.success && data.order) {
+                    updateLoadingStatus(loadingText, 'Displaying order...');
                     // Convert API format to display format
                     const apiOrder = data.order;
                     const order = {
@@ -648,15 +659,23 @@
                     };
                     btn.textContent = origText;
                     btn.disabled = false;
+                    document.body.removeChild(loadingText);
                     displayOrder(order);
                     return;
+                } else if (data.error) {
+                    updateLoadingStatus(loadingText, 'Order not found, checking local...');
+                    await new Promise(r => setTimeout(r, 500));
                 }
+                apiSuccess = false;
             } catch (error) {
                 console.error('Error fetching from API:', error);
+                updateLoadingStatus(loadingText, `Error: ${error.name === 'AbortError' ? 'Server timeout, checking local...' : 'Connection failed, checking local...'}`);
+                await new Promise(r => setTimeout(r, 500));
             }
             
             btn.textContent = origText;
             btn.disabled = false;
+            if (loadingText.parentNode) document.body.removeChild(loadingText);
 
             // Fallback to localStorage
             const orders = JSON.parse(localStorage.getItem('mingli_orders') || '[]');
@@ -667,6 +686,10 @@
             } else {
                 showNotFound();
             }
+        }
+        
+        function updateLoadingStatus(el, text) {
+            el.innerHTML = `<div style="font-size:24px;margin-bottom:10px;">⏳</div>${text}<br><small style="color:#aaa;">Please wait...</small>`;
         }
 
         // Display order details
