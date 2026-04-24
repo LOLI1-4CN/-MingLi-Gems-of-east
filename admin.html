@@ -520,6 +520,9 @@
                 <button class="btn btn-secondary" onclick="exportCSV()" style="margin-right: 12px;">
                     📥 Export CSV Backup
                 </button>
+                <button class="btn btn-secondary" onclick="syncToCloud()" style="margin-right: 12px;">
+                    ☁️ Sync Local to Cloud
+                </button>
                 <span style="color: var(--text-muted); font-size: 0.8rem;">
                     Recommended: Export orders daily
                 </span>
@@ -645,6 +648,7 @@
                 items: JSON.stringify(apiOrder.items || []),
                 totalAmount: apiOrder.total?.toFixed(2) || '0.00',
                 paymentMethod: apiOrder.paymentMethod || '',
+                baziData: apiOrder.baziData || null,
                 status: apiOrder.orderStatus?.toLowerCase() || 'pending',
                 carrier: apiOrder.shippingCarrier?.toLowerCase() || '',
                 trackingNumber: apiOrder.trackingNumber || '',
@@ -727,8 +731,13 @@
             tbody.innerHTML = orders.map(order => {
                 const items = JSON.parse(order.items || '[]');
                 const itemsHtml = items.map(item => 
-                    `<div class="item-line">${item.name} x${item.quantity}</div>`
+                    `<div class="item-line">${item.name} x${item.quantity}${item.details ? ' <span style="color:#C9A96E;font-size:0.75em;">' + item.details + '</span>' : ''}</div>`
                 ).join('');
+
+                const baziHtml = order.paymentMethod === 'bazi' || order.baziData ? 
+                    `<div class="bazi-info" style="margin-top:6px;padding:6px 8px;background:rgba(201,169,110,0.1);border-radius:4px;font-size:0.72em;color:#C9A96E;">
+                        ☯ BaZi: ${order.baziData?.birthYear || ''}/${String(order.baziData?.birthMonth||'').padStart(2,'0')}/${String(order.baziData?.birthDay||'').padStart(2,'0')} ${order.baziData?.gender || ''} | ${order.baziData?.baziSnapshot?.year || ''} ${order.baziData?.baziSnapshot?.month || ''} ${order.baziData?.baziSnapshot?.day || ''} ${order.baziData?.baziSnapshot?.hour || ''}
+                    </div>` : '';
 
                 const statusClass = {
                     'paid': 'status-paid',
@@ -773,7 +782,7 @@
                             <div class="customer-name">${order.customerName}</div>
                             <div class="customer-email">${order.customerEmail}</div>
                         </td>
-                        <td class="items-summary">${itemsHtml}</td>
+                        <td class="items-summary">${itemsHtml}${baziHtml}</td>
                         <td class="amount">$${order.totalAmount}</td>
                         <td>
                             <span class="status-badge ${statusClass}">${statusText}</span>
@@ -945,6 +954,76 @@
                 'other': '#'
             };
             return urls[carrier] || '#';
+        }
+
+        // Sync local orders to cloud
+        async function syncToCloud() {
+            const orders = JSON.parse(localStorage.getItem('mingli_orders') || '[]');
+            if (orders.length === 0) {
+                alert('No local orders to sync');
+                return;
+            }
+
+            if (!confirm(`Sync ${orders.length} local orders to cloud?\n\nThis will upload all local orders to MongoDB.`)) {
+                return;
+            }
+
+            showApiBanner('loading', `Syncing ${orders.length} orders to cloud...`);
+            let synced = 0;
+            let failed = 0;
+
+            for (const order of orders) {
+                try {
+                    // Convert local format to API format
+                    const customer = {
+                        name: order.customerName,
+                        email: order.customerEmail,
+                        phone: order.customerPhone,
+                        address: order.customerAddress.split(',')[0]?.trim() || '',
+                        city: order.customerAddress.split(',')[1]?.trim() || '',
+                        zipCode: order.customerAddress.split(',')[2]?.trim() || '',
+                        country: order.customerAddress.split(',')[3]?.trim() || ''
+                    };
+
+                    const apiOrder = {
+                        orderId: order.orderId,
+                        customer: customer,
+                        items: JSON.parse(order.items || '[]'),
+                        total: parseFloat(order.totalAmount) || 0,
+                        paymentMethod: order.paymentMethod || 'paypal',
+                        paymentStatus: order.status === 'paid' ? 'paid' : 'pending',
+                        orderStatus: order.status.charAt(0).toUpperCase() + order.status.slice(1) || 'Pending',
+                        trackingNumber: order.trackingNumber || '',
+                        shippingCarrier: order.carrier?.toUpperCase() || '',
+                        notes: order.notes || '',
+                        createdAt: order.createdAt
+                    };
+
+                    const response = await fetchWithTimeout(`${API_BASE_URL}/api/orders`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(apiOrder)
+                    }, 30000);
+
+                    if (response.ok) {
+                        synced++;
+                    } else {
+                        failed++;
+                        console.error('Failed to sync:', order.orderId);
+                    }
+                } catch (e) {
+                    failed++;
+                    console.error('Error syncing order:', order.orderId, e);
+                }
+            }
+
+            if (failed === 0) {
+                showApiBanner('success', `✅ Successfully synced ${synced} orders to cloud!`);
+                // Reload to fetch from cloud
+                setTimeout(() => location.reload(), 2000);
+            } else {
+                showApiBanner('error', `⚠️ Synced ${synced}, Failed ${failed} orders`);
+            }
         }
 
         // Export to CSV
