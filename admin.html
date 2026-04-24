@@ -956,7 +956,7 @@
             return urls[carrier] || '#';
         }
 
-        // Sync local orders to cloud
+        // Sync local orders to cloud (CONCURRENT - much faster!)
         async function syncToCloud() {
             const orders = JSON.parse(localStorage.getItem('mingli_orders') || '[]');
             if (orders.length === 0) {
@@ -964,62 +964,70 @@
                 return;
             }
 
-            if (!confirm(`Sync ${orders.length} local orders to cloud?\n\nThis will upload all local orders to MongoDB.`)) {
+            if (!confirm(`Sync ${orders.length} local orders to cloud?\n\nThis will upload all orders in parallel.`)) {
                 return;
             }
 
-            showApiBanner('loading', `Syncing ${orders.length} orders to cloud...`);
+            showApiBanner('loading', `Starting parallel sync of ${orders.length} orders...`);
+            
+            // Convert all orders first
+            const apiOrders = orders.map(order => {
+                const customer = {
+                    name: order.customerName,
+                    email: order.customerEmail,
+                    phone: order.customerPhone,
+                    address: order.customerAddress.split(',')[0]?.trim() || '',
+                    city: order.customerAddress.split(',')[1]?.trim() || '',
+                    zipCode: order.customerAddress.split(',')[2]?.trim() || '',
+                    country: order.customerAddress.split(',')[3]?.trim() || ''
+                };
+
+                return {
+                    orderId: order.orderId,
+                    customer: customer,
+                    items: JSON.parse(order.items || '[]'),
+                    total: parseFloat(order.totalAmount) || 0,
+                    paymentMethod: order.paymentMethod || 'paypal',
+                    paymentStatus: order.status === 'paid' ? 'paid' : 'pending',
+                    orderStatus: order.status.charAt(0).toUpperCase() + order.status.slice(1) || 'Pending',
+                    trackingNumber: order.trackingNumber || '',
+                    shippingCarrier: order.carrier?.toUpperCase() || '',
+                    notes: order.notes || '',
+                    createdAt: order.createdAt
+                };
+            });
+
+            // Upload concurrently - 10 at a time
+            const BATCH_SIZE = 10;
             let synced = 0;
             let failed = 0;
 
-            for (const order of orders) {
-                try {
-                    // Convert local format to API format
-                    const customer = {
-                        name: order.customerName,
-                        email: order.customerEmail,
-                        phone: order.customerPhone,
-                        address: order.customerAddress.split(',')[0]?.trim() || '',
-                        city: order.customerAddress.split(',')[1]?.trim() || '',
-                        zipCode: order.customerAddress.split(',')[2]?.trim() || '',
-                        country: order.customerAddress.split(',')[3]?.trim() || ''
-                    };
+            for (let i = 0; i < apiOrders.length; i += BATCH_SIZE) {
+                const batch = apiOrders.slice(i, i + BATCH_SIZE);
+                const batchNum = Math.floor(i / BATCH_SIZE) + 1;
+                const totalBatches = Math.ceil(apiOrders.length / BATCH_SIZE);
+                showApiBanner('loading', `Syncing batch ${batchNum}/${totalBatches}...`);
 
-                    const apiOrder = {
-                        orderId: order.orderId,
-                        customer: customer,
-                        items: JSON.parse(order.items || '[]'),
-                        total: parseFloat(order.totalAmount) || 0,
-                        paymentMethod: order.paymentMethod || 'paypal',
-                        paymentStatus: order.status === 'paid' ? 'paid' : 'pending',
-                        orderStatus: order.status.charAt(0).toUpperCase() + order.status.slice(1) || 'Pending',
-                        trackingNumber: order.trackingNumber || '',
-                        shippingCarrier: order.carrier?.toUpperCase() || '',
-                        notes: order.notes || '',
-                        createdAt: order.createdAt
-                    };
-
-                    const response = await fetchWithTimeout(`${API_BASE_URL}/api/orders`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(apiOrder)
-                    }, 30000);
-
-                    if (response.ok) {
-                        synced++;
-                    } else {
-                        failed++;
-                        console.error('Failed to sync:', order.orderId);
+                const results = await Promise.all(batch.map(async (order) => {
+                    try {
+                        const response = await fetchWithTimeout(`${API_BASE_URL}/api/orders`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(order)
+                        }, 15000);
+                        return response.ok;
+                    } catch (e) {
+                        console.error('Error syncing:', order.orderId, e);
+                        return false;
                     }
-                } catch (e) {
-                    failed++;
-                    console.error('Error syncing order:', order.orderId, e);
-                }
+                }));
+
+                synced += results.filter(r => r).length;
+                failed += results.filter(r => !r).length;
             }
 
             if (failed === 0) {
                 showApiBanner('success', `✅ Successfully synced ${synced} orders to cloud!`);
-                // Reload to fetch from cloud
                 setTimeout(() => location.reload(), 2000);
             } else {
                 showApiBanner('error', `⚠️ Synced ${synced}, Failed ${failed} orders`);
