@@ -3067,8 +3067,8 @@
         document.getElementById('customerInfoSection').style.display = 'none';
         document.getElementById('paymentMethodSection').style.display = 'block';
         
-        // Default select PayPal
-        selectPaymentMethod('paypal');
+        // Default select LianLian (Bank Transfer)
+        selectPaymentMethod('lianlian');
     }
 
     function showCustomerForm() {
@@ -3112,8 +3112,6 @@
         
         // Always use LianLian for now
         document.getElementById('lianlianSection').style.display = 'block';
-            document.getElementById('lianlianSection').style.display = 'block';
-        }
     }
 
     function backToPaymentMethod() {
