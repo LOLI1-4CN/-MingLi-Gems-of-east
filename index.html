@@ -2617,21 +2617,25 @@
         if (e.target === this) closeFullCustomModal();
     });
 
-    // Populate years (1920-2025)
+    // Populate years (1920-2025) - with null check
     const yearSelect = document.getElementById('birthYear');
     const astroYear = document.getElementById('astroYear');
     for (let y = 2025; y >= 1920; y--) {
         const opt = new Option(y, y);
-        yearSelect.add(opt);
-        astroYear.add(new Option(y, y));
+        if (yearSelect) yearSelect.add(opt);
+        if (astroYear) astroYear.add(new Option(y, y));
     }
     const astroMonth = document.getElementById('astroMonth');
-    for (let m = 1; m <= 12; m++) {
-        astroMonth.add(new Option(m, m));
+    if (astroMonth) {
+        for (let m = 1; m <= 12; m++) {
+            astroMonth.add(new Option(m, m));
+        }
     }
     const astroDay = document.getElementById('astroDay');
-    for (let d = 1; d <= 31; d++) {
-        astroDay.add(new Option(d, d));
+    if (astroDay) {
+        for (let d = 1; d <= 31; d++) {
+            astroDay.add(new Option(d, d));
+        }
     }
 
     // ===== NAVBAR SCROLL =====
