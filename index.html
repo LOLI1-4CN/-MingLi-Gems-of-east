@@ -3154,6 +3154,12 @@
 
         // Save to Backend API
         try {
+            // Check if this order includes a BaZi report (from bazi.html)
+            const baziReportOrder = JSON.parse(localStorage.getItem('bazi_report_order') || 'null');
+            if (baziReportOrder) {
+                localStorage.removeItem('bazi_report_order'); // Clear after reading
+            }
+
             const apiOrderData = {
                 orderId: orderId,
                 customer: {
@@ -3179,7 +3185,16 @@
                 paymentMethod: 'lianlian',
                 paymentStatus: 'pending',
                 orderStatus: 'Pending Payment',
-                notes: currentCustomerInfo.notes
+                notes: currentCustomerInfo.notes,
+                baziData: baziReportOrder ? {
+                    birthYear: parseInt(baziReportOrder.birthInfo?.year) || 0,
+                    birthMonth: parseInt(baziReportOrder.birthInfo?.month) || 0,
+                    birthDay: parseInt(baziReportOrder.birthInfo?.day) || 0,
+                    birthHour: parseInt(baziReportOrder.birthInfo?.hour) || 0,
+                    gender: baziReportOrder.birthInfo?.gender || '',
+                    baziSnapshot: baziReportOrder.baziSnapshot || {},
+                    calendarType: baziReportOrder.birthInfo?.calendar || 'solar'
+                } : undefined
             };
             
             fetch('https://mingli-gems-api.vercel.app/api/orders', {
@@ -3201,6 +3216,7 @@
         }
 
         // Send order notification email
+        const baziReportOrder4Email = JSON.parse(localStorage.getItem('bazi_report_order') || 'null');
         if (typeof sendOrderNotification === 'function') {
             sendOrderNotification({
                 orderId: orderId,
@@ -3210,7 +3226,11 @@
                 customerAddress: `${currentCustomerInfo.address}, ${currentCustomerInfo.city}, ${currentCustomerInfo.zip}, ${currentCustomerInfo.country}`,
                 items: [...cartItems],
                 total: total,
-                paymentMethod: 'Bank Wire Transfer (Pending)'
+                paymentMethod: 'Bank Wire Transfer (Pending)',
+                baziData: baziReportOrder4Email ? {
+                    birthInfo: baziReportOrder4Email.birthInfo,
+                    baziSnapshot: baziReportOrder4Email.baziSnapshot
+                } : null
             });
         }
 
@@ -3261,6 +3281,12 @@ Thank you for your order!`);
         const totalEl = document.getElementById('checkoutTotal');
         const total = parseFloat(totalEl.textContent.replace('$', '')) || 0;
 
+        // Check if this order includes a BaZi report (from bazi.html)
+        const baziReportOrder = JSON.parse(localStorage.getItem('bazi_report_order') || 'null');
+        if (baziReportOrder) {
+            localStorage.removeItem('bazi_report_order'); // Clear after reading
+        }
+
         const orderData = {
             orderId: orderId,
             paypalOrderId: paypalOrderId,
@@ -3279,7 +3305,16 @@ Thank you for your order!`);
             totalAmount: total.toFixed(2),
             currency: 'USD',
             status: 'paid',
-            createdAt: new Date().toISOString()
+            createdAt: new Date().toISOString(),
+            baziData: baziReportOrder ? {
+                birthYear: parseInt(baziReportOrder.birthInfo?.year) || 0,
+                birthMonth: parseInt(baziReportOrder.birthInfo?.month) || 0,
+                birthDay: parseInt(baziReportOrder.birthInfo?.day) || 0,
+                birthHour: parseInt(baziReportOrder.birthInfo?.hour) || 0,
+                gender: baziReportOrder.birthInfo?.gender || '',
+                baziSnapshot: baziReportOrder.baziSnapshot || {},
+                calendarType: baziReportOrder.birthInfo?.calendar || 'solar'
+            } : null
         };
 
         // Save to localStorage for backup
@@ -3287,7 +3322,7 @@ Thank you for your order!`);
         orders.unshift(orderData);
         localStorage.setItem('mingli_orders', JSON.stringify(orders));
 
-        // Save to Backend API
+        // Save to Backend API (with timeout and retry)
         try {
             const apiOrderData = {
                 orderId: orderId,
@@ -3315,31 +3350,24 @@ Thank you for your order!`);
                 paymentStatus: 'paid',
                 paypalOrderId: paypalOrderId,
                 orderStatus: 'Paid',
-                notes: currentCustomerInfo.notes
+                notes: currentCustomerInfo.notes,
+                baziData: baziReportOrder ? {
+                    birthYear: parseInt(baziReportOrder.birthInfo?.year) || 0,
+                    birthMonth: parseInt(baziReportOrder.birthInfo?.month) || 0,
+                    birthDay: parseInt(baziReportOrder.birthInfo?.day) || 0,
+                    birthHour: parseInt(baziReportOrder.birthInfo?.hour) || 0,
+                    gender: baziReportOrder.birthInfo?.gender || '',
+                    baziSnapshot: baziReportOrder.baziSnapshot || {},
+                    calendarType: baziReportOrder.birthInfo?.calendar || 'solar'
+                } : undefined
             };
             
-            fetch('https://mingli-gems-api.vercel.app/api/orders', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(apiOrderData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    console.log('[Backend API] Order saved successfully:', data.orderId);
-                } else {
-                    console.error('[Backend API] Failed to save order:', data.error);
-                }
-            })
-            .catch(err => {
-                console.error('[Backend API] Error:', err);
-            });
+            // Async save with timeout and retry
+            syncOrderToBackend(apiOrderData, orderId);
         } catch (apiError) {
             console.error('[Backend API] Error saving order:', apiError);
         }
-
+        
         // Sync to Google Sheets
         if (window.GoogleSheetsIntegration) {
             window.GoogleSheetsIntegration.syncOrder(orderData)
@@ -3348,6 +3376,52 @@ Thank you for your order!`);
         }
 
         return orderId;
+    }
+
+    // Sync order to backend with timeout and retry
+    async function syncOrderToBackend(orderData, orderId) {
+        const API_URL = 'https://mingli-gems-api.vercel.app/api/orders';
+        const TIMEOUT = 30000; // 30 seconds
+        const MAX_RETRIES = 3;
+        
+        for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+            try {
+                console.log(`[Backend API] Syncing order ${orderId} (attempt ${attempt}/${MAX_RETRIES})...`);
+                
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), TIMEOUT);
+                
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(orderData),
+                    signal: controller.signal
+                });
+                
+                clearTimeout(timeoutId);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        console.log(`[Backend API] ✅ Order ${orderId} synced successfully!`);
+                        return;
+                    }
+                }
+                
+                console.warn(`[Backend API] Attempt ${attempt} failed, status:`, response.status);
+            } catch (err) {
+                console.error(`[Backend API] Attempt ${attempt} error:`, err.name === 'AbortError' ? 'Timeout' : err.message);
+            }
+            
+            if (attempt < MAX_RETRIES) {
+                const waitTime = attempt * 2000; // 2s, 4s
+                console.log(`[Backend API] Retrying in ${waitTime/1000}s...`);
+                await new Promise(r => setTimeout(r, waitTime));
+            }
+        }
+        
+        console.error(`[Backend API] ❌ Failed to sync order ${orderId} after ${MAX_RETRIES} attempts. Order saved locally.`);
+        // Order is still in localStorage, can be synced later via admin panel
     }
 
     function closeCheckout() {
@@ -3408,7 +3482,8 @@ Thank you for your order!`);
                             customerPhone: currentCustomerInfo.phone,
                             customerAddress: `${currentCustomerInfo.address}, ${currentCustomerInfo.city}, ${currentCustomerInfo.zip}, ${currentCustomerInfo.country}`,
                             items: [...cartItems],
-                            total: total
+                            total: total,
+                            baziData: orderData.baziData || null
                         });
 
                         // Payment successful
@@ -3497,6 +3572,15 @@ Thank you for your order!`);
 
     // Send order notification email
     function sendOrderNotification(orderData) {
+        // Build BaZi info string if present
+        let baziInfo = '';
+        if (orderData.baziData) {
+            const bd = orderData.baziData;
+            const cal = bd.calendarType === 'lunar' ? 'Lunar' : 'Solar';
+            const bs = bd.baziSnapshot || {};
+            baziInfo = `\n☯ BaZi Birth: ${bd.birthYear}/${String(bd.birthMonth||'').padStart(2,'0')}/${String(bd.birthDay||'').padStart(2,'0')} ${bd.gender || ''}\nBaZi: ${bs.year||''} ${bs.month||''} ${bs.day||''} ${bs.hour||''}`;
+        }
+
         const templateParams = {
             order_id: orderData.orderId,
             order_time: new Date().toLocaleString('zh-CN'),
@@ -3504,7 +3588,7 @@ Thank you for your order!`);
             customer_email: orderData.customerEmail,
             customer_phone: orderData.customerPhone,
             customer_address: orderData.customerAddress,
-            order_items: orderData.items.map(item => `${item.name} x${item.quantity} - $${item.price}`).join('\n'),
+            order_items: orderData.items.map(item => `${item.name} x${item.quantity} - $${item.price}`).join('\n') + baziInfo,
             total_amount: orderData.total.toFixed(2),
             email: '75576061@qq.com'
         };
