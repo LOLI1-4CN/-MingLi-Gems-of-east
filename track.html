@@ -661,6 +661,9 @@
                     btn.disabled = false;
                     document.body.removeChild(loadingText);
                     displayOrder(order);
+                    // Update sync time
+                    localStorage.setItem('lastSyncTime', new Date().toISOString());
+                    showSyncStatus(true);
                     return;
                 } else if (data.error) {
                     updateLoadingStatus(loadingText, 'Order not found, checking local...');
@@ -690,6 +693,21 @@
         
         function updateLoadingStatus(el, text) {
             el.innerHTML = `<div style="font-size:24px;margin-bottom:10px;">⏳</div>${text}<br><small style="color:#aaa;">Please wait...</small>`;
+        }
+        
+        // Show sync status
+        function showSyncStatus(success) {
+            const savedTime = localStorage.getItem('lastSyncTime');
+            if (savedTime) {
+                const date = new Date(savedTime);
+                const timeStr = date.toLocaleString();
+                const statusEl = document.createElement('div');
+                statusEl.style.cssText = 'text-align:center;margin-top:20px;font-size:12px;color:#888;';
+                statusEl.innerHTML = success 
+                    ? `✅ Data synced from cloud at ${timeStr}`
+                    : `⚠️ Using cached data. Last sync: ${timeStr}`;
+                document.querySelector('.search-result')?.appendChild(statusEl);
+            }
         }
 
         // Display order details

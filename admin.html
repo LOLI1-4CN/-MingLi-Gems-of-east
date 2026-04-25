@@ -608,6 +608,12 @@
         // API Configuration
         const API_BASE_URL = 'https://mingli-gems-api.vercel.app';
         const ADMIN_API_KEY = 'mingli2024_secure_key';
+        
+        // Last sync time
+        let lastSyncTime = null;
+        let autoRefreshEnabled = false;
+        let autoRefreshInterval = null;
+        const AUTO_REFRESH_MINUTES = 5;
 
         // Fetch with timeout helper
         function fetchWithTimeout(url, options = {}, timeoutMs = 120000) {
@@ -635,6 +641,44 @@
                 banner.style.background = '#8B2500'; banner.style.color = '#fff';
             }
             banner.innerHTML = message;
+        }
+        
+        // Update sync time display
+        function updateSyncTimeDisplay() {
+            let syncEl = document.getElementById('lastSyncTime');
+            if (!syncEl) {
+                syncEl = document.createElement('span');
+                syncEl.id = 'lastSyncTime';
+                syncEl.style.cssText = 'margin-left:20px;font-size:12px;opacity:0.8;';
+                const statsEl = document.querySelector('.stats-row') || document.querySelector('.stats');
+                if (statsEl) statsEl.appendChild(syncEl);
+            }
+            
+            const savedTime = localStorage.getItem('lastSyncTime');
+            if (savedTime) {
+                const date = new Date(savedTime);
+                const timeStr = date.toLocaleTimeString();
+                const autoRefreshText = autoRefreshEnabled ? ` | 🔄 Auto-refresh: ON (${AUTO_REFRESH_MINUTES}min)` : ` | <a href="#" onclick="toggleAutoRefresh();return false;" style="color:#C9A96E;">Enable auto-refresh</a>`;
+                syncEl.innerHTML = `Last sync: ${timeStr}${autoRefreshText}`;
+            }
+        }
+        
+        // Toggle auto refresh
+        function toggleAutoRefresh() {
+            autoRefreshEnabled = !autoRefreshEnabled;
+            if (autoRefreshEnabled) {
+                autoRefreshInterval = setInterval(() => {
+                    loadOrders();
+                }, AUTO_REFRESH_MINUTES * 60 * 1000);
+                showApiBanner('success', `🔄 Auto-refresh enabled — every ${AUTO_REFRESH_MINUTES} minutes`);
+            } else {
+                if (autoRefreshInterval) {
+                    clearInterval(autoRefreshInterval);
+                    autoRefreshInterval = null;
+                }
+                showApiBanner('success', 'Auto-refresh disabled');
+            }
+            updateSyncTimeDisplay();
         }
         
         // Convert API order format to local format
@@ -683,6 +727,10 @@
                     const orders = data.orders.map(normalizeOrder);
                     // Update cache
                     localStorage.setItem('mingli_orders', JSON.stringify(orders));
+                    // Update last sync time
+                    lastSyncTime = new Date();
+                    localStorage.setItem('lastSyncTime', lastSyncTime.toISOString());
+                    updateSyncTimeDisplay();
                     // Refresh display with fresh cloud data
                     showApiBanner('success', `✅ Cloud synced — ${orders.length} orders`);
                     updateStats(orders);
@@ -964,14 +1012,40 @@
                 return;
             }
 
-            if (!confirm(`Sync ${orders.length} local orders to cloud?\n\nThis will upload all orders in parallel.`)) {
+            // Check for existing order IDs to avoid duplicates
+            showApiBanner('loading', 'Checking existing orders on cloud...');
+            let existingOrderIds = new Set();
+            try {
+                const response = await fetchWithTimeout(`${API_BASE_URL}/api/admin/orders`, {
+                    headers: { 'x-admin-key': ADMIN_API_KEY }
+                }, 60000);
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.orders) {
+                        data.orders.forEach(o => existingOrderIds.add(o.orderId));
+                    }
+                }
+            } catch (e) {
+                console.log('Could not fetch existing orders, will skip deduplication');
+            }
+            
+            // Filter out orders that already exist on cloud
+            const newOrders = orders.filter(o => !existingOrderIds.has(o.orderId));
+            const skipCount = orders.length - newOrders.length;
+            
+            if (newOrders.length === 0) {
+                showApiBanner('success', `✅ All ${orders.length} orders already exist on cloud — nothing to sync!`);
                 return;
             }
 
-            showApiBanner('loading', `Starting parallel sync of ${orders.length} orders...`);
+            if (!confirm(`Sync ${newOrders.length} new orders to cloud?\n\n${skipCount > 0 ? `⚠️ Skipping ${skipCount} orders that already exist on cloud\n\n` : ''}This will upload orders in parallel.`)) {
+                return;
+            }
+
+            showApiBanner('loading', `Starting parallel sync of ${newOrders.length} new orders... (${skipCount} skipped)`);
             
             // Convert all orders first
-            const apiOrders = orders.map(order => {
+            const apiOrders = newOrders.map(order => {
                 const customer = {
                     name: order.customerName,
                     email: order.customerEmail,
