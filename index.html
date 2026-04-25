@@ -3230,7 +3230,7 @@
                 customerEmail: currentCustomerInfo.email,
                 customerPhone: currentCustomerInfo.phone,
                 customerAddress: `${currentCustomerInfo.address}, ${currentCustomerInfo.city}, ${currentCustomerInfo.zip}, ${currentCustomerInfo.country}`,
-                items: [...cartItems],
+                items: cartItems.map(item => ({ name: item.name || item, price: item.price || 89, quantity: item.quantity || 1 })),
                 total: total,
                 paymentMethod: 'Bank Wire Transfer (Pending)',
                 baziData: baziReportOrder4Email ? {
@@ -3238,11 +3238,6 @@
                     baziSnapshot: baziReportOrder4Email.baziSnapshot
                 } : null
             });
-        }
-
-        // Sync to Google Sheets if available
-        if (typeof syncOrderToGoogleSheets === 'function') {
-            syncOrderToGoogleSheets(orderData);
         }
 
         // Show instructions
@@ -3374,13 +3369,6 @@ Thank you for your order!`);
             console.error('[Backend API] Error saving order:', apiError);
         }
         
-        // Sync to Google Sheets
-        if (window.GoogleSheetsIntegration) {
-            window.GoogleSheetsIntegration.syncOrder(orderData)
-                .then(result => console.log('[Google Sheets] Sync result:', result))
-                .catch(err => console.error('[Google Sheets] Sync error:', err));
-        }
-
         return orderId;
     }
 
@@ -3489,6 +3477,7 @@ Thank you for your order!`);
                             customerAddress: `${currentCustomerInfo.address}, ${currentCustomerInfo.city}, ${currentCustomerInfo.zip}, ${currentCustomerInfo.country}`,
                             items: [...cartItems],
                             total: total,
+                            paymentMethod: 'PayPal (Paid)',
                             baziData: orderData.baziData || null
                         });
 
@@ -3607,9 +3596,6 @@ Thank you for your order!`);
             });
     }
 </script>
-
-<!-- Google Sheets Integration -->
-<script src="google-sheets-integration.js"></script>
 
 <!-- Botpress Webchat Widget -->
 <script src="https://cdn.botpress.cloud/webchat/v3.6/inject.js"></script>
