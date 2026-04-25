@@ -2401,22 +2401,24 @@
                 <h4 class="customer-info-title" style="margin-bottom: 20px;">Select Payment Method</h4>
                 
                 <div class="payment-options">
-                    <div class="payment-option" onclick="selectPaymentMethod('paypal')">
-                        <div class="payment-option-icon">💳</div>
-                        <div class="payment-option-info">
-                            <strong>PayPal / Credit Card</strong>
-                            <span>Pay with PayPal account or credit card</span>
-                        </div>
-                        <div class="payment-option-check" id="paypalCheck">✓</div>
-                    </div>
-                    
+                    <!-- LianLian / Bank Transfer - First Priority -->
                     <div class="payment-option" onclick="selectPaymentMethod('lianlian')">
                         <div class="payment-option-icon" style="background: linear-gradient(135deg, #2C5F2D, #97BC62);">🏦</div>
                         <div class="payment-option-info">
-                            <strong>Bank Wire Transfer</strong>
-                            <span>International SWIFT/Wire Transfer</span>
+                            <strong>Bank Wire Transfer (Recommended)</strong>
+                            <span>International SWIFT/Wire Transfer via LianLian Pay</span>
                         </div>
                         <div class="payment-option-check" id="lianlianCheck" style="display:none;">✓</div>
+                    </div>
+                    
+                    <!-- PayPal - Second Option (Temporarily Disabled) -->
+                    <div class="payment-option" onclick="selectPaymentMethod('paypal')" style="opacity: 0.7;">
+                        <div class="payment-option-icon">💳</div>
+                        <div class="payment-option-info">
+                            <strong>PayPal / Credit Card</strong>
+                            <span>Pay with PayPal account or credit card (Coming Soon)</span>
+                        </div>
+                        <div class="payment-option-check" id="paypalCheck">✓</div>
                     </div>
                 </div>
                 
@@ -2482,7 +2484,7 @@
                 </div>
             </div>
 
-            <p class="checkout-note">🔒 Secure payment powered by PayPal & Bank Wire Transfer. SSL encrypted.</p>
+            <p class="checkout-note">🔒 Secure payment powered by LianLian Pay & Bank Wire Transfer. PayPal coming soon. SSL encrypted.</p>
         </div>
     </div>
 
@@ -3076,9 +3078,15 @@
         document.getElementById('lianlianSection').style.display = 'none';
     }
 
-    var selectedPaymentMethod = 'paypal';
+    var selectedPaymentMethod = 'lianlian'; // Default to LianLian
 
     function selectPaymentMethod(method) {
+        // Temporarily disable PayPal - redirect to LianLian
+        if (method === 'paypal') {
+            alert('PayPal is temporarily unavailable due to account review. Please use Bank Wire Transfer (LianLian Pay) instead.\n\n连连支付正在审查中，请使用银行转账方式付款。');
+            method = 'lianlian';
+        }
+        
         selectedPaymentMethod = method;
         
         // Update UI
@@ -3094,7 +3102,7 @@
             document.querySelectorAll('.payment-option')[0].classList.add('selected');
             if (paypalCheck) paypalCheck.style.display = 'flex';
         } else {
-            document.querySelectorAll('.payment-option')[1].classList.add('selected');
+            document.querySelectorAll('.payment-option')[0].classList.add('selected'); // LianLian is now first
             if (lianlianCheck) lianlianCheck.style.display = 'flex';
         }
     }
@@ -3102,12 +3110,8 @@
     function confirmPaymentMethod() {
         document.getElementById('paymentMethodSection').style.display = 'none';
         
-        if (selectedPaymentMethod === 'paypal') {
-            document.getElementById('paypalSection').style.display = 'block';
-            setTimeout(() => {
-                renderPayPalButtons();
-            }, 100);
-        } else {
+        // Always use LianLian for now
+        document.getElementById('lianlianSection').style.display = 'block';
             document.getElementById('lianlianSection').style.display = 'block';
         }
     }
